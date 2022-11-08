@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Month, months } from "../../tools/lib";
+import { Month, months } from "../../../tools/lib";
+import DateOffers from "./DateOffers";
 
 const DateController = () => {
     const dateObject = new Date(Date.now());
@@ -89,9 +90,36 @@ const DateController = () => {
         let month = dateToUse.month;
         let day = dateToUse.day;
         let year = dateToUse.year;
-        //setApproved(false);
+
+        //quick validation
+        if (month < 1 || month > 12) {
+            alert("Invalid month, please choose between 1 - 12");
+            return;
+        }
+        if (year < 2000 || year > 2022) {
+            alert("Invalid year, please choose between 2000 - 2022");
+            return;
+        }
+        if (day < 1 || day > months[month - 1].numDays) {
+            alert(
+                "Invalid day selector, please choose between 1 and " +
+                    months[month - 1].numDays
+            );
+            return;
+        }
+
         let tempDateOfWeek = new Date(`${month}-${day}-${year}`);
         let dateObject2 = new Date(Date.now());
+
+        if (dateObject2 < tempDateOfWeek) {
+            alert(
+                `Can't select a future date, we are adjusting this request to todays values`
+            );
+            tempDateOfWeek = dateObject2;
+        }
+
+        //setApproved(false);
+
         let miliDiff = Math.abs(
             dateObject2.getTime() - tempDateOfWeek.getTime()
         );
@@ -110,8 +138,9 @@ const DateController = () => {
             setDay(day - 2);
             setApproved(true);
             setApprovedDate(tempDateOfWeek);
+
+            //higher function call here
             */
-            //if any of the days are holidays, tell them to pick another date
         } else {
             //if over 90 days
             let datesToOffer = convertToAfter90(tempDateOfWeek);
@@ -121,11 +150,22 @@ const DateController = () => {
 
     const handleChange = (event, selector: string) => {
         event.preventDefault();
-        let val = event.target.value();
+        let val = +event.target.value;
+
         setDateToUse({
             ...dateToUse,
             [selector]: val,
         });
+    };
+
+    const updateDateByOffering = (m: number, d: number, y: number) => {
+        setDateToUse({
+            month: m,
+            day: d,
+            year: y,
+        });
+        setDateOptions(null);
+        //higher function call
     };
 
     return (
@@ -149,7 +189,7 @@ const DateController = () => {
                         name="day"
                         type="number"
                         min={1}
-                        max={months[dateToUse.month - 1].numDays+1}
+                        max={months[dateToUse.month - 1].numDays + 1}
                         id="day-selector"
                         value={dateToUse.day}
                         onChange={(e) => handleChange(e, "day")}
@@ -169,6 +209,7 @@ const DateController = () => {
                 </div>
                 <button type="submit">Set Sell Date</button>
             </form>
+            <DateOffers dateOffering={dateOptions} updateSelectedDate={updateDateByOffering} />
         </section>
     );
 };

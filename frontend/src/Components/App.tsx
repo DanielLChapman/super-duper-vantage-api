@@ -1,5 +1,6 @@
 import React from 'react';
 import DateController from './DateHandler/DateController';
+import StockSearch from './StockSearch';
 
 function App(props) {
   return (
@@ -8,7 +9,7 @@ function App(props) {
         header
       </header>
       <main className='main-content'>
-        <DateController />
+          <StockSearch />
       </main>
       <footer className='footer-content'>
         footer

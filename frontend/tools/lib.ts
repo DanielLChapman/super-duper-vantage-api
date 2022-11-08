@@ -62,3 +62,7 @@ export const months = {
         numDays: 31,
     },
 }
+
+export const isValidDate = (d) => {
+    return d instanceof Date && !isNaN(d.getDate());
+}

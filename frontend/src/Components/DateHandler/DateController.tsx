@@ -1,9 +1,24 @@
 import React, { useState } from "react";
-import { Month, months } from "../../../tools/lib";
+import { isValidDate, Month, months } from "../../../tools/lib";
 import DateOffers from "./DateOffers";
 
-const DateController = () => {
+type DateControllersProps = {
+    dateBuild: {
+        month: number;
+        day: number;
+        year: number;
+    };
+    updateHandler: (val: number, selector: string) => void;
+    updateAllDates: (m: number, d: number, y: number) => void;
+};
+
+const DateController: React.FC<DateControllersProps> = ({
+    dateBuild,
+    updateHandler,
+    updateAllDates,
+}) => {
     const dateObject = new Date(Date.now());
+    if (!dateBuild) return <span>Loading...</span>;
 
     //0-11, so plus one on API call
     //const [month, setMonth] = useState(dateObject.getMonth() + 1);
@@ -14,61 +29,61 @@ const DateController = () => {
 
     //const [year, setYear] = useState(dateObject.getFullYear());
 
+    /*
     const [dateToUse, setDateToUse] = useState({
         month: dateObject.getMonth() + 1,
         day: dateObject.getDate(),
         year: dateObject.getFullYear(),
-    });
+    });*/
+    let month = dateBuild.month;
+    let day = dateBuild.day;
+    let year = dateBuild.year;
 
     const [dateOptions, setDateOptions] = useState(null);
 
     const getWeekly = (tempDateOfWeek: Date): Date[] => {
         let tempDayOfWeek = tempDateOfWeek.getDay();
-        let month = dateToUse.month;
-        let day = dateToUse.day;
-        let year = dateToUse.year;
+        let monthTemp = month;
+        let dayTemp = day;
+        let yearTemp = year;
 
-        if (tempDayOfWeek === 5) {
-            //already a friday, no need to offer anything else
-            return [tempDateOfWeek];
-        } else {
-            let advanced = new Date(
-                `${month}-${day + (5 - tempDayOfWeek)}-${year}`
-            );
-            let previous = new Date(
-                `${month}-${day - tempDayOfWeek - 2}-${year}`
-            );
-            return [previous, advanced];
+        let advanced = new Date(
+            `${monthTemp}-${dayTemp + (5 - tempDayOfWeek)}-${yearTemp}`
+        );
+        let previous = new Date(
+            `${monthTemp}-${dayTemp - tempDayOfWeek - 2}-${yearTemp}`
+        );
+        if (!isValidDate(advanced)) {
+            return [previous];
         }
+        if (!isValidDate(previous)) {
+            return [advanced];
+        }
+        return [previous, advanced];
     };
 
     const getMonthly = (tempDateOfWeek: Date): Date[] => {
-        let month = dateToUse.month;
-        let day = dateToUse.day;
-        let year = dateToUse.year;
+        let monthTemp = month;
+        let dayTemp = day;
+        let yearTemp = year;
         //month
-        let curMonth = months[month - 1] as Month;
+        let curMonth = months[monthTemp - 1] as Month;
 
-        if (month === 2) {
-            curMonth.numDays = curMonth.special(year);
+        if (monthTemp === 2) {
+            curMonth.numDays = curMonth.special(yearTemp);
         }
 
-        if (day === curMonth.numDays) {
-            //End of Month, use monthly
-            return [tempDateOfWeek];
+        let advanced = new Date(`${monthTemp}-${curMonth.numDays}-${yearTemp}`);
+        let previous: Date;
+        if (monthTemp === 0) {
+            previous = new Date(`${12}-${months[11].numDays}-${yearTemp - 1}`);
         } else {
-            let advanced = new Date(`${month}-${curMonth.numDays}-${year}`);
-            let previous: Date;
-            if (month === 0) {
-                previous = new Date(`${12}-${months[11].numDays}-${year - 1}`);
-            } else {
-                previous = new Date(
-                    `${month - 1}-${months[month - 2].numDays}-${year}`
-                );
-            }
-
-            return [previous, advanced];
+            previous = new Date(
+                `${monthTemp - 1}-${months[monthTemp - 2].numDays}-${yearTemp}`
+            );
         }
+
+        return [previous, advanced];
     };
 
     const convertToAfter90 = (
@@ -87,28 +102,28 @@ const DateController = () => {
 
     const formHandler = (event: React.FormEvent) => {
         event.preventDefault();
-        let month = dateToUse.month;
-        let day = dateToUse.day;
-        let year = dateToUse.year;
+        let monthTemp = month;
+        let dayTemp = day;
+        let yearTemp = year;
 
         //quick validation
-        if (month < 1 || month > 12) {
+        if (monthTemp < 1 || monthTemp > 12) {
             alert("Invalid month, please choose between 1 - 12");
             return;
         }
-        if (year < 2000 || year > 2022) {
+        if (yearTemp < 2000 || yearTemp > 2022) {
             alert("Invalid year, please choose between 2000 - 2022");
             return;
         }
-        if (day < 1 || day > months[month - 1].numDays) {
+        if (dayTemp < 1 || dayTemp > months[monthTemp - 1].numDays) {
             alert(
                 "Invalid day selector, please choose between 1 and " +
-                    months[month - 1].numDays
+                    months[monthTemp - 1].numDays
             );
             return;
         }
 
-        let tempDateOfWeek = new Date(`${month}-${day}-${year}`);
+        let tempDateOfWeek = new Date(`${monthTemp}-${dayTemp}-${yearTemp}`);
         let dateObject2 = new Date(Date.now());
 
         if (dateObject2 < tempDateOfWeek) {
@@ -129,20 +144,48 @@ const DateController = () => {
             //if under 90 days
             //make sure its not a weekend, otherwise go the Friday before
             //we can pull the stock and just try the date - 1 until it works
-            /*
 
             let tempDayOfWeek = tempDateOfWeek.getDay();
             if (tempDayOfWeek === 0 || tempDayOfWeek === 6) {
-                tempDateOfWeek = new Date(`${month}-${day-(tempDayOfWeek === 0 ? 1 : 2)}-${year}`);
+                updateAllDates(month, day - (tempDayOfWeek === 0 ? 2 : 1), year);
+            } else {
+                updateAllDates(month, day, year);
             }
-            setDay(day - 2);
-            setApproved(true);
-            setApprovedDate(tempDateOfWeek);
+
+            
 
             //higher function call here
-            */
         } else {
             //if over 90 days
+
+            //check if it is an end of the month:
+            let curMonth = months[monthTemp - 1] as Month;
+
+            if (monthTemp === 2) {
+                curMonth.numDays = curMonth.special(yearTemp);
+            }
+
+            if (dayTemp === curMonth.numDays) {
+                //End of Month, use monthly
+                /* 
+
+                CALL THE OKAY DATE FUNCTION
+                RETURN
+                */
+            }
+
+            //check if it is a friday:
+            let tempDayOfWeek = tempDateOfWeek.getDay();
+            if (tempDayOfWeek === 5) {
+                //already a friday, no need to offer anything else
+                /* 
+
+                CALL THE OKAY DATE FUNCTION
+                RETURN
+                */
+            }
+
+            //Check if its a friday or end of the month already, otherwise do this
             let datesToOffer = convertToAfter90(tempDateOfWeek);
             setDateOptions(datesToOffer);
         }
@@ -152,18 +195,11 @@ const DateController = () => {
         event.preventDefault();
         let val = +event.target.value;
 
-        setDateToUse({
-            ...dateToUse,
-            [selector]: val,
-        });
+        updateHandler(val, selector);
     };
 
     const updateDateByOffering = (m: number, d: number, y: number) => {
-        setDateToUse({
-            month: m,
-            day: d,
-            year: y,
-        });
+        updateAllDates(+m, +d, +y);
         setDateOptions(null);
         //higher function call
     };
@@ -179,7 +215,7 @@ const DateController = () => {
                         min={1}
                         max={12}
                         id="month-selector"
-                        value={dateToUse.month}
+                        value={month}
                         onChange={(e) => handleChange(e, "month")}
                     />
                 </div>
@@ -189,9 +225,9 @@ const DateController = () => {
                         name="day"
                         type="number"
                         min={1}
-                        max={months[dateToUse.month - 1].numDays + 1}
+                        max={months[month - 1].numDays + 1}
                         id="day-selector"
-                        value={dateToUse.day}
+                        value={day}
                         onChange={(e) => handleChange(e, "day")}
                     />
                 </div>
@@ -203,13 +239,16 @@ const DateController = () => {
                         min={1900}
                         max={dateObject.getFullYear()}
                         id="year-selector"
-                        value={dateToUse.year}
+                        value={year}
                         onChange={(e) => handleChange(e, "year")}
                     />
                 </div>
                 <button type="submit">Set Sell Date</button>
             </form>
-            <DateOffers dateOffering={dateOptions} updateSelectedDate={updateDateByOffering} />
+            <DateOffers
+                dateOffering={dateOptions}
+                updateSelectedDate={updateDateByOffering}
+            />
         </section>
     );
 };

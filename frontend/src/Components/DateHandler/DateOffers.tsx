@@ -25,6 +25,7 @@ const DateOffers: React.FC<DateOffersProps> = ({
             <h6>Weekly Options (Month-Date-Year)</h6>
             <ul>
                 {dateOffering.weekly?.map((x, i) => {
+                    console.log(x);
                     return (
                         <li
                             onClick={() =>
@@ -49,9 +50,9 @@ const DateOffers: React.FC<DateOffersProps> = ({
                         <li
                             onClick={() =>
                                 updateSelectedDate(
-                                    x.getMonth(),
-                                    x.getDate(),
-                                    x.getFullYear()
+                                    +x.getMonth(),
+                                    +x.getDate(),
+                                    +x.getFullYear()
                                 )
                             }
                             key={i}

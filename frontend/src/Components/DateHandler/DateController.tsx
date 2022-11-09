@@ -18,7 +18,7 @@ const DateController: React.FC<DateControllersProps> = ({
     updateAllDates,
 }) => {
     const dateObject = new Date(Date.now());
-    if (!dateBuild) return <span>Loading...</span>;
+    if (!dateBuild) return <span className="loading-span">Loading...</span>;
 
     //0-11, so plus one on API call
     //const [month, setMonth] = useState(dateObject.getMonth() + 1);

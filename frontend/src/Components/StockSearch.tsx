@@ -25,6 +25,17 @@ const StockSearch: React.FC = () => {
         });
     };
 
+    const resetDate = () => {
+        setDateToUse({
+            month: dateObject.getMonth() + 1,
+            day: dateObject.getDate(),
+            year: dateObject.getFullYear(),
+        });
+
+        //hide symbol window
+        //hide sell windows
+    }
+
     return (
         <div>
             <DateController
@@ -32,6 +43,7 @@ const StockSearch: React.FC = () => {
                 updateHandler={handleChange}
                 updateAllDates={updateAllDates}
             />
+            <button onClick={resetDate}>Reset Date</button>
         </div>
     );
 };

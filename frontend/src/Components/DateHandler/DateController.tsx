@@ -56,29 +56,7 @@ const DateController: React.FC<DateControllersProps> = ({
         advanced = new Date(`${monthTemp}-${dayTemp}-${yearTemp}`);
         advanced.setDate(advanced.getDate() + rewindTime)
 
-        /*
 
-        if (dayTemp + rewindTime > months[monthTemp - 1].special(yearTemp)) {
-            //account for february
-            let advancedMonthTemp = monthTemp + 1;
-            let advancedDayTemp: number = dayTemp + rewindTime - months[monthTemp - 1].special(yearTemp);
-            let advancedYearTemp = yearTemp;
-
-            if (advancedMonthTemp > 12) {
-                advancedMonthTemp = 1;
-                advancedYearTemp += 1;
-            }
-
-            //account for new year
-            advanced = new Date(
-                `${advancedMonthTemp}-${advancedDayTemp}-${advancedYearTemp}`
-            );
-        } else {
-            advanced = new Date(
-                `${monthTemp}-${dayTemp + rewindTime}-${yearTemp}`
-            );
-        }
-        */
         let previous: Date;
         rewindTime = -tempDayOfWeek - 2;
 
@@ -90,31 +68,7 @@ const DateController: React.FC<DateControllersProps> = ({
 
 
         previous.setDate(previous.getDate() - Math.abs(rewindTime));
-        
-        /*
-        if (tempDayOfWeek === 6) {
-            rewindTime = dayTemp - 1;
-        }
-        if (rewindTime < 1) {
-            let previousMonthTemp = monthTemp - 1;
-            let previousDayTemp: number = dayTemp;
-            let previousYearTemp = yearTemp;
-                
-            if (previousMonthTemp === 0) {
-                previousMonthTemp = 12;
-                previousYearTemp -= 1;
-            }
-
-            previousDayTemp = months[previousMonthTemp - 1].special(previousYearTemp) + rewindTime;
-            
-            previous = new Date( `${previousMonthTemp}-${previousDayTemp}-${previousYearTemp}`);
-        } else {
-            previous = new Date(
-                `${monthTemp}-${rewindTime}-${yearTemp}`
-            );
-        }*/
-        
-
+    
         let returnArr = [];
         if (isValidDate(previous)) {
             returnArr.push(previous);

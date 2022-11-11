@@ -46,28 +46,79 @@ const DateController: React.FC<DateControllersProps> = ({
         let monthTemp = month;
         let dayTemp = day;
         let yearTemp = year;
+        //advanced
+        let advanced: Date;
 
-        let advanced = new Date(
-            `${monthTemp}-${dayTemp + (5 - tempDayOfWeek)}-${yearTemp}`
-        );
-        let previous = new Date(
-            `${monthTemp}-${dayTemp - tempDayOfWeek - 2}-${yearTemp}`
-        );
-        if (!isValidDate(advanced)) {
-            return [previous];
+        let rewindTime = 5 - tempDayOfWeek;
+        if (tempDayOfWeek === 6) {
+            rewindTime = 6;
         }
-        if (!isValidDate(previous)) {
-            return [advanced];
+
+        if (dayTemp + rewindTime > months[monthTemp - 1].special(yearTemp)) {
+            //account for february
+            let advancedMonthTemp = monthTemp + 1;
+            let advancedDayTemp: number = dayTemp + rewindTime - months[monthTemp - 1].special(yearTemp);
+            let advancedYearTemp = yearTemp;
+
+            if (advancedMonthTemp > 12) {
+                advancedMonthTemp = 1;
+                advancedYearTemp += 1;
+            }
+
+            //account for new year
+            advanced = new Date(
+                `${advancedMonthTemp}-${advancedDayTemp}-${advancedYearTemp}`
+            );
+        } else {
+            advanced = new Date(
+                `${monthTemp}-${dayTemp + rewindTime}-${yearTemp}`
+            );
         }
-        return [previous, advanced];
+        
+        let previous: Date;
+        rewindTime = dayTemp - tempDayOfWeek - 2
+        if (tempDayOfWeek === 6) {
+            rewindTime = dayTemp - 1;
+        }
+        if (rewindTime < 1) {
+            let previousMonthTemp = monthTemp - 1;
+            let previousDayTemp: number = dayTemp;
+            let previousYearTemp = yearTemp;
+                
+            if (previousMonthTemp === 0) {
+                previousMonthTemp = 12;
+                previousYearTemp -= 1;
+            }
+
+            previousDayTemp = months[previousMonthTemp - 1].special(previousYearTemp) + rewindTime;
+            
+            previous = new Date( `${previousMonthTemp}-${previousDayTemp}-${previousYearTemp}`);
+        } else {
+            previous = new Date(
+                `${monthTemp}-${rewindTime}-${yearTemp}`
+            );
+        }
+        
+
+        let returnArr = [];
+        if (isValidDate(previous)) {
+            returnArr.push(previous);
+        }
+        if (isValidDate(advanced)) {
+            returnArr.push(advanced)
+        }
+        
+        return returnArr;
     };
 
     const getMonthly = (tempDateOfWeek: Date): Date[] => {
+        //ERROR AT 1/1/2022
         let monthTemp = month;
         let dayTemp = day;
         let yearTemp = year;
         //month
         let curMonth = months[monthTemp - 1] as Month;
+        
 
         if (monthTemp === 2) {
             curMonth.numDays = curMonth.special(yearTemp);
@@ -75,7 +126,7 @@ const DateController: React.FC<DateControllersProps> = ({
 
         let advanced = new Date(`${monthTemp}-${curMonth.numDays}-${yearTemp}`);
         let previous: Date;
-        if (monthTemp === 0) {
+        if (monthTemp === 1) {
             previous = new Date(`${12}-${months[11].numDays}-${yearTemp - 1}`);
         } else {
             previous = new Date(
@@ -256,7 +307,7 @@ const DateController: React.FC<DateControllersProps> = ({
                         name="day"
                         type="number"
                         min={1}
-                        max={months[month - 1].numDays + 1}
+                        max={months[month - 1].special(year) || 31}
                         id="day-selector"
                         value={day}
                         onChange={(e) => handleChange(e, "day")}

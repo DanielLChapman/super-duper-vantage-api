@@ -1,68 +1,112 @@
-export const monthList = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+export const monthList = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+];
 
 export type Month = {
-        name: string,
-        numDays: number,
-        special: (number) => number | null
-}
-    
+    name: string;
+    numDays: number;
+    special: (number) => number | null;
+};
 
 export const months = {
-    '0': {
-        name: 'January',
+    "0": {
+        name: "January",
         numDays: 31,
+        special() {
+            return 31;
+        },
     },
-    '1': {
-        name: 'February',
+    "1": {
+        name: "February",
         numDays: 28,
         special(year) {
             if (year % 4 === 0) {
                 return 29;
+            } else {
+                return 28;
             }
-        }
+        },
     },
-    '2': {
-        name: 'March',
+    "2": {
+        name: "March",
         numDays: 31,
+        special() {
+            return 31;
+        },
     },
-    '3': {
-        name: 'April',
+    "3": {
+        name: "April",
         numDays: 30,
+        special() {
+            return 30;
+        },
     },
-    '4': {
-        name: 'May',
+    "4": {
+        name: "May",
         numDays: 31,
+        special() {
+            return 31;
+        },
     },
-    '5': {
-        name: 'June',
+    "5": {
+        name: "June",
         numDays: 30,
+        special() {
+            return 30;
+        },
     },
-    '6': {
-        name: 'July',
+    "6": {
+        name: "July",
         numDays: 31,
     },
-    '7': {
-        name: 'August',
+    "7": {
+        name: "August",
         numDays: 31,
+        special() {
+            return 31;
+        },
     },
-    '8': {
-        name: 'September',
+    "8": {
+        name: "September",
         numDays: 30,
+        special() {
+            return 30;
+        },
     },
-    '9': {
-        name: 'October',
+    "9": {
+        name: "October",
         numDays: 31,
+        special() {
+            return 31;
+        },
     },
-    '10': {
-        name: 'November',
+    "10": {
+        name: "November",
         numDays: 30,
+        special() {
+            return 30;
+        },
     },
-    '11': {
-        name: 'December',
+    "11": {
+        name: "December",
         numDays: 31,
+        special() {
+            return 31;
+        },
     },
-}
+};
 
 export const isValidDate = (d) => {
     return d instanceof Date && !isNaN(d.getDate());
-}
+};

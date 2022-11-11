@@ -53,6 +53,10 @@ const DateController: React.FC<DateControllersProps> = ({
         if (tempDayOfWeek === 6) {
             rewindTime = 6;
         }
+        advanced = new Date(`${monthTemp}-${dayTemp}-${yearTemp}`);
+        advanced.setDate(advanced.getDate() + rewindTime)
+
+        /*
 
         if (dayTemp + rewindTime > months[monthTemp - 1].special(yearTemp)) {
             //account for february
@@ -74,9 +78,20 @@ const DateController: React.FC<DateControllersProps> = ({
                 `${monthTemp}-${dayTemp + rewindTime}-${yearTemp}`
             );
         }
-        
+        */
         let previous: Date;
-        rewindTime = dayTemp - tempDayOfWeek - 2
+        rewindTime = -tempDayOfWeek - 2;
+
+        if (tempDayOfWeek === 6) {
+            rewindTime = 1
+        }
+        
+        previous = new Date(`${monthTemp}-${dayTemp}-${yearTemp}`);
+
+
+        previous.setDate(previous.getDate() - Math.abs(rewindTime));
+        
+        /*
         if (tempDayOfWeek === 6) {
             rewindTime = dayTemp - 1;
         }
@@ -97,7 +112,7 @@ const DateController: React.FC<DateControllersProps> = ({
             previous = new Date(
                 `${monthTemp}-${rewindTime}-${yearTemp}`
             );
-        }
+        }*/
         
 
         let returnArr = [];
@@ -117,20 +132,17 @@ const DateController: React.FC<DateControllersProps> = ({
         let dayTemp = day;
         let yearTemp = year;
         //month
-        let curMonth = months[monthTemp - 1] as Month;
-        
+        let curMonth = months[monthTemp - 1].special(yearTemp) as number;
 
-        if (monthTemp === 2) {
-            curMonth.numDays = curMonth.special(yearTemp);
-        }
 
-        let advanced = new Date(`${monthTemp}-${curMonth.numDays}-${yearTemp}`);
+        let advanced = new Date(`${monthTemp}-${curMonth}-${yearTemp}`);
         let previous: Date;
+
         if (monthTemp === 1) {
-            previous = new Date(`${12}-${months[11].numDays}-${yearTemp - 1}`);
+            previous = new Date(`${12}-31-${yearTemp - 1}`);
         } else {
             previous = new Date(
-                `${monthTemp - 1}-${months[monthTemp - 2].numDays}-${yearTemp}`
+                `${monthTemp - 1}-${months[monthTemp - 2].special(yearTemp)}-${yearTemp}`
             );
         }
 
@@ -161,6 +173,14 @@ const DateController: React.FC<DateControllersProps> = ({
         let tempDateOfWeek = new Date(`${monthTemp}-${dayTemp}-${yearTemp}`);
         //establish a current time
         let dateObject2 = new Date(Date.now());
+        if (dateObject2.getMonth()+1 === m && dateObject2.getDate() === d && dateObject2.getFullYear() === y) {
+            /*
+            
+            RETURN FUNCTION HERE TO MOVE ONTO STOCK HIGHER FUNCTION CALL
+            
+            */
+           return;
+        }
 
         //if the dateRequested is in the future, correct to today
         if (dateObject2 < tempDateOfWeek) {
@@ -168,7 +188,8 @@ const DateController: React.FC<DateControllersProps> = ({
                 `Can't select a future date, we are adjusting this request to todays values`
             );
             tempDateOfWeek = dateObject2;
-        }
+        } 
+        
         
         //For calculating the 90 day difference, convert to mili-seconds difference and then convert that to days
         let miliDiff = Math.abs(
@@ -182,29 +203,10 @@ const DateController: React.FC<DateControllersProps> = ({
 
             let tempDayOfWeek = tempDateOfWeek.getDay();
             if (tempDayOfWeek === 0 || tempDayOfWeek === 6) {
-                let t =  day - (tempDayOfWeek === 0 ? 2 : 1);
-                //handling issues where the first is the saturday or sunday. 
-
-                //also handling incase we go into the previous month
-                if (t < 1) {
-                    if (monthTemp === 1) {
-                        monthTemp = 12;
-                    }
-                    t =  months[monthTemp - 1].numDays - t;
-                    //now correct to friday;
-                    let tempDate = new Date(`${monthTemp}-${t}-${yearTemp}`).getDay();
-                    if (tempDate === 0 || tempDate === 6) { 
-                        t =  t - (tempDate === 0 ? 2 : 1);
-                    }
-                } 
-                dayTemp = t;
-                //incase fixinig to a previous friday goes over the 90 days;
-               
-                //if we are safe to proceed, update the date
-                
-                //higher function call here
+                tempDateOfWeek.setDate(tempDateOfWeek.getDate() - (tempDayOfWeek === 0 ? 2 : 1));
             }
-            updateAllDates(monthTemp, dayTemp, yearTemp);
+
+            updateAllDates(tempDateOfWeek.getMonth()+1, tempDateOfWeek.getDate(), tempDateOfWeek.getFullYear());
 
         } else {
             //if over 90 days

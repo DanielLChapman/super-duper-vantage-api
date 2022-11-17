@@ -69,6 +69,9 @@ export const months = {
     "6": {
         name: "July",
         numDays: 31,
+        special() {
+            return 31;
+        },
     },
     "7": {
         name: "August",

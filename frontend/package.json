@@ -27,6 +27,7 @@
     "@babel/preset-typescript": "^7.0.0",
     "@jest/globals": "^29.3.1",
     "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.4.3",
     "@types/react": "18.0.9",
     "babel-jest": "^29.3.1",
     "jest": "^29.3.1",
@@ -37,7 +38,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "jest",
+    "test": "jest -w",
     "test:ci": "jest --ci"
   },
   "eslintConfig": {

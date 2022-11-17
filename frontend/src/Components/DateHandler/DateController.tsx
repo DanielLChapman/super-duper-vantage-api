@@ -255,6 +255,7 @@ const DateController: React.FC<DateControllersProps> = ({
                         id="month-selector"
                         value={month}
                         onChange={(e) => handleChange(e, "month")}
+                        data-testid="date-controller-form-month"
                     />
                 </div>
                 <div className="form-control">
@@ -263,10 +264,11 @@ const DateController: React.FC<DateControllersProps> = ({
                         name="day"
                         type="number"
                         min={1}
-                        max={months[month - 1].special(year) || 31}
+                        max={months[month - 1]?.special(year) || 31}
                         id="day-selector"
                         value={day}
                         onChange={(e) => handleChange(e, "day")}
+                        data-testid="date-controller-form-day"
                     />
                 </div>
                 <div className="form-control">
@@ -279,9 +281,10 @@ const DateController: React.FC<DateControllersProps> = ({
                         id="year-selector"
                         value={year}
                         onChange={(e) => handleChange(e, "year")}
+                        data-testid="date-controller-form-year"
                     />
                 </div>
-                <button type="submit">Set Sell Date</button>
+                <button data-testid="date-controller-form-submit" type="submit">Set Sell Date</button>
             </form>
             <DateOffers
                 dateOffering={dateOptions}

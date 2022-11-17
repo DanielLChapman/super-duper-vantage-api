@@ -30,7 +30,7 @@ const DateOffers: React.FC<DateOffersProps> = ({
                         <li
                             onClick={() =>
                                 updateSelectedDate(
-                                    +x.getMonth(),
+                                    +x.getMonth()+1,
                                     +x.getDate(),
                                     +x.getFullYear()
                                 )
@@ -50,12 +50,13 @@ const DateOffers: React.FC<DateOffersProps> = ({
                         <li
                             onClick={() =>
                                 updateSelectedDate(
-                                    +x.getMonth(),
+                                    +x.getMonth() + 1,
                                     +x.getDate(),
                                     +x.getFullYear()
                                 )
                             }
                             key={i}
+                            data-testid={`monthly-offering-${i+1}`}
                         >
                             {+x.getMonth() + 1} - {+x.getDate()} -{" "}
                             {+x.getFullYear()}

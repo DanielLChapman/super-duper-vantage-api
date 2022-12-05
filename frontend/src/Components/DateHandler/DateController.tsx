@@ -10,12 +10,14 @@ type DateControllersProps = {
     };
     updateHandler: (val: number, selector: string) => void;
     updateAllDates: (m: number, d: number, y: number) => void;
+    setURLSelector: (action: any | ((prevState: any) => any)) => void;
 };
 
 const DateController: React.FC<DateControllersProps> = ({
     dateBuild,
     updateHandler,
     updateAllDates,
+    setURLSelector
 }) => {
     const dateObject = new Date(Date.now());
     if (!dateBuild) return <span className="loading-span">Loading...</span>;
@@ -128,11 +130,13 @@ const DateController: React.FC<DateControllersProps> = ({
         //establish a current time
         let dateObject2 = new Date(Date.now());
         if (dateObject2.getMonth()+1 === m && dateObject2.getDate() === d && dateObject2.getFullYear() === y) {
+            setURLSelector('Day');
             /*
             
             RETURN FUNCTION HERE TO MOVE ONTO STOCK HIGHER FUNCTION CALL
             
             */
+           
            return;
         }
 
@@ -142,6 +146,9 @@ const DateController: React.FC<DateControllersProps> = ({
                 `Can't select a future date, we are adjusting this request to todays values`
             );
             tempDateOfWeek = dateObject2;
+
+            setURLSelector('Day');
+            return;
         } 
         
         
@@ -159,9 +166,10 @@ const DateController: React.FC<DateControllersProps> = ({
             if (tempDayOfWeek === 0 || tempDayOfWeek === 6) {
                 tempDateOfWeek.setDate(tempDateOfWeek.getDate() - (tempDayOfWeek === 0 ? 2 : 1));
             }
+            
 
             updateAllDates(tempDateOfWeek.getMonth()+1, tempDateOfWeek.getDate(), tempDateOfWeek.getFullYear());
-
+            setURLSelector('Day');
         } else {
             //if over 90 days
 
@@ -173,6 +181,7 @@ const DateController: React.FC<DateControllersProps> = ({
             }
 
             if (dayTemp === curMonth.numDays) {
+                setURLSelector('Month');
                 //End of Month, use monthly
                 /* 
 
@@ -185,6 +194,7 @@ const DateController: React.FC<DateControllersProps> = ({
             let tempDayOfWeek = tempDateOfWeek.getDay();
             if (tempDayOfWeek === 5) {
                 //already a friday, no need to offer anything else
+                setURLSelector('Weekly');
                 /* 
 
                 CALL THE OKAY DATE FUNCTION
@@ -289,6 +299,7 @@ const DateController: React.FC<DateControllersProps> = ({
             <DateOffers
                 dateOffering={dateOptions}
                 updateSelectedDate={updateDateByOffering}
+                setURLSelector={setURLSelector}
             />
         </section>
     );

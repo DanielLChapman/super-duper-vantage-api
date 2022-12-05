@@ -1,6 +1,15 @@
 import Document, { Html, Head, NextScript, Main } from 'next/document';
 
 export default class MyDocument extends Document {
+  /*static getInitialProps({ renderPage }) {
+    const sheet = new ServerStyleSheet();
+    const page = renderPage((App) => (props) =>
+      sheet.collectStyles(<App {...props} />)
+    );
+    const styleTags = sheet.getStyleElement();
+    return { ...page, styleTags };
+  }*/ 
+
   static async getInitialProps(ctx) {
     const originalRenderPage = ctx.renderPage
 

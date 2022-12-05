@@ -6,11 +6,13 @@ type DateOffersProps = {
         monthly: Date[];
     };
     updateSelectedDate: (m: number, d: number, y: number) => void;
+    setURLSelector: (action: any | ((prevState: any) => any)) => void;
 };
 
 const DateOffers: React.FC<DateOffersProps> = ({
     dateOffering,
     updateSelectedDate,
+    setURLSelector,
 }) => {
     if (!dateOffering) {
         return;
@@ -25,16 +27,16 @@ const DateOffers: React.FC<DateOffersProps> = ({
             <h6>Weekly Options (Month-Date-Year)</h6>
             <ul>
                 {dateOffering.weekly?.map((x, i) => {
-                    console.log(x);
                     return (
                         <li
-                            onClick={() =>
+                            onClick={() => {
                                 updateSelectedDate(
-                                    +x.getMonth()+1,
+                                    +x.getMonth() + 1,
                                     +x.getDate(),
                                     +x.getFullYear()
-                                )
-                            }
+                                );
+                                setURLSelector("Weekly");
+                            }}
                             key={i}
                         >
                             {+x.getMonth() + 1} - {+x.getDate()} -{" "}
@@ -48,15 +50,16 @@ const DateOffers: React.FC<DateOffersProps> = ({
                 {dateOffering.monthly?.map((x, i) => {
                     return (
                         <li
-                            onClick={() =>
+                            onClick={() => {
                                 updateSelectedDate(
                                     +x.getMonth() + 1,
                                     +x.getDate(),
                                     +x.getFullYear()
-                                )
-                            }
+                                );
+                                setURLSelector("Monthly");
+                            }}
                             key={i}
-                            data-testid={`monthly-offering-${i+1}`}
+                            data-testid={`monthly-offering-${i + 1}`}
                         >
                             {+x.getMonth() + 1} - {+x.getDate()} -{" "}
                             {+x.getFullYear()}

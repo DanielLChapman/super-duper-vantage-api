@@ -2,11 +2,11 @@ import React from "react";
 
 const Page = (props) => {
     return (
-        <div>
+        <main>
             {/*<Header />*/}
-            <main>{props.children}</main>
+            {props.children}
             {/*<link rel="stylesheet" href="main.css" />*/}
-        </div>
+        </main>
     );
 };
 

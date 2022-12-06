@@ -3,10 +3,6 @@ import Head from "next/head";
 import App from "../src/Components/App"
 
 function index(props) {
-    const user = {
-        id: 1,
-        api_key: process.env.REACT_APP_user_api_key || 'some_key,_i_give_up,_hydration'
-    };
 
     return (
         <div>
@@ -16,7 +12,7 @@ function index(props) {
 
             </Head>
 
-            <App user={user} />
+            <App />
 
 
         </div>

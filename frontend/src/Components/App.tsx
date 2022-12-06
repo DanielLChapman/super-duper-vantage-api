@@ -1,24 +1,26 @@
 import React from "react";
+import { user } from "../../tools/lib";
 import DateController from "./DateHandler/DateController";
+import Header from "./Header";
 import StockSearch from "./StockSearch";
+import { useUser } from "./User";
 
-type AppInitialProps = {
-    user: {
-        id: number;
-        api_key: string;
-    };
-};
+type AppInitialProps = {};
 
-const App: React.FC<AppInitialProps> = ({ user }) => {
+const App: React.FC<AppInitialProps> = () => {
+    //user entry
 
-  const checkUser = () => {
-    console.log(user);
-  }
+    let  user = useUser();
+
+    const refetchUser = () => {
+        user = useUser();
+    }
+
     return (
         <div className="App">
-            <header className="header-content">header</header>
+            <Header user={user} />
             <main className="main-content">
-                <StockSearch checkUser={checkUser} />
+                <StockSearch user={user} />
             </main>
             <footer className="footer-content">footer</footer>
         </div>

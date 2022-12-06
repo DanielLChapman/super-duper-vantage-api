@@ -113,3 +113,31 @@ export const months = {
 export const isValidDate = (d) => {
     return d instanceof Date && !isNaN(d.getDate());
 };
+
+export type tradeHistory = {
+    id: string,
+    symbol: string,
+    amount: number,
+    //sell price or buy price
+    price: number,
+    date: Date,
+    buySell: 'buy' | 'sell',
+}
+
+export type stock = {
+    //default buy since you cant own a sold stock right now
+    symbol: string,
+    amount: number,
+    price: number,
+    purchaseDate: Date,
+}
+
+export type user = {
+    id: string,
+    apiKey: string,
+    username: string,
+    money: number,
+    tradeHistory: [tradeHistory] | [],
+    currentStocks: [stock] | []
+
+}

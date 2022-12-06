@@ -4,10 +4,10 @@ import BuySellHandler from "./StockHandler/BuySellHandler";
 import StockSymbolForm from "./StockHandler/StockSymbolForm";
 
 type StockSearchProps = {
-    checkUser: () => void
+
 }
 
-const StockSearch: React.FC<StockSearchProps> = ({checkUser}) => {
+const StockSearch: React.FC<StockSearchProps> = ({}) => {
     const dateObject = new Date(Date.now());
     const [allowStockSymbol, setAllowStockSymbol] = useState(true); //default if using today, it should be allowed
     const [stockData, setStockData] = useState({
@@ -164,7 +164,6 @@ const StockSearch: React.FC<StockSearchProps> = ({checkUser}) => {
                 setURLSelector={setSelector}
             />
             <button onClick={resetDate}>Reset Date</button>
-            <button onClick={checkUser}>User</button>
             {
                 allowStockSymbol && <StockSymbolForm stockSymbol={stockData.symbol} amount={stockData.amount} handleStockChange={handleStockChange} verify={verify} />
             }

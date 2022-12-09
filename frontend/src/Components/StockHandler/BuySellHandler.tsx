@@ -8,6 +8,11 @@ type BuySellProps = {
 }
 
 const BuySellHandler: React.FC<BuySellProps>  = ({amount, symbol, price}) => {
+
+    //graphql call to update user
+    const buyHandler = () => {
+        
+    }
     return (
         <div>
             <button className="buy-button" onClick={() => {console.log('buy')}}>Buy {amount}</button>

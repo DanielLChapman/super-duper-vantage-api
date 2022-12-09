@@ -120,7 +120,7 @@ export type tradeHistory = {
     amount: number,
     //sell price or buy price
     price: number,
-    date: Date,
+    createdAt: Date,
     buySell: 'buy' | 'sell',
 }
 
@@ -129,7 +129,7 @@ export type stock = {
     symbol: string,
     amount: number,
     price: number,
-    purchaseDate: Date,
+    createdAt: Date,
 }
 
 export type user = {

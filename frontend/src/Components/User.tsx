@@ -1,3 +1,5 @@
+import { useQuery } from "@apollo/client";
+import gql from "graphql-tag";
 import React, { useState } from "react";
 import { user as userType } from "../../tools/lib";
 
@@ -7,29 +9,47 @@ type backendtype = {
 
 let backend: backendtype = {
     data: {
-        id: Math.random() * 1000000 + " ",
+        id: -1 + "",
         username: "Demo",
         apiKey: "demo",
         money: 100000,
-        tradeHistory: [
-            {
-                id: Math.random() * 1000000 + " ",
-                symbol: "IBM",
-                buySell: "sell",
-                amount: 1000,
-                price: 137.52,
-                date: new Date(Date.now()),
-            },
-        ],
-        currentStocks: [],
+        trades: [],
+        stocks: [],
     },
 };
 
-export function useUser() {
-    let data: userType;
-    //const { data } = useQuery(CURRENT_USER_QUERY);
+export const CURRENT_USER_QUERY = gql`
+    query {
+        authenticatedItem {
+            ... on User {
+                id 
+                username
+                money
+                apiKey
+                trades {
+                    id
+                    symbol
+                    amount
+                    price
+                    buySell
+                    createdAt
+                },
+                stocks {
+                    id
+                    symbol
+                    amount
+                    price
+                    createdAt
+                }
+            }
+        }
+    }
+`;
 
-    if (!data) {
+export function useUser() {
+    let { data } = useQuery(CURRENT_USER_QUERY);
+
+    if (!data.authenticatedItem) {
         data = {...backend.data};
     }
 

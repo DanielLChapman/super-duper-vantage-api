@@ -35,7 +35,7 @@
     "ts-node": "^10.9.1"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 7777",
     "build": "next build",
     "start": "next start",
     "test": "jest -w",

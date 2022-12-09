@@ -1,13 +1,14 @@
 import React, { useState } from "react";
+import { user as userType} from "../../tools/lib";
 import DateController from "./DateHandler/DateController";
 import BuySellHandler from "./StockHandler/BuySellHandler";
 import StockSymbolForm from "./StockHandler/StockSymbolForm";
 
 type StockSearchProps = {
-
+    user: userType | null,
 }
 
-const StockSearch: React.FC<StockSearchProps> = ({}) => {
+const StockSearch: React.FC<StockSearchProps> = ({user}) => {
     const dateObject = new Date(Date.now());
     const [allowStockSymbol, setAllowStockSymbol] = useState(true); //default if using today, it should be allowed
     const [stockData, setStockData] = useState({

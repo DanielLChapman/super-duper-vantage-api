@@ -1,5 +1,6 @@
 
-import Page from "../src/Components/Page";
+import Router from "next/router";
+import Page from "../src/components/Page";
 import {
     ApolloClient,
     InMemoryCache,
@@ -7,10 +8,10 @@ import {
     useQuery,
     gql,
 } from "@apollo/client";
-import withData from '../library/apollo';
+import withData from '../library/apollo'
+import { endpoint, prodEndpoint } from "../config";
 
 function MyApp({ Component, pageProps, apollo }) {
-
     return (
         <ApolloProvider client={apollo}>
             <Page>
@@ -20,5 +21,13 @@ function MyApp({ Component, pageProps, apollo }) {
     );
 }
 
+MyApp.getInitialProps = async function ({ Component, ctx }) {
+    let pageProps = {};
+    if (Component.getInitialProps) {
+        pageProps = await Component.getInitialProps(ctx);
+    }
+    pageProps.query = ctx.query;
+    return { pageProps };
+};
 
 export default withData(MyApp);

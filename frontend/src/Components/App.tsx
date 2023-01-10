@@ -16,6 +16,8 @@ const App: React.FC<AppInitialProps> = () => {
         user = useUser();
     }
 
+    console.log(user);
+
     return (
         <div className="App">
             <Header user={user} />

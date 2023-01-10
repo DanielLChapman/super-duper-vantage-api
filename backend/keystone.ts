@@ -6,6 +6,7 @@
 //   you can find out more at https://keystonejs.com/docs/apis/config
 
 import { config } from '@keystone-6/core';
+import { extendGraphqlSchema } from './schemaExtension'
 
 // to keep this file tidy, we define our schema in a different file
 import { lists } from './schema';
@@ -13,6 +14,7 @@ import { lists } from './schema';
 // authentication is configured separately here too, but you might move this elsewhere
 // when you write your list-level access control functions, as they typically rely on session data
 import { withAuth, session } from './auth';
+import buyStock from './mutations/buyStock';
 
 export default withAuth(
   config({
@@ -25,5 +27,6 @@ export default withAuth(
     },
     lists,
     session,
+    extendGraphqlSchema
   })
 );

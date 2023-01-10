@@ -120,8 +120,8 @@ export type tradeHistory = {
     amount: number,
     //sell price or buy price
     price: number,
-    createdAt: Date,
-    buySell: 'buy' | 'sell',
+    createdAt?: Date,
+    buySell: boolean
 }
 
 export type stock = {
@@ -129,7 +129,7 @@ export type stock = {
     symbol: string,
     amount: number,
     price: number,
-    createdAt: Date,
+    createdAt?: Date,
 }
 
 export type user = {
@@ -137,7 +137,7 @@ export type user = {
     apiKey: string,
     username: string,
     money: number,
-    tradeHistory: [tradeHistory] | [],
-    currentStocks: [stock] | []
-
+    trades?: [tradeHistory] | [],
+    stocks?: [stock] | [],
+    createdAt?: Date
 }

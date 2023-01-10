@@ -25,6 +25,90 @@ __export(keystone_exports, {
 module.exports = __toCommonJS(keystone_exports);
 var import_core2 = require("@keystone-6/core");
 
+// schemaExtension.ts
+var import_schema = require("@graphql-tools/schema");
+
+// mutations/buyStock.ts
+var graphql = String.raw;
+async function buyStock(root, { stockPrice }, { stockSymbol }, { amount }, context) {
+  const sesh = context.session;
+  const userId = context.session.itemId;
+  if (!sesh.itemId) {
+    throw new Error("You must be logged in to do this!");
+  }
+  const user = await context.lists.User.findOne({
+    where: {
+      id: userId
+    },
+    resolveFields: graphql`
+            id
+            money
+        `
+  });
+  let totalPrice = stockPrice * amount;
+  if (totalPrice < 0) {
+    totalPrice = 0;
+  }
+  if (user.money < totalPrice) {
+    throw new Error("You don't have enough money for this trade");
+  }
+  let newMoney = +user.money - +totalPrice;
+  const newUser = await context.lists.User.updateOne({
+    id: userId,
+    data: {
+      money: newMoney
+    }
+  });
+  if (!newUser) {
+    throw new Error("Issue Updating User's Money");
+  }
+  const trade = await context.lists.Trade.createOne({
+    data: {
+      symbol: stockSymbol,
+      amount,
+      price: stockPrice,
+      buySell: true,
+      user: {
+        connect: {
+          iid: userId
+        }
+      }
+    }
+  });
+  if (!trade) {
+    throw new Error("Something happened here with creating a trade, let an admin know");
+  }
+  return await context.lists.Stock.createOne({
+    data: {
+      symbol: stockSymbol,
+      amount,
+      price: stockPrice,
+      user: {
+        connect: {
+          iid: userId
+        }
+      }
+    }
+  });
+}
+var buyStock_default = buyStock;
+
+// schemaExtension.ts
+var graphql2 = String.raw;
+var extendGraphqlSchema = (schema) => {
+  (0, import_schema.mergeSchemas)({
+    schemas: [schema],
+    typeDefs: `
+      type Mutation {
+        buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!): Stock
+      }
+      `,
+    resolvers: {
+      buyStock: buyStock_default
+    }
+  });
+};
+
 // schema.ts
 var import_core = require("@keystone-6/core");
 var import_access = require("@keystone-6/core/access");
@@ -137,7 +221,8 @@ var keystone_default = withAuth(
       url: "file:./keystone.db"
     },
     lists,
-    session
+    session,
+    extendGraphqlSchema
   })
 );
 // Annotate the CommonJS export names for ESM import in node:

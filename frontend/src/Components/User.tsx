@@ -49,9 +49,9 @@ export const CURRENT_USER_QUERY = gql`
 export function useUser() {
     let { data } = useQuery(CURRENT_USER_QUERY);
 
-    if (!data.authenticatedItem) {
+    if (!data || !data.authenticatedItem) {
         data = {...backend.data};
     }
 
-    return data;
+    return data.authenticatedItem;
 }

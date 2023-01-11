@@ -27,6 +27,9 @@ import { document } from '@keystone-6/fields-document';
 // when using Typescript, you can refine your types to a stricter subset by importing
 // the generated types from '.keystone/types'
 import type { Lists } from '.keystone/types';
+import { mergeSchemas } from '@graphql-tools/schema';
+import type { GraphQLSchema } from 'graphql';
+import buyStock from './mutations/buyStock';
 
 export const lists: Lists = {
   User: list({
@@ -160,3 +163,23 @@ export const lists: Lists = {
   }),
 
 };
+
+
+export const extendGraphqlSchema = (schema: GraphQLSchema) =>
+  mergeSchemas({
+    schemas: [schema],
+    typeDefs: `
+    type Mutation {
+      buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!): Stock
+    }
+    `,
+    resolvers: {
+      Mutation: {
+        buyStock: buyStock
+  
+      },
+      Query: {
+
+      },
+    },
+  });

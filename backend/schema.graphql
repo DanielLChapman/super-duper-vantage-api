@@ -329,6 +329,7 @@ type Mutation {
   endSession: Boolean!
   authenticateUserWithPassword(username: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
+  buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!): Stock
 }
 
 union UserAuthenticationWithPasswordResult = UserAuthenticationWithPasswordSuccess | UserAuthenticationWithPasswordFailure

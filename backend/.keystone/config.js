@@ -33,7 +33,7 @@ var import_schema = require("@graphql-tools/schema");
 
 // mutations/buyStock.ts
 var graphql = String.raw;
-async function buyStock(root, { stockPrice }, { stockSymbol }, { amount }, context) {
+async function buyStock(root, { stockPrice }, { stockSymbol }, { amount }, { dateOfTrade }, context) {
   const sesh = context.session;
   const userId = context.session.itemId;
   if (!sesh.itemId) {
@@ -55,6 +55,38 @@ async function buyStock(root, { stockPrice }, { stockSymbol }, { amount }, conte
     throw new Error("You don't have enough money for this trade");
   }
   let newMoney = +user.money - +totalPrice;
+  const newUser = await context.db.User.updateOne({
+    where: {
+      id: userId
+    },
+    data: {
+      money: newMoney
+    }
+  });
+  if (!newUser) {
+    throw new Error("Issue Updating User's Money");
+  }
+  let tempDate = new Date(Date.now());
+  if (dateOfTrade && dateOfTrade.length > 0) {
+    tempDate = new Date(dateOfTrade);
+  }
+  const trade = await context.db.Trade.createOne({
+    data: {
+      symbol: stockSymbol,
+      amount,
+      dateOfTrade: tempDate,
+      price: stockPrice,
+      buySell: true,
+      owner: {
+        connect: {
+          id: userId
+        }
+      }
+    }
+  });
+  if (!trade) {
+    throw new Error("Something happened here with creating a trade, let an admin know");
+  }
   return await context.db.Stock.createOne({
     data: {
       symbol: stockSymbol,
@@ -69,6 +101,203 @@ async function buyStock(root, { stockPrice }, { stockSymbol }, { amount }, conte
   });
 }
 var buyStock_default = buyStock;
+
+// mutations/sellStock.ts
+var graphql2 = String.raw;
+async function sellStock(root, { stockPrice }, { stockSymbol }, { amount }, { dateOfTrade }, context) {
+  const sesh = context.session;
+  const userId = context.session.itemId;
+  if (!sesh.itemId) {
+    throw new Error("You must be logged in to do this!");
+  }
+  const user = await context.db.User.findOne({
+    where: {
+      id: userId
+    }
+  });
+  if (!user) {
+    throw new Error("Please let an admin know, Error finding user on buyStock");
+  }
+  let totalPrice = stockPrice * amount;
+  if (totalPrice < 0) {
+    totalPrice = 0;
+  }
+  let newMoney = +user.money + +totalPrice;
+  const newUser = await context.db.User.updateOne({
+    where: {
+      id: userId
+    },
+    data: {
+      money: newMoney
+    }
+  });
+  if (!newUser) {
+    throw new Error("Issue Updating User's Money");
+  }
+  let tempDate = new Date(Date.now());
+  if (dateOfTrade && dateOfTrade.length > 0) {
+    tempDate = new Date(dateOfTrade);
+  }
+  return await context.db.Trade.createOne({
+    data: {
+      symbol: stockSymbol,
+      amount,
+      dateOfTrade: tempDate,
+      price: stockPrice,
+      buySell: false,
+      owner: {
+        connect: {
+          id: userId
+        }
+      }
+    }
+  });
+}
+var sellStock_default = sellStock;
+
+// mutations/sellFromStock.ts
+var graphql3 = String.raw;
+async function sellFromStock(root, { stockPrice }, { stockSymbol }, { amount }, { dateOfTrade }, { stockID }, context) {
+  const sesh = context.session;
+  const userId = context.session.itemId;
+  if (!sesh.itemId) {
+    throw new Error("You must be logged in to do this!");
+  }
+  const user = await context.db.User.findOne({
+    where: {
+      id: userId
+    }
+  });
+  if (!user) {
+    throw new Error("Please let an admin know, Error finding user on buyStock");
+  }
+  const stock = await context.db.Stock.findOne({
+    where: {
+      id: stockID
+    }
+  });
+  if (!stock) {
+    throw new Error("Invalid stock");
+  }
+  if (stock.ownerId !== userId) {
+    throw new Error("Invalid stock");
+  }
+  if (stock.amount < amount) {
+    throw new Error("Not enough to sell");
+  }
+  let totalPrice = stockPrice * amount;
+  if (totalPrice < 0) {
+    totalPrice = 0;
+  }
+  let newMoney = +user.money + +totalPrice;
+  const newUser = await context.db.User.updateOne({
+    where: {
+      id: userId
+    },
+    data: {
+      money: newMoney
+    }
+  });
+  if (!newUser) {
+    throw new Error("Issue Updating User's Money");
+  }
+  let tempDate = new Date(Date.now());
+  if (dateOfTrade && dateOfTrade.length > 0) {
+    tempDate = new Date(dateOfTrade);
+  }
+  const trade = await context.db.Trade.createOne({
+    data: {
+      symbol: stockSymbol,
+      amount,
+      dateOfTrade: tempDate,
+      price: stockPrice,
+      buySell: false,
+      owner: {
+        connect: {
+          id: userId
+        }
+      }
+    }
+  });
+  if (!trade || trade.errors) {
+    throw new Error("Something happened here with creating a trade, let an admin know");
+  }
+  return await context.db.Stock.updateOne({
+    where: {
+      id: stockID
+    },
+    data: {
+      amount: stock.amount - amount
+    }
+  });
+}
+var sellFromStock_default = sellFromStock;
+
+// mutations/sellAllStock.ts
+var graphql4 = String.raw;
+async function sellAllStock(root, { stockPrice }, { stockSymbol }, { dateOfTrade }, { stockID }, context) {
+  const sesh = context.session;
+  const userId = context.session.itemId;
+  if (!sesh.itemId) {
+    throw new Error("You must be logged in to do this!");
+  }
+  const user = await context.db.User.findOne({
+    where: {
+      id: userId
+    }
+  });
+  if (!user) {
+    throw new Error("Please let an admin know, Error finding user on buyStock");
+  }
+  const stock = await context.db.Stock.findOne({
+    where: {
+      id: stockID
+    }
+  });
+  if (!stock) {
+    throw new Error("Invalid stock");
+  }
+  if (stock.ownerId !== userId) {
+    throw new Error("Invalid stock");
+  }
+  let totalPrice = stockPrice * stock.amount;
+  let newMoney = +user.money + +totalPrice;
+  const newUser = await context.db.User.updateOne({
+    where: {
+      id: userId
+    },
+    data: {
+      money: newMoney
+    }
+  });
+  if (!newUser) {
+    throw new Error("Issue Updating User's Money");
+  }
+  await context.db.Stock.deleteOne({
+    where: {
+      id: stockID
+    }
+  });
+  let tempDate = new Date(Date.now());
+  if (dateOfTrade && dateOfTrade.length > 0) {
+    tempDate = new Date(dateOfTrade);
+  }
+  return await context.db.Trade.createOne({
+    data: {
+      symbol: stockSymbol,
+      amount: stock.amount,
+      dateOfTrade: tempDate,
+      price: stockPrice,
+      buySell: false,
+      owner: {
+        connect: {
+          id: userId
+        }
+      }
+    }
+  });
+}
+var sellAllStock_default = sellAllStock;
 
 // schema.ts
 var lists = {
@@ -97,7 +326,7 @@ var lists = {
       symbol: (0, import_fields.text)({ validation: { isRequired: true } }),
       amount: (0, import_fields.integer)({ validation: { isRequired: true } }),
       price: (0, import_fields.integer)({ validation: { isRequired: true } }),
-      createdAt: (0, import_fields.timestamp)({
+      dateOfTrade: (0, import_fields.timestamp)({
         defaultValue: { kind: "now" }
       }),
       buySell: (0, import_fields.checkbox)({
@@ -151,12 +380,19 @@ var extendGraphqlSchema = (schema) => (0, import_schema.mergeSchemas)({
   schemas: [schema],
   typeDefs: `
     type Mutation {
-      buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!): Stock
+      buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Stock
+      sellStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
+      sellFromStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String, stockID: ID!): Stock
+      sellAllStock(stockPrice: Float!, stockSymbol: String!, dateOfTrade: String, stockID: ID!): Trade
     }
+    
     `,
   resolvers: {
     Mutation: {
-      buyStock: buyStock_default
+      buyStock: buyStock_default,
+      sellStock: sellStock_default,
+      sellFromStock: sellFromStock_default,
+      sellAllStock: sellAllStock_default
     },
     Query: {}
   }

@@ -4,7 +4,7 @@ import { Session } from '../types';
 
 const graphql = String.raw;
 
-async function buyStock(
+async function sellStock(
     root: any,
     {stockPrice}: {stockPrice: number},
     {stockSymbol}: {stockSymbol: string},
@@ -36,11 +36,7 @@ async function buyStock(
     if (totalPrice < 0) 
     {totalPrice = 0;}
 
-    if (user.money < totalPrice) {
-        throw new Error("You don't have enough money for this trade");
-    }
-
-    let newMoney = +user.money - +totalPrice;
+    let newMoney = +user.money + +totalPrice;
 
     //UPDATE USERS MONEY
     const newUser = await context.db.User.updateOne({
@@ -64,14 +60,14 @@ async function buyStock(
         tempDate = new Date(dateOfTrade);
     } 
 
-    const trade = await context.db.Trade.createOne({
+    return await context.db.Trade.createOne({
         data: {
             symbol: stockSymbol,
             amount: amount,
             // @ts-ignore
             dateOfTrade: tempDate,
             price: stockPrice,
-            buySell: true,
+            buySell: false,
             owner: {
                 connect: {
                     id: userId,
@@ -80,28 +76,8 @@ async function buyStock(
         }
     });
 
-    if (!trade) {
-        throw new Error("Something happened here with creating a trade, let an admin know")
-    }
-
-    //CREATE THE STOCK*/
-    //NOT GOING TO CHECK IF USER HAS STOCK ALREADY,
-    //CAN IN THE FRONTEND DO A COST BASIS, BUT MAYBE SHOULD BE KEPT SEPARATE.
-    //CAN CHANGE IN THE FUTURE
-
-    return await context.db.Stock.createOne({
-        data: {
-            symbol: stockSymbol,
-            amount: amount,
-            price: stockPrice,
-            owner: {
-                connect: {
-                    id: userId,
-                }
-            }
-        }
-    });
+    //DONT NEED TO CREATE THE STOCK AS WE ARE SELLING OFF
 
 }
 
-export default buyStock;
+export default sellStock;

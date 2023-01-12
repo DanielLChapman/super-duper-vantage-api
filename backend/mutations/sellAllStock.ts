@@ -4,12 +4,14 @@ import { Session } from '../types';
 
 const graphql = String.raw;
 
-async function buyStock(
+type ID = string;
+
+async function sellAllStock(
     root: any,
     {stockPrice}: {stockPrice: number},
     {stockSymbol}: {stockSymbol: string},
-    {amount}: {amount: number},
     {dateOfTrade}: {dateOfTrade: string},
+    {stockID}: {stockID: ID},
     context: Context
 ) {
 
@@ -31,16 +33,24 @@ async function buyStock(
         throw new Error('Please let an admin know, Error finding user on buyStock')
     }
 
-    //MAKE SURE YOU HAVE MONEY FOR SALE
-    let totalPrice = (stockPrice * amount);
-    if (totalPrice < 0) 
-    {totalPrice = 0;}
+    const stock = await context.db.Stock.findOne({
+        where: {
+            id: stockID
+        }
+    });
 
-    if (user.money < totalPrice) {
-        throw new Error("You don't have enough money for this trade");
+    if (!stock) {
+        throw new Error('Invalid stock');
+    } 
+
+    if (stock.ownerId !== userId) {
+        throw new Error('Invalid stock');
     }
 
-    let newMoney = +user.money - +totalPrice;
+    //MAKE SURE YOU HAVE MONEY FOR SALE
+    let totalPrice = (stockPrice * stock.amount);
+
+    let newMoney = +user.money + +totalPrice;
 
     //UPDATE USERS MONEY
     const newUser = await context.db.User.updateOne({
@@ -56,6 +66,12 @@ async function buyStock(
         throw new Error("Issue Updating User's Money")
     }
 
+    //UPDATE STOCK
+    await context.db.Stock.deleteOne({
+        where: {
+            id: stockID
+        }
+    });
 
     //CREATE THE TRADE
     
@@ -64,36 +80,15 @@ async function buyStock(
         tempDate = new Date(dateOfTrade);
     } 
 
-    const trade = await context.db.Trade.createOne({
+
+    return await context.db.Trade.createOne({
         data: {
             symbol: stockSymbol,
-            amount: amount,
+            amount: stock.amount,
             // @ts-ignore
             dateOfTrade: tempDate,
             price: stockPrice,
-            buySell: true,
-            owner: {
-                connect: {
-                    id: userId,
-                }
-            }
-        }
-    });
-
-    if (!trade) {
-        throw new Error("Something happened here with creating a trade, let an admin know")
-    }
-
-    //CREATE THE STOCK*/
-    //NOT GOING TO CHECK IF USER HAS STOCK ALREADY,
-    //CAN IN THE FRONTEND DO A COST BASIS, BUT MAYBE SHOULD BE KEPT SEPARATE.
-    //CAN CHANGE IN THE FUTURE
-
-    return await context.db.Stock.createOne({
-        data: {
-            symbol: stockSymbol,
-            amount: amount,
-            price: stockPrice,
+            buySell: false,
             owner: {
                 connect: {
                     id: userId,
@@ -104,4 +99,4 @@ async function buyStock(
 
 }
 
-export default buyStock;
+export default sellAllStock;

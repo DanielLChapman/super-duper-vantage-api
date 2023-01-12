@@ -30,6 +30,9 @@ import type { Lists } from '.keystone/types';
 import { mergeSchemas } from '@graphql-tools/schema';
 import type { GraphQLSchema } from 'graphql';
 import buyStock from './mutations/buyStock';
+import sellStock from './mutations/sellStock';
+import sellFromStock from './mutations/sellFromStock';
+import sellAllStock from './mutations/sellAllStock';
 
 export const lists: Lists = {
   User: list({
@@ -79,8 +82,8 @@ export const lists: Lists = {
       //converting to pennies
       price: integer({ validation: { isRequired: true } }),
 
-      createdAt: timestamp({
-        // this sets the timestamp to Date.now() when the user is first created
+      dateOfTrade: timestamp({
+        // this sets the timestamp to Date.now() when the trade is first created
         defaultValue: { kind: 'now' },
       }),
 
@@ -170,13 +173,19 @@ export const extendGraphqlSchema = (schema: GraphQLSchema) =>
     schemas: [schema],
     typeDefs: `
     type Mutation {
-      buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!): Stock
+      buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Stock
+      sellStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
+      sellFromStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String, stockID: ID!): Stock
+      sellAllStock(stockPrice: Float!, stockSymbol: String!, dateOfTrade: String, stockID: ID!): Trade
     }
+    
     `,
     resolvers: {
       Mutation: {
-        buyStock: buyStock
-  
+        buyStock: buyStock,
+        sellStock: sellStock,
+        sellFromStock: sellFromStock,
+        sellAllStock: sellAllStock,
       },
       Query: {
 

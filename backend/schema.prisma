@@ -24,14 +24,14 @@ model User {
 }
 
 model Trade {
-  id        String    @id @default(cuid())
-  symbol    String    @default("")
-  amount    Int
-  price     Int
-  createdAt DateTime? @default(now())
-  buySell   Boolean   @default(true)
-  owner     User?     @relation("Trade_owner", fields: [ownerId], references: [id])
-  ownerId   String?   @map("owner")
+  id          String    @id @default(cuid())
+  symbol      String    @default("")
+  amount      Int
+  price       Int
+  dateOfTrade DateTime? @default(now())
+  buySell     Boolean   @default(true)
+  owner       User?     @relation("Trade_owner", fields: [ownerId], references: [id])
+  ownerId     String?   @map("owner")
 
   @@index([ownerId])
 }

@@ -1,7 +1,12 @@
 import { useEffect, useState} from 'react';
 
-export default function useForm(initial = {}) {
-    const [inputs, setInputs ] = useState(initial);
+interface signUp {
+    username: string,
+    password: string,
+}
+
+export default function useForm(initial: any = {}) {
+    const [inputs, setInputs ]  = useState(initial);
     const initialValues = Object.values(initial).join('');
 
     useEffect(() => {

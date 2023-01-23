@@ -169,7 +169,7 @@ const StockSearch: React.FC<StockSearchProps> = ({user}) => {
                 allowStockSymbol && <StockSymbolForm stockSymbol={stockData.symbol} amount={stockData.amount} handleStockChange={handleStockChange} verify={verify} />
             }
             {
-                buySellAppear && <BuySellHandler user={user} buySellHandler={buySellHandler} symbol={stockData.symbol} amount={stockData.amount} price={stockData.price} />
+                buySellAppear && <BuySellHandler date={`${dateToUse.month}-${dateToUse.day}-${dateToUse.year}`} user={user} buySellHandler={buySellHandler} symbol={stockData.symbol} amount={stockData.amount} price={stockData.price} />
             }
         </div>
     );

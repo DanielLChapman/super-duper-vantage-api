@@ -146,6 +146,12 @@ const DateController: React.FC<DateControllersProps> = ({
                 `Can't select a future date, we are adjusting this request to todays values`
             );
             tempDateOfWeek = dateObject2;
+            console.log(tempDateOfWeek);
+            day = tempDateOfWeek.getDate();
+            month = tempDateOfWeek.getMonth() + 1;
+            year = tempDateOfWeek.getFullYear();
+
+            updateDateByOffering(month, day, year);
 
             setURLSelector('Day');
             return;
@@ -220,8 +226,8 @@ const DateController: React.FC<DateControllersProps> = ({
             alert("Invalid month, please choose between 1 - 12");
             return;
         }
-        if (yearTemp < 2000 || yearTemp > 2022) {
-            alert("Invalid year, please choose between 2000 - 2022");
+        if (yearTemp < 2000 || yearTemp > 2023) {
+            alert("Invalid year, please choose between 2000 - 2023");
             return;
         }
         if (dayTemp < 1 || dayTemp > months[monthTemp - 1].numDays) {

@@ -173,7 +173,7 @@ export const extendGraphqlSchema = (schema: GraphQLSchema) =>
     schemas: [schema],
     typeDefs: `
     type Mutation {
-      buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Stock
+      buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
       sellStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
       sellFromStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String, stockID: ID!): Stock
       sellAllStock(stockPrice: Float!, stockSymbol: String!, dateOfTrade: String, stockID: ID!): Trade

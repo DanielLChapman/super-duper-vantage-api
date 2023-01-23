@@ -90,7 +90,7 @@ const StockSearch: React.FC<StockSearchProps> = ({user}) => {
     const verify = async () => {
         let url: string;
         let jsonKey: string; 
-        let key = 'demo';
+        let key = user?.apiKey || 'demo';
         switch(selector) {
             //maybe toggle for adjusted
             case 'Intraday':
@@ -169,7 +169,7 @@ const StockSearch: React.FC<StockSearchProps> = ({user}) => {
                 allowStockSymbol && <StockSymbolForm stockSymbol={stockData.symbol} amount={stockData.amount} handleStockChange={handleStockChange} verify={verify} />
             }
             {
-                buySellAppear && <BuySellHandler buySellHandler={buySellHandler} symbol={stockData.symbol} amount={stockData.amount} price={stockData.price} />
+                buySellAppear && <BuySellHandler user={user} buySellHandler={buySellHandler} symbol={stockData.symbol} amount={stockData.amount} price={stockData.price} />
             }
         </div>
     );

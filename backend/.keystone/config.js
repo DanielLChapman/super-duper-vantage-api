@@ -70,13 +70,11 @@ async function buyStock(root, { stockPrice }, { stockSymbol }, { amount }, { dat
   if (dateOfTrade && dateOfTrade.length > 0) {
     tempDate = new Date(dateOfTrade);
   }
-  const trade = await context.db.Trade.createOne({
+  let stock = await context.db.Stock.createOne({
     data: {
       symbol: stockSymbol,
       amount,
-      dateOfTrade: tempDate,
       price: stockPrice,
-      buySell: true,
       owner: {
         connect: {
           id: userId
@@ -84,14 +82,16 @@ async function buyStock(root, { stockPrice }, { stockSymbol }, { amount }, { dat
       }
     }
   });
-  if (!trade) {
-    throw new Error("Something happened here with creating a trade, let an admin know");
+  if (!stock || stock.errors) {
+    throw new Error("Something happened here with creating a stock, let an admin know");
   }
-  return await context.db.Stock.createOne({
+  return await context.db.Trade.createOne({
     data: {
       symbol: stockSymbol,
       amount,
+      dateOfTrade: tempDate,
       price: stockPrice,
+      buySell: true,
       owner: {
         connect: {
           id: userId
@@ -380,7 +380,7 @@ var extendGraphqlSchema = (schema) => (0, import_schema.mergeSchemas)({
   schemas: [schema],
   typeDefs: `
     type Mutation {
-      buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Stock
+      buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
       sellStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
       sellFromStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String, stockID: ID!): Stock
       sellAllStock(stockPrice: Float!, stockSymbol: String!, dateOfTrade: String, stockID: ID!): Trade
@@ -422,11 +422,18 @@ var session = (0, import_session.statelessSessions)({
 });
 
 // keystone.ts
+var import_config = require("dotenv/config");
 var keystone_default = withAuth(
   (0, import_core2.config)({
     db: {
       provider: "sqlite",
       url: "file:./keystone.db"
+    },
+    server: {
+      cors: {
+        origin: ["http://localhost:7777"],
+        credentials: true
+      }
     },
     lists,
     session,

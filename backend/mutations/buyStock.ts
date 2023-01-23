@@ -64,14 +64,16 @@ async function buyStock(
         tempDate = new Date(dateOfTrade);
     } 
 
-    const trade = await context.db.Trade.createOne({
+    //CREATE THE STOCK*/
+    //NOT GOING TO CHECK IF USER HAS STOCK ALREADY,
+    //CAN IN THE FRONTEND DO A COST BASIS, BUT MAYBE SHOULD BE KEPT SEPARATE.
+    //CAN CHANGE IN THE FUTURE
+
+    let stock = await context.db.Stock.createOne({
         data: {
             symbol: stockSymbol,
             amount: amount,
-            // @ts-ignore
-            dateOfTrade: tempDate,
             price: stockPrice,
-            buySell: true,
             owner: {
                 connect: {
                     id: userId,
@@ -80,20 +82,19 @@ async function buyStock(
         }
     });
 
-    if (!trade) {
-        throw new Error("Something happened here with creating a trade, let an admin know")
+    // @ts-ignore
+    if (!stock || stock.errors) {
+        throw new Error("Something happened here with creating a stock, let an admin know")
     }
 
-    //CREATE THE STOCK*/
-    //NOT GOING TO CHECK IF USER HAS STOCK ALREADY,
-    //CAN IN THE FRONTEND DO A COST BASIS, BUT MAYBE SHOULD BE KEPT SEPARATE.
-    //CAN CHANGE IN THE FUTURE
-
-    return await context.db.Stock.createOne({
+    return await context.db.Trade.createOne({
         data: {
             symbol: stockSymbol,
             amount: amount,
+            // @ts-ignore
+            dateOfTrade: tempDate,
             price: stockPrice,
+            buySell: true,
             owner: {
                 connect: {
                     id: userId,

@@ -31,7 +31,7 @@ async function sellStock(
         throw new Error('Please let an admin know, Error finding user on buyStock')
     }
 
-    //MAKE SURE YOU HAVE MONEY FOR SALE
+    //CALCULATINIG MONEY
     let totalPrice = (stockPrice * amount);
     if (totalPrice < 0) 
     {totalPrice = 0;}

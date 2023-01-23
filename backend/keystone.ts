@@ -14,6 +14,8 @@ import { extendGraphqlSchema, lists } from './schema';
 // when you write your list-level access control functions, as they typically rely on session data
 import { withAuth, session } from './auth';
 import buyStock from './mutations/buyStock';
+import 'dotenv/config';
+
 
 export default withAuth(
   config({
@@ -23,6 +25,12 @@ export default withAuth(
       //   see https://keystonejs.com/docs/guides/choosing-a-database#title
       provider: 'sqlite',
       url: 'file:./keystone.db',
+    },
+    server: {
+        cors: {
+            origin: ["http://localhost:7777"],
+            credentials: true,
+        },
     },
     lists,
     session,

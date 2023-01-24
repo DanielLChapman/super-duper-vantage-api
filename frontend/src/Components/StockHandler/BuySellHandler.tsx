@@ -21,12 +21,13 @@ export const BUY_STOCK_HANDLER = gql`
         $dateOfTrade: String
     ) {
         buyStock(
-            data: {
                 stockPrice: $stockPrice
                 stockSymbol: $stockSymbol
                 amount: $amount
                 dateOfTrade: $dateOfTrade
-            }
+            
+
+            
         ) {
             id
             symbol
@@ -67,27 +68,36 @@ const BuySellHandler: React.FC<BuySellProps>  = ({user, amount, symbol, price, d
         return <span>Please log in</span>
     }
 
+    let dateCheck = Date.now() + "";
+    console.log(date); 
+    if (date) {
+        dateCheck = date;
+    }
+
     const [buyStock, {data: buyData, error: buyError, loading: buyLoading}] = useMutation(
         BUY_STOCK_HANDLER,
         {
             variables: {
-                stockPrice: price,
+                stockPrice: +price,
                 stockSymbol: symbol,
-                amount: amount,
-                dateOfTrade: date,
+                amount: +amount,
+                dateOfTrade: dateCheck,
             },
             refetchQueries: [{query: CURRENT_USER_QUERY}]
         }
     );
 
+    if (buyError) {
+        console.log(buyError);
+    }
     const [sellStock, {data: sellData, error: sellError, loading: sellLoading}] = useMutation(
         SELL_STOCK_HANDLER,
         {
             variables: {
-                stockPrice: price,
+                stockPrice: +price,
                 stockSymbol: symbol,
-                amount: amount,
-                dateOfTrade: date,
+                amount: +amount,
+                dateOfTrade: dateCheck,
             },
             refetchQueries: [{query: CURRENT_USER_QUERY}]
         }
@@ -103,7 +113,7 @@ const BuySellHandler: React.FC<BuySellProps>  = ({user, amount, symbol, price, d
     }
     return (
         <div>
-            <button className="buy-button" onClick={() => {console.log('buy')}}>Buy {amount}</button>
+            <button className="buy-button" onClick={() => {buyHandler('buy')}}>Buy {amount}</button>
             <button className="sell-button" onClick={() => {console.log('sell')}}>Sell {amount}</button>
             <h5 className='buy-sell-text'>of {symbol} for {price * amount}</h5>
         </div>

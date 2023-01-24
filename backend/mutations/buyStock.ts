@@ -6,13 +6,13 @@ const graphql = String.raw;
 
 async function buyStock(
     root: any,
-    {stockPrice}: {stockPrice: number},
-    {stockSymbol}: {stockSymbol: string},
-    {amount}: {amount: number},
-    {dateOfTrade}: {dateOfTrade: string},
+    {
+    stockPrice,
+    stockSymbol,
+    amount,
+    dateOfTrade}: {stockPrice: number, stockSymbol: string, amount: number, dateOfTrade: string},
     context: Context
 ) {
-
     const sesh = context.session as Session;
     const userId = context.session.itemId;
     if (!sesh.itemId) {
@@ -32,7 +32,7 @@ async function buyStock(
     }
 
     //MAKE SURE YOU HAVE MONEY FOR SALE
-    let totalPrice = (stockPrice * amount);
+    let totalPrice = (stockPrice * amount)*100;
     if (totalPrice < 0) 
     {totalPrice = 0;}
 
@@ -58,11 +58,13 @@ async function buyStock(
 
 
     //CREATE THE TRADE
+
     
     let tempDate = new Date(Date.now());
     if (dateOfTrade && dateOfTrade.length > 0) {
         tempDate = new Date(dateOfTrade);
     } 
+
 
     //CREATE THE STOCK*/
     //NOT GOING TO CHECK IF USER HAS STOCK ALREADY,
@@ -84,9 +86,12 @@ async function buyStock(
 
     // @ts-ignore
     if (!stock || stock.errors) {
+        //should reverse user update
         throw new Error("Something happened here with creating a stock, let an admin know")
     }
 
+
+    //should delete stock and reverse user update if error here
     return await context.db.Trade.createOne({
         data: {
             symbol: stockSymbol,

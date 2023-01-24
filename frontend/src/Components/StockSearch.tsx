@@ -117,6 +117,8 @@ const StockSearch: React.FC<StockSearchProps> = ({user}) => {
         let dateToUseForSearch = `${dateToUse.year}-${dateToUse.month}-${dateToUse.day}`;
         let dataFromApi = await verifyAPIHandler(url);
 
+        console.log(dataFromApi);
+
         if (dataFromApi['Note']) {
             return {
                 error: 'Please wait, maximum of 5 api calls for free API key'

@@ -33,7 +33,12 @@ var import_schema = require("@graphql-tools/schema");
 
 // mutations/buyStock.ts
 var graphql = String.raw;
-async function buyStock(root, { stockPrice }, { stockSymbol }, { amount }, { dateOfTrade }, context) {
+async function buyStock(root, {
+  stockPrice,
+  stockSymbol,
+  amount,
+  dateOfTrade
+}, context) {
   const sesh = context.session;
   const userId = context.session.itemId;
   if (!sesh.itemId) {
@@ -47,7 +52,7 @@ async function buyStock(root, { stockPrice }, { stockSymbol }, { amount }, { dat
   if (!user) {
     throw new Error("Please let an admin know, Error finding user on buyStock");
   }
-  let totalPrice = stockPrice * amount;
+  let totalPrice = stockPrice * amount * 100;
   if (totalPrice < 0) {
     totalPrice = 0;
   }

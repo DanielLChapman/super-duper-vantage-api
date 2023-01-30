@@ -53,7 +53,7 @@ async function sellFromStock(
     }
 
     //MAKE SURE YOU HAVE MONEY FOR SALE
-    let totalPrice = (stockPrice * amount);
+    let totalPrice = (stockPrice*100 * amount);
     if (totalPrice < 0) 
     {totalPrice = 0;}
 

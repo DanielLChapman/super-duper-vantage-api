@@ -32,6 +32,7 @@ async function buyStock(
     }
 
     //MAKE SURE YOU HAVE MONEY FOR SALE
+    //CONVERT TO PENNIES SO * 100
     let totalPrice = (stockPrice * amount)*100;
     if (totalPrice < 0) 
     {totalPrice = 0;}
@@ -75,7 +76,7 @@ async function buyStock(
         data: {
             symbol: stockSymbol,
             amount: amount,
-            price: stockPrice,
+            price: stockPrice * 100,
             owner: {
                 connect: {
                     id: userId,
@@ -98,7 +99,7 @@ async function buyStock(
             amount: amount,
             // @ts-ignore
             dateOfTrade: tempDate,
-            price: stockPrice,
+            price: stockPrice * 100,
             buySell: true,
             owner: {
                 connect: {

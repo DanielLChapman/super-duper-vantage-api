@@ -79,7 +79,7 @@ async function buyStock(root, {
     data: {
       symbol: stockSymbol,
       amount,
-      price: stockPrice,
+      price: stockPrice * 100,
       owner: {
         connect: {
           id: userId
@@ -95,7 +95,7 @@ async function buyStock(root, {
       symbol: stockSymbol,
       amount,
       dateOfTrade: tempDate,
-      price: stockPrice,
+      price: stockPrice * 100,
       buySell: true,
       owner: {
         connect: {
@@ -123,7 +123,7 @@ async function sellStock(root, { stockPrice }, { stockSymbol }, { amount }, { da
   if (!user) {
     throw new Error("Please let an admin know, Error finding user on buyStock");
   }
-  let totalPrice = stockPrice * amount;
+  let totalPrice = stockPrice * 100 * amount;
   if (totalPrice < 0) {
     totalPrice = 0;
   }
@@ -148,7 +148,7 @@ async function sellStock(root, { stockPrice }, { stockSymbol }, { amount }, { da
       symbol: stockSymbol,
       amount,
       dateOfTrade: tempDate,
-      price: stockPrice,
+      price: stockPrice * 100,
       buySell: false,
       owner: {
         connect: {
@@ -190,7 +190,7 @@ async function sellFromStock(root, { stockPrice }, { stockSymbol }, { amount }, 
   if (stock.amount < amount) {
     throw new Error("Not enough to sell");
   }
-  let totalPrice = stockPrice * amount;
+  let totalPrice = stockPrice * 100 * amount;
   if (totalPrice < 0) {
     totalPrice = 0;
   }
@@ -265,7 +265,7 @@ async function sellAllStock(root, { stockPrice }, { stockSymbol }, { dateOfTrade
   if (stock.ownerId !== userId) {
     throw new Error("Invalid stock");
   }
-  let totalPrice = stockPrice * stock.amount;
+  let totalPrice = stockPrice * 100 * stock.amount;
   let newMoney = +user.money + +totalPrice;
   const newUser = await context.db.User.updateOne({
     where: {
@@ -292,7 +292,7 @@ async function sellAllStock(root, { stockPrice }, { stockSymbol }, { dateOfTrade
       symbol: stockSymbol,
       amount: stock.amount,
       dateOfTrade: tempDate,
-      price: stockPrice,
+      price: stockPrice * 100,
       buySell: false,
       owner: {
         connect: {

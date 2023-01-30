@@ -32,7 +32,7 @@ async function sellStock(
     }
 
     //CALCULATINIG MONEY
-    let totalPrice = (stockPrice * amount);
+    let totalPrice = (stockPrice*100 * amount);
     if (totalPrice < 0) 
     {totalPrice = 0;}
 
@@ -66,7 +66,7 @@ async function sellStock(
             amount: amount,
             // @ts-ignore
             dateOfTrade: tempDate,
-            price: stockPrice,
+            price: stockPrice * 100,
             buySell: false,
             owner: {
                 connect: {

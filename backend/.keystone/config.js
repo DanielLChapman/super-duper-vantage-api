@@ -109,7 +109,12 @@ var buyStock_default = buyStock;
 
 // mutations/sellStock.ts
 var graphql2 = String.raw;
-async function sellStock(root, { stockPrice }, { stockSymbol }, { amount }, { dateOfTrade }, context) {
+async function sellStock(root, {
+  stockPrice,
+  stockSymbol,
+  amount,
+  dateOfTrade
+}, context) {
   const sesh = context.session;
   const userId = context.session.itemId;
   if (!sesh.itemId) {

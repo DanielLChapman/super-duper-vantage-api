@@ -49,11 +49,9 @@ export const CURRENT_USER_QUERY = gql`
 export function useUser() {
     let { data } = useQuery(CURRENT_USER_QUERY);
 
-    console.log(data);
     if (!data || !data.authenticatedItem) {
         data = {...backend.data};
     }
-    console.log(data);
 
     return data.authenticatedItem || data;
 }

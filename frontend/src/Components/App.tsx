@@ -16,7 +16,7 @@ const App: React.FC<AppInitialProps> = () => {
         user = useUser();
     }
 
-    console.log(user);
+    console.log(user.money/100);
 
     return (
         <div className="App">

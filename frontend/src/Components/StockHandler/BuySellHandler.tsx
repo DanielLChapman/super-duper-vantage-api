@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 import React from 'react';
 import { CURRENT_USER_QUERY } from '../User';
 import { user as userType} from "../../../tools/lib";
+import roundToTwo from '../../../tools/roundToTwo';
 
 type BuySellProps = {
     amount: number,
@@ -46,12 +47,11 @@ export const SELL_STOCK_HANDLER = gql`
         $dateOfTrade: String
     ) {
         sellStock(
-            data: {
                 stockPrice: $stockPrice
                 stockSymbol: $stockSymbol
                 amount: $amount
                 dateOfTrade: $dateOfTrade
-            }
+            
         ) {
             id
             symbol
@@ -69,7 +69,6 @@ const BuySellHandler: React.FC<BuySellProps>  = ({user, amount, symbol, price, d
     }
 
     let dateCheck = Date.now() + "";
-    console.log(date); 
     if (date) {
         dateCheck = date;
     }
@@ -78,7 +77,7 @@ const BuySellHandler: React.FC<BuySellProps>  = ({user, amount, symbol, price, d
         BUY_STOCK_HANDLER,
         {
             variables: {
-                stockPrice: +price,
+                stockPrice: roundToTwo(+price),
                 stockSymbol: symbol,
                 amount: +amount,
                 dateOfTrade: dateCheck,
@@ -94,7 +93,7 @@ const BuySellHandler: React.FC<BuySellProps>  = ({user, amount, symbol, price, d
         SELL_STOCK_HANDLER,
         {
             variables: {
-                stockPrice: +price,
+                stockPrice: roundToTwo(+price),
                 stockSymbol: symbol,
                 amount: +amount,
                 dateOfTrade: dateCheck,
@@ -105,16 +104,25 @@ const BuySellHandler: React.FC<BuySellProps>  = ({user, amount, symbol, price, d
 
     //graphql call to update user
     const buyHandler = async (swapOption) => {  
-        if (swapOption === 'buy') {
-            let res = await buyStock()
-            console.log(res);
-            console.log(user);
+        let res;
+        switch (swapOption ) {
+            case 'buy' :
+                res = await buyStock()
+                break;
+            case 'sell' :
+                res = await sellStock();
+                break;
+            default:
+                console.log('error', swapOption);
         }
+
+        console.log(res);
+        console.log(res.user);
     }
     return (
         <div>
             <button className="buy-button" onClick={() => {buyHandler('buy')}}>Buy {amount}</button>
-            <button className="sell-button" onClick={() => {console.log('sell')}}>Sell {amount}</button>
+            <button className="sell-button" onClick={() => {buyHandler('sell')}}>Sell {amount}</button>
             <h5 className='buy-sell-text'>of {symbol} for {price * amount}</h5>
         </div>
     );

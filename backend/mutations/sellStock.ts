@@ -6,10 +6,11 @@ const graphql = String.raw;
 
 async function sellStock(
     root: any,
-    {stockPrice}: {stockPrice: number},
-    {stockSymbol}: {stockSymbol: string},
-    {amount}: {amount: number},
-    {dateOfTrade}: {dateOfTrade: string},
+    {
+        stockPrice,
+        stockSymbol,
+        amount,
+        dateOfTrade}: {stockPrice: number, stockSymbol: string, amount: number, dateOfTrade: string},
     context: Context
 ) {
 

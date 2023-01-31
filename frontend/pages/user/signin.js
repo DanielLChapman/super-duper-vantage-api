@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 
 import { useRouter } from 'next/router';
 
-import { useUser } from '../src/Components/User';
+import { useUser } from '../../src/Components/User';
 import dynamic from 'next/dynamic'
-const SignUp = dynamic(() => import('../src/Components/UserHandling/SignUp'), {
+import SignIn from '../../src/Components/UserHandling/SignIn';
+const SignUp = dynamic(() => import('../../src/Components/UserHandling/SignUp'), {
     ssr: false,
   })
 
@@ -25,7 +26,7 @@ function signin(props) {
         <section className="SignInContainer">
             {
                 !needToRegister ? (
-                    <span>Hi</span>
+                    <SignIn />
                 ) : 
                 (
                     <SignUp />

@@ -167,7 +167,7 @@ var sellStock_default = sellStock;
 
 // mutations/sellFromStock.ts
 var graphql3 = String.raw;
-async function sellFromStock(root, { stockPrice }, { stockSymbol }, { amount }, { dateOfTrade }, { stockID }, context) {
+async function sellFromStock(root, { stockPrice, stockSymbol, dateOfTrade, stockID, amount }, context) {
   const sesh = context.session;
   const userId = context.session.itemId;
   if (!sesh.itemId) {
@@ -245,7 +245,7 @@ var sellFromStock_default = sellFromStock;
 
 // mutations/sellAllStock.ts
 var graphql4 = String.raw;
-async function sellAllStock(root, { stockPrice }, { stockSymbol }, { dateOfTrade }, { stockID }, context) {
+async function sellAllStock(root, { stockPrice, stockSymbol, dateOfTrade, stockID }, context) {
   const sesh = context.session;
   const userId = context.session.itemId;
   if (!sesh.itemId) {

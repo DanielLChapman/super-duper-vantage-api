@@ -6,16 +6,18 @@ import { ChangeEvent, FormEvent, FormEventHandler, useState } from "react";
 import { stringifyForDisplay } from "@apollo/client/utilities";
 import PasswordChecklist from "react-password-checklist";
 import { capitalize } from "../../../tools/capitalize";
+import Link from "next/link";
 
 interface signUp {
     username: string;
     password: string;
+    apiKey: string;
 }
 
 
 export const SIGNUP_MUTATION = gql`
-    mutation SIGNUP_MUTATION($username: String!, $password: String!) {
-        createUser(data: { username: $name, password: $password }) {
+    mutation SIGNUP_MUTATION($username: String!, $apiKey: String!, $password: String!) {
+        createUser(data: { username: $username, password: $password, apiKey: $apiKey }) {
             id
             username
         }
@@ -37,6 +39,7 @@ export default function SignUp(props) {
     } = useForm({
         username: "",
         password: "",
+        apiKey: "",
     });
 
     const [signup, { data, error, loading }] = useMutation(SIGNUP_MUTATION);
@@ -47,10 +50,16 @@ export default function SignUp(props) {
         let vars = {
             username: inputs.username,
             password: inputs.password,
+            apiKey: inputs.apiKey
         };
 
         if (inputs.password.length < 8) {
             setError("Password required to be a minimum of 8 characters");
+            return;
+        }
+
+        if (inputs.apiKey.length === 0) {
+            setError('Need an API key');
             return;
         }
 
@@ -101,9 +110,9 @@ export default function SignUp(props) {
                 <div className="input">
                     <input
                         type="name"
-                        name="name"
-                        placeholder="Name"
-                        autoComplete="name"
+                        name="username"
+                        placeholder="username"
+                        autoComplete="username"
                         value={inputs.username}
                         onChange={handleChange}
                         className="input_field"
@@ -111,6 +120,22 @@ export default function SignUp(props) {
                     />
                     <label className="input_label" htmlFor="name">
                         Username
+                    </label>
+                </div>
+
+                <div className="input">
+                    <input
+                        type="text"
+                        name="apiKey"
+                        placeholder="apiKey"
+                        autoComplete="apiKey"
+                        value={inputs.apiKey}
+                        onChange={handleChange}
+                        className="input_field"
+                        required
+                    />
+                    <label className="input_label" htmlFor="apiKey">
+                        API Key from <a target="_blank" href='https://www.alphavantage.co/'>Alpha Vantage (free)</a> 
                     </label>
                 </div>
 

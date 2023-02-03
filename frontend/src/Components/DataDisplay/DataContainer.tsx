@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { user } from "../../../tools/lib";
+import StockCard from "./DataStockDisplay";
+import TradeCard from "./DataTradeDisplay";
 
 const DataContainer: React.FC<{ user: user }> = ({ user }) => {
     if (!user) {
@@ -20,7 +22,7 @@ const DataContainer: React.FC<{ user: user }> = ({ user }) => {
                                 {user.stocks.length > 0 ? (
                                     <ul>
                                         {user.stocks.map((stock, index) => (
-                                            <li key={index}>{stock.symbol}</li>
+                                            <li key={index}><StockCard stock={stock} /></li>
                                         ))}
                                     </ul>
                                 ) : (
@@ -36,7 +38,7 @@ const DataContainer: React.FC<{ user: user }> = ({ user }) => {
                                 {user.trades.length > 0 ? (
                                     <ul>
                                         {user.trades.map((trade, index) => (
-                                            <li key={index}>{trade.symbol}</li>
+                                            <li key={index}><TradeCard trade={trade} /></li>
                                         ))}
                                     </ul>
                                 ) : (

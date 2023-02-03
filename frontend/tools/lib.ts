@@ -120,7 +120,7 @@ export type tradeHistory = {
     amount: number,
     //sell price or buy price
     price: number,
-    createdAt?: Date,
+    dateOfTrade?: Date,
     buySell: boolean
 }
 

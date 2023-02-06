@@ -11,7 +11,10 @@ async function sellFromStock(
     {stockPrice, stockSymbol, dateOfTrade, stockID, amount}: { amount: number, stockPrice: number, stockSymbol: string, dateOfTrade: string, stockID: ID},
     context: Context
 ) {
-
+    if (amount <= 0 || amount % 1 !== 0) {
+        throw new Error('Error in amount, must be greater than 0 and not a decimal');
+    }
+    
     const sesh = context.session as Session;
     const userId = context.session.itemId;
     if (!sesh.itemId) {

@@ -44,6 +44,10 @@ async function sellAllStock(
         throw new Error('Invalid stock');
     }
 
+    if (stock.amount <= 0 || stock.amount % 1 !== 0) {
+        throw new Error('Error in amount, must be greater than 0 and not a decimal');
+    }
+
     //MAKE SURE YOU HAVE MONEY FOR SALE
     let totalPrice = (stockPrice*100 * stock.amount);
 

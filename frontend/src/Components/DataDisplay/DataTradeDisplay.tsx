@@ -1,6 +1,6 @@
+import gql from 'graphql-tag';
 import React from 'react';
 import { tradeHistory } from '../../../tools/lib';
-
 
 interface Props {
   trade: tradeHistory;

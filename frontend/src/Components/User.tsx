@@ -39,6 +39,7 @@ export const CURRENT_USER_QUERY = gql`
                     symbol
                     amount
                     price
+                    dateOfTrade
                     createdAt
                 }
             }

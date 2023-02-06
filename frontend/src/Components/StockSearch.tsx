@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useContext} from "react";
 import { user as userType} from "../../tools/lib";
 import DateController from "./DateHandler/DateController";
 import BuySellHandler from "./StockHandler/BuySellHandler";
@@ -6,9 +6,16 @@ import StockSymbolForm from "./StockHandler/StockSymbolForm";
 
 type StockSearchProps = {
     user: userType | null,
+    dateToUse: {
+        month: number,
+        day: number,
+        year: number
+    },
+    setDateToUse: React.Dispatch<React.SetStateAction<object>>
 }
 
-const StockSearch: React.FC<StockSearchProps> = ({user}) => {
+
+const StockSearch: React.FC<StockSearchProps> = ({user, dateToUse, setDateToUse}) => {
     const dateObject = new Date(Date.now());
     const [allowStockSymbol, setAllowStockSymbol] = useState(true); //default if using today, it should be allowed
     const [stockData, setStockData] = useState({
@@ -20,11 +27,7 @@ const StockSearch: React.FC<StockSearchProps> = ({user}) => {
     const [buySellAppear, setBuySellAppear] = useState(false);
 
     //DATES:
-    const [dateToUse, setDateToUse] = useState({
-        month: dateObject.getMonth() + 1,
-        day: dateObject.getDate(),
-        year: dateObject.getFullYear(),
-    });
+    
    
     const handleDateChange = (val: number, selector: string) => {
         setDateToUse({

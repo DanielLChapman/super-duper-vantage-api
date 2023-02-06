@@ -26,7 +26,16 @@ const StockSymbolForm: React.FC<DateControllersProps> = ({
     return (
         <form
             onSubmit={async (e: React.SyntheticEvent) => {
+
                 e.preventDefault();
+                if (amount <= 0) {
+                    alert('Amount must be 1 or greater');
+                    return;
+                }
+                if (amount % 1 !== 0) {
+                    alert('Amount must not be a decimal');
+                    return;
+                }
                 //let val = +e.currentTarget.value;
                 //handleSymbolChange(stockData.symbol, stockData.amount);
                 setEnabled(false);

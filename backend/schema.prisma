@@ -37,13 +37,14 @@ model Trade {
 }
 
 model Stock {
-  id        String    @id @default(cuid())
-  symbol    String    @default("")
-  amount    Int
-  price     Int
-  createdAt DateTime? @default(now())
-  owner     User?     @relation("Stock_owner", fields: [ownerId], references: [id])
-  ownerId   String?   @map("owner")
+  id          String    @id @default(cuid())
+  symbol      String    @default("")
+  amount      Int
+  price       Int
+  createdAt   DateTime? @default(now())
+  dateOfTrade DateTime? @default(now())
+  owner       User?     @relation("Stock_owner", fields: [ownerId], references: [id])
+  ownerId     String?   @map("owner")
 
   @@index([ownerId])
 }

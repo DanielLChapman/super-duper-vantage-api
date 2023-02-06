@@ -254,6 +254,7 @@ type Stock {
   amount: Int
   price: Int
   createdAt: DateTime
+  dateOfTrade: DateTime
   owner: User
 }
 
@@ -270,6 +271,7 @@ input StockWhereInput {
   amount: IntFilter
   price: IntFilter
   createdAt: DateTimeNullableFilter
+  dateOfTrade: DateTimeNullableFilter
   owner: UserWhereInput
 }
 
@@ -279,6 +281,7 @@ input StockOrderByInput {
   amount: OrderDirection
   price: OrderDirection
   createdAt: OrderDirection
+  dateOfTrade: OrderDirection
 }
 
 input StockUpdateInput {
@@ -286,6 +289,7 @@ input StockUpdateInput {
   amount: Int
   price: Int
   createdAt: DateTime
+  dateOfTrade: DateTime
   owner: UserRelateToOneForUpdateInput
 }
 
@@ -299,6 +303,7 @@ input StockCreateInput {
   amount: Int
   price: Int
   createdAt: DateTime
+  dateOfTrade: DateTime
   owner: UserRelateToOneForCreateInput
 }
 

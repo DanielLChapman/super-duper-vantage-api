@@ -142,6 +142,11 @@ export const lists: Lists = {
         defaultValue: { kind: 'now' },
       }),
 
+      dateOfTrade: timestamp({
+        // this sets the timestamp to Date.now() when the trade is first created
+        defaultValue: { kind: 'now' },
+      }),
+
 
       // with this field, you can set a User as the author for a Post
       owner: relationship({

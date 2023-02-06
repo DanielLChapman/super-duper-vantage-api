@@ -115,9 +115,6 @@ const BuySellHandler: React.FC<BuySellProps>  = ({user, amount, symbol, price, d
             default:
                 console.log('error', swapOption);
         }
-
-        console.log(res);
-        console.log(res.user);
     }
     return (
         <div>

@@ -80,6 +80,7 @@ async function buyStock(root, {
       symbol: stockSymbol,
       amount,
       price: stockPrice * 100,
+      dateOfTrade: tempDate,
       owner: {
         connect: {
           id: userId
@@ -370,6 +371,9 @@ var lists = {
       amount: (0, import_fields.integer)({ validation: { isRequired: true } }),
       price: (0, import_fields.integer)({ validation: { isRequired: true } }),
       createdAt: (0, import_fields.timestamp)({
+        defaultValue: { kind: "now" }
+      }),
+      dateOfTrade: (0, import_fields.timestamp)({
         defaultValue: { kind: "now" }
       }),
       owner: (0, import_fields.relationship)({

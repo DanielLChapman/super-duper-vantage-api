@@ -77,6 +77,7 @@ async function buyStock(
             symbol: stockSymbol,
             amount: amount,
             price: stockPrice * 100,
+            dateOfTrade: tempDate,
             owner: {
                 connect: {
                     id: userId,

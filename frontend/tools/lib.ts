@@ -130,6 +130,7 @@ export type stock = {
     amount: number,
     price: number,
     createdAt?: Date,
+    dateOfTrade?: Date,
 }
 
 export type user = {

@@ -3,7 +3,7 @@ import { user } from "../../../tools/lib";
 import StockCard from "./DataStockDisplay";
 import TradeCard from "./DataTradeDisplay";
 
-const DataContainer: React.FC<{ user: user }> = ({ user }) => {
+const DataContainer: React.FC<{ user: user, dateToUse: {month: number, day: number, year: number} }> = ({ user, dateToUse }) => {
     if (!user) {
         return <span>Loading....</span>;
     }

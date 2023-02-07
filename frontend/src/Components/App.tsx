@@ -30,7 +30,7 @@ const App: React.FC<AppInitialProps> = () => {
             <Header user={user} />
             <main className="main-content">
                 <StockSearch setDateToUse={setDateToUse} dateToUse={dateToUse} user={user} />
-                <DataContainer user={user} />
+                <DataContainer user={user} dateToUse={dateToUse} />
             </main>
             <footer className="footer-content">footer</footer>
         </div>

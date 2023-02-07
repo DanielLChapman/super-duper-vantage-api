@@ -39,6 +39,9 @@ async function buyStock(root, {
   amount,
   dateOfTrade
 }, context) {
+  if (amount <= 0 || amount % 1 !== 0) {
+    throw new Error("Error in amount, must be greater than 0 and not a decimal");
+  }
   const sesh = context.session;
   const userId = context.session.itemId;
   if (!sesh.itemId) {
@@ -116,6 +119,9 @@ async function sellStock(root, {
   amount,
   dateOfTrade
 }, context) {
+  if (amount <= 0 || amount % 1 !== 0) {
+    throw new Error("Error in amount, must be greater than 0 and not a decimal");
+  }
   const sesh = context.session;
   const userId = context.session.itemId;
   if (!sesh.itemId) {
@@ -169,6 +175,9 @@ var sellStock_default = sellStock;
 // mutations/sellFromStock.ts
 var graphql3 = String.raw;
 async function sellFromStock(root, { stockPrice, stockSymbol, dateOfTrade, stockID, amount }, context) {
+  if (amount <= 0 || amount % 1 !== 0) {
+    throw new Error("Error in amount, must be greater than 0 and not a decimal");
+  }
   const sesh = context.session;
   const userId = context.session.itemId;
   if (!sesh.itemId) {
@@ -270,6 +279,9 @@ async function sellAllStock(root, { stockPrice, stockSymbol, dateOfTrade, stockI
   }
   if (stock.ownerId !== userId) {
     throw new Error("Invalid stock");
+  }
+  if (stock.amount <= 0 || stock.amount % 1 !== 0) {
+    throw new Error("Error in amount, must be greater than 0 and not a decimal");
   }
   let totalPrice = stockPrice * 100 * stock.amount;
   let newMoney = +user.money + +totalPrice;

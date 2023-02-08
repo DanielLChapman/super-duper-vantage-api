@@ -1,28 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { user } from "../../../tools/lib";
 import StockCard from "./DataStockDisplay";
 import TradeCard from "./DataTradeDisplay";
 
-const DataContainer: React.FC<{ user: user, dateToUse: {month: number, day: number, year: number} }> = ({ user, dateToUse }) => {
+const DataContainer: React.FC<{ verifiedDates: 'boolean', selector: string | 'day' | 'monthly' | 'weekly' | 'intraday', user: user, dateToUse: {month: number, day: number, year: number} }> = ({ verifiedDates, user, dateToUse, selector }) => {
     if (!user) {
         return <span>Loading....</span>;
     }
     const [showStocks, setShowStocks] = useState(false);
     const [showTrades, setShowTrades] = useState(false);
+    const [checkedStocks, setCheckedStocks ] = useState([]);
+
+    useEffect(() => {
+        setCheckedStocks([]);
+    }, [dateToUse, selector]);
 
     return (
         <>
             <h2>Stocks // Trade History</h2>
             <section className="data-container">
                 <ul>
-                    <li onClick={() => setShowStocks(!showStocks)}>
-                        Stocks
+                    <li >
+                        <span onClick={() => setShowStocks(!showStocks)}>Stocks</span>
                         {showStocks && (
                             <>
                                 {user.stocks.length > 0 ? (
                                     <ul>
                                         {user.stocks.map((stock, index) => (
-                                            <li key={index}><StockCard stock={stock} /></li>
+                                            <li key={index}><StockCard checkedStocks={checkedStocks} setCheckedStocks={setCheckedStocks} verifiedDates={verifiedDates} apiKey={user.apiKey} dateToUse={dateToUse} selector={selector} stock={stock} /></li>
                                         ))}
                                     </ul>
                                 ) : (
@@ -31,8 +36,8 @@ const DataContainer: React.FC<{ user: user, dateToUse: {month: number, day: numb
                             </>
                         )}
                     </li>
-                    <li onClick={() => setShowTrades(!showTrades)}>
-                        Trades
+                    <li>
+                        <span>Trades</span>
                         {showTrades && (
                             <>
                                 {user.trades.length > 0 ? (

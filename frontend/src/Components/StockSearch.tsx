@@ -12,11 +12,15 @@ type StockSearchProps = {
         day: number,
         year: number
     },
-    setDateToUse: React.Dispatch<React.SetStateAction<object>>
+    setDateToUse: React.Dispatch<React.SetStateAction<object>>,
+    selector: string ,
+    setSelector:  React.Dispatch<React.SetStateAction<string>>,
+    verifiedDates: boolean ,
+    setVerifiedDates:  React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 
-const StockSearch: React.FC<StockSearchProps> = ({user, dateToUse, setDateToUse}) => {
+const StockSearch: React.FC<StockSearchProps> = ({verifiedDates, setVerifiedDates, selector, setSelector, user, dateToUse, setDateToUse}) => {
     const dateObject = new Date(Date.now());
     const [allowStockSymbol, setAllowStockSymbol] = useState(true); //default if using today, it should be allowed
     const [stockData, setStockData] = useState({
@@ -24,7 +28,7 @@ const StockSearch: React.FC<StockSearchProps> = ({user, dateToUse, setDateToUse}
         amount: 0,
         price: 0,
     });
-    const [selector, setSelector] = useState('Day');
+   
     const [buySellAppear, setBuySellAppear] = useState(false);
 
     //DATES:
@@ -35,6 +39,7 @@ const StockSearch: React.FC<StockSearchProps> = ({user, dateToUse, setDateToUse}
             ...dateToUse,
             [selector]: val,
         });
+        setVerifiedDates(false);
         setAllowStockSymbol(false);
         setBuySellAppear(false);
     };
@@ -45,6 +50,7 @@ const StockSearch: React.FC<StockSearchProps> = ({user, dateToUse, setDateToUse}
             day: d,
             year: y,
         });
+        setVerifiedDates(true);
         setAllowStockSymbol(true);
         setBuySellAppear(false);
     };
@@ -55,6 +61,7 @@ const StockSearch: React.FC<StockSearchProps> = ({user, dateToUse, setDateToUse}
             day: dateObject.getDate(),
             year: dateObject.getFullYear(),
         });
+        setVerifiedDates(true);
         setAllowStockSymbol(true);
         setBuySellAppear(false);
 
@@ -82,19 +89,10 @@ const StockSearch: React.FC<StockSearchProps> = ({user, dateToUse, setDateToUse}
         });
     }
 
-    const verifyAPIHandler = async (url) => {
-        let dataFromApi: object;
-        await fetch(url)
-            .then((response) => response.json())
-            .then((data) => dataFromApi = data);
-
-        return dataFromApi;
-    } 
-
     const verify = async () => {
         const closingPrice = await verifyFetch(stockData.symbol, selector, user.apiKey, dateToUse);
 
-        if (closingPrice.errro) {
+        if (closingPrice.error) {
             return closingPrice;
         }
 
@@ -103,8 +101,9 @@ const StockSearch: React.FC<StockSearchProps> = ({user, dateToUse, setDateToUse}
             price: closingPrice
         });
 
+        setVerifiedDates(true);
         setBuySellAppear(true);
-        
+
         return {
             symbol: stockData.symbol,
             close: closingPrice

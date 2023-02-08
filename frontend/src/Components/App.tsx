@@ -24,13 +24,16 @@ const App: React.FC<AppInitialProps> = () => {
         day: dateObject.getDate(),
         year: dateObject.getFullYear(),
     });
+    const [verifiedDates, setVerifiedDates ] = useState(true);
+
+    const [selector, setSelector] = useState('Day');
 
     return (
         <div className="App">
             <Header user={user} />
             <main className="main-content">
-                <StockSearch setDateToUse={setDateToUse} dateToUse={dateToUse} user={user} />
-                <DataContainer user={user} dateToUse={dateToUse} />
+                <StockSearch verifiedDates={verifiedDates} setVerifiedDates={setVerifiedDates} selector={selector} setSelector={setSelector} setDateToUse={setDateToUse} dateToUse={dateToUse} user={user} />
+                <DataContainer verifiedDates={verifiedDates} selector={selector} user={user} dateToUse={dateToUse} />
             </main>
             <footer className="footer-content">footer</footer>
         </div>

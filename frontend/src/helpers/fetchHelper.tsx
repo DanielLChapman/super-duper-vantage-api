@@ -34,7 +34,8 @@ export async function verifyFetch(symbol: string, selector: string, apiKey: stri
             console.log(selector);
             return;
     }
-    let dateToUseForSearch = `${dateToUse.year}-${dateToUse.month}-${dateToUse.day}`;
+    
+    let dateToUseForSearch = `${dateToUse.year}-${dateToUse.month < 10 ? "0" + dateToUse.month : dateToUse.month}-${dateToUse.day < 10 ? "0" + dateToUse.day : dateToUse.day}`;
     let dataFromApi = await verifyAPIHandler(url);
 
     if (dataFromApi['Note']) {
@@ -59,8 +60,7 @@ export async function verifyFetch(symbol: string, selector: string, apiKey: stri
         dateToUseForSearch = Object.keys(dataFromApi[jsonKey])[0];
     }
 
-    
-    let closingPrice = dataFromApi[jsonKey][dateToUseForSearch]['4. close'];
+    let closingPrice = selector === 'Day' || selector === 'Intraday' ? dataFromApi[jsonKey][dateToUseForSearch]['4. close'] : dataFromApi[jsonKey][dateToUseForSearch]['5. adjusted close'];
 
     return closingPrice;
     /*

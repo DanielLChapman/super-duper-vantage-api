@@ -56,3 +56,13 @@ export function useUser() {
 
     return data.authenticatedItem || data;
 }
+
+export function getUserAPIKey() {
+    let { data } = useQuery(CURRENT_USER_QUERY);
+
+    if (!data || !data.authenticatedItem) {
+        data = {...backend.data};
+    }
+
+    return data.authenticatedItem.apiKey || data.apiKey;
+}

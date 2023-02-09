@@ -73,11 +73,13 @@ const BuySellHandler: React.FC<BuySellProps>  = ({user, amount, symbol, price, d
         dateCheck = date;
     }
 
+    let convertedPrice =  +(roundToTwo(+price)*100).toFixed(0);
+
     const [buyStock, {data: buyData, error: buyError, loading: buyLoading}] = useMutation(
         BUY_STOCK_HANDLER,
         {
             variables: {
-                stockPrice: roundToTwo(+price),
+                stockPrice: convertedPrice,
                 stockSymbol: symbol,
                 amount: +amount,
                 dateOfTrade: dateCheck,
@@ -93,7 +95,7 @@ const BuySellHandler: React.FC<BuySellProps>  = ({user, amount, symbol, price, d
         SELL_STOCK_HANDLER,
         {
             variables: {
-                stockPrice: roundToTwo(+price),
+                stockPrice: convertedPrice,
                 stockSymbol: symbol,
                 amount: +amount,
                 dateOfTrade: dateCheck,
@@ -118,9 +120,10 @@ const BuySellHandler: React.FC<BuySellProps>  = ({user, amount, symbol, price, d
     }
     return (
         <div>
+            <h5 className="buy-sell-info-text">{symbol.replace(/^\w/, c => c.toUpperCase())} has a price of {price.toLocaleString('USD', { style: 'currency', currency: 'USD'})} for each share at this date (adjusted)</h5>
             <button className="buy-button" onClick={() => {buyHandler('buy')}}>Buy {amount}</button>
             <button className="sell-button" onClick={() => {buyHandler('sell')}}>Sell {amount}</button>
-            <h5 className='buy-sell-text'>of {symbol} for {price * amount}</h5>
+            <h5 className='buy-sell-text'>of {symbol} for {roundToTwo(price * amount).toLocaleString('USD', { style: 'currency', currency: 'USD'})}</h5>
         </div>
     );
 };

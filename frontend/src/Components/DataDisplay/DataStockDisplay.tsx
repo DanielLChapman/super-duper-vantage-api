@@ -11,7 +11,7 @@ export const SELL_ALL_HANDLER = gql`
         $stockPrice: Float!
         $stockSymbol: String!
         $stockID: ID!
-        $dateOfTrade: String
+        $dateOfTrade: String!
     ) {
         sellAllStock(
             stockPrice: $stockPrice
@@ -23,7 +23,29 @@ export const SELL_ALL_HANDLER = gql`
             symbol
             amount
             price
-            buySell
+        }
+    }
+`;
+
+export const SELL_SOME_HANDLER = gql`
+    mutation SELL_SOME_MUTATION(
+        $stockPrice: Float!
+        $stockSymbol: String!
+        $amount: Float!
+        $stockID: ID!
+        $dateOfTrade: String!
+    ) {
+        sellFromStock(
+            stockPrice: $stockPrice
+            stockSymbol: $stockSymbol
+            amount: $amount
+            stockID: $stockID
+            dateOfTrade: $dateOfTrade
+        ) {
+            id
+            symbol
+            amount
+            price
         }
     }
 `;
@@ -37,51 +59,94 @@ interface Props {
     };
     apiKey: string;
     selector: string;
-    verifiedDates: 'boolean';
+    verifiedDates: "boolean";
     checkedStocks: Array<[string, number]>;
-    setCheckedStocks:  React.Dispatch<React.SetStateAction<Array<[string, number]>>>;
+    setCheckedStocks: React.Dispatch<
+        React.SetStateAction<Array<[string, number]>>
+    >;
 }
 
-const StockCard: React.FC<Props> = ({ checkedStocks, setCheckedStocks, verifiedDates, stock, apiKey, selector, dateToUse }) => {   
-    
+const StockCard: React.FC<Props> = ({
+    checkedStocks,
+    setCheckedStocks,
+    verifiedDates,
+    stock,
+    apiKey,
+    selector,
+    dateToUse,
+}) => {
     const [sellAmount, setSellAmount] = useState(0);
     const [verifyThePrice, setTheVerifiedPrice] = useState(-1);
 
     useEffect(() => {
         setTheVerifiedPrice(-1);
     }, [dateToUse, selector]);
-    
+
     const [
         sellAllStock,
         { data: sellAllData, error: sellAllError, loading: sellAllLoading },
-    ] = useMutation(SELL_ALL_HANDLER, {
-        variables: {
-            stockPrice: roundToTwo(+stock.price),
-            stockSymbol: stock.symbol,
-            amount: +stock.amount,
-            dateOfTrade: Date.now() + "",
-        },
-        refetchQueries: [{ query: CURRENT_USER_QUERY }],
-    });
+    ] = useMutation(SELL_ALL_HANDLER);
 
+    const [
+        sellSomeStock,
+        { data: sellSomeData, error: sellSomeError, loading: sellSomeLoading },
+    ] = useMutation(SELL_SOME_HANDLER);
 
-
-    const handleSellAll = () => {
+    const handleSellAll = async () => {
         // Implement logic for selling all stock
+        if (verifyThePrice === -1) {
+            return;
+        }
+        let convertedPrice = +(roundToTwo(+verifyThePrice) * 100).toFixed(0);
+
+        const res = await sellAllStock({
+            variables: {
+                stockPrice: convertedPrice,
+                stockSymbol: stock.symbol,
+                stockID: stock.id,
+                dateOfTrade: Date.now() + "",
+            },
+            refetchQueries: [{ query: CURRENT_USER_QUERY }],
+        });
+        if (res.data) {
+            alert("Success");
+        }
     };
 
-    const handleSellSome = () => {
+    const handleSellSome = async () => {
         // Implement logic for selling some stock
+        if (sellAmount >= stock.amount) {
+            handleSellAll();
+        }
+        if (verifyThePrice === -1) {
+            return;
+        }
+        let convertedPrice = +(roundToTwo(+verifyThePrice) * 100).toFixed(0);
+        const res = await sellSomeStock({
+            variables: {
+                stockPrice: convertedPrice,
+                stockSymbol: stock.symbol,
+                stockID: stock.id,
+                amount: sellAmount,
+                dateOfTrade: Date.now() + "",
+            },
+            refetchQueries: [{ query: CURRENT_USER_QUERY }],
+        });
+        if (res.data) {
+            alert("Success");
+        }
     };
 
     //Logic to call API, or let user know to wait
-     //get price, have state manager to switch between verify and sell button
+    //get price, have state manager to switch between verify and sell button
     const verifyPrice = async () => {
         if (!verifiedDates) {
-            alert('Please verify that the date is confirmed by selecting Set Sell Date');
+            alert(
+                "Please verify that the date is confirmed by selecting Set Sell Date"
+            );
             return;
         }
-        let closingPrice: any = -1; 
+        let closingPrice: any = -1;
 
         for (let [s, price] of checkedStocks) {
             if (s === stock.symbol) {
@@ -89,33 +154,30 @@ const StockCard: React.FC<Props> = ({ checkedStocks, setCheckedStocks, verifiedD
                 setTheVerifiedPrice(closingPrice);
             }
         }
-        
+
         if (closingPrice !== -1) return;
 
-        closingPrice = await verifyFetch(stock.symbol, selector, apiKey, dateToUse);
+        closingPrice = await verifyFetch(
+            stock.symbol,
+            selector,
+            apiKey,
+            dateToUse
+        );
 
         if (closingPrice.error) {
             return closingPrice;
         }
 
-
         setTheVerifiedPrice(closingPrice);
-        setCheckedStocks(
-            [...checkedStocks, [stock.symbol, closingPrice]]
-        );
-
+        setCheckedStocks([...checkedStocks, [stock.symbol, closingPrice]]);
     };
-
-   
 
     //if the props change, setState back to verify.
     useEffect(() => {
         if (verifiedDates && checkedStocks.length > 0) {
-            verifyPrice()
+            verifyPrice();
         }
-        
     }, [checkedStocks]);
-    
 
     const stockDate = new Date(stock.dateOfTrade) || new Date(Date.now());
 
@@ -144,18 +206,24 @@ const StockCard: React.FC<Props> = ({ checkedStocks, setCheckedStocks, verifiedD
                     <span className="stock-card-sell-all-button-container">
                         Total Price At Selected Date Above:
                         {verifyThePrice === -1 ? (
-                            <button className="stock-card-sell-button" onClick={verifyPrice}>Get Price</button>
+                            <button
+                                className="stock-card-sell-button"
+                                onClick={verifyPrice}
+                            >
+                                Get Price
+                            </button>
                         ) : (
                             <>
-                                <span>{verifyThePrice * stock.amount}</span>
+                                <span>
+                                    {(verifyThePrice * stock.amount).toFixed(2)}
+                                </span>
                                 <button
-                                className="stock-card-sell-button stock-card-sell-all-button"
-                                onClick={handleSellAll}
-                            >
-                                Sell All
-                            </button>
+                                    className="stock-card-sell-button stock-card-sell-all-button"
+                                    onClick={handleSellAll}
+                                >
+                                    Sell All
+                                </button>
                             </>
-                            
                         )}
                     </span>
                 </div>
@@ -163,19 +231,26 @@ const StockCard: React.FC<Props> = ({ checkedStocks, setCheckedStocks, verifiedD
                     <input
                         type="number"
                         value={sellAmount}
+                        max={stock.amount}
                         onChange={(e) => setSellAmount(+e.target.value)}
                         className="stock-card-sell-input"
                     />
                     <span className="stock-card-sell-some-button-container">
-                        Sell {verifyThePrice === - 1 ? 'Some' : sellAmount} At Selected Date Above:{" "}
+                        Sell {verifyThePrice === -1 ? "Some" : sellAmount} At
+                        Selected Date Above:{" "}
                         {verifyThePrice === -1 ? (
-                            <button className="stock-card-sell-button" onClick={verifyPrice}>Get Price</button>
+                            <button
+                                className="stock-card-sell-button"
+                                onClick={verifyPrice}
+                            >
+                                Get Price
+                            </button>
                         ) : (
                             <button
                                 className="stock-card-sell-button stock-card-sell-some-button"
                                 onClick={handleSellSome}
                             >
-                                {verifyThePrice * stock.amount}
+                                {(verifyThePrice * sellAmount).toFixed(2)}
                             </button>
                         )}
                     </span>

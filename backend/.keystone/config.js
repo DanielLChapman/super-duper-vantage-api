@@ -55,10 +55,14 @@ async function buyStock(root, {
   if (!user) {
     throw new Error("Please let an admin know, Error finding user on buyStock");
   }
-  let totalPrice = stockPrice * amount * 100;
+  if (stockPrice.toString().indexOf(".") !== -1) {
+    stockPrice = +(Math.round(stockPrice * 100) / 100 * 100).toFixed(0);
+  }
+  let totalPrice = stockPrice * amount;
   if (totalPrice < 0) {
     totalPrice = 0;
   }
+  totalPrice = +totalPrice.toFixed(0);
   if (user.money < totalPrice) {
     throw new Error("You don't have enough money for this trade");
   }
@@ -82,7 +86,7 @@ async function buyStock(root, {
     data: {
       symbol: stockSymbol,
       amount,
-      price: stockPrice * 100,
+      price: stockPrice,
       dateOfTrade: tempDate,
       owner: {
         connect: {
@@ -99,7 +103,7 @@ async function buyStock(root, {
       symbol: stockSymbol,
       amount,
       dateOfTrade: tempDate,
-      price: stockPrice * 100,
+      price: stockPrice,
       buySell: true,
       owner: {
         connect: {
@@ -135,7 +139,10 @@ async function sellStock(root, {
   if (!user) {
     throw new Error("Please let an admin know, Error finding user on buyStock");
   }
-  let totalPrice = stockPrice * 100 * amount;
+  if (stockPrice.toString().indexOf(".") !== -1) {
+    stockPrice = +(Math.round(stockPrice * 100) / 100 * 100).toFixed(0);
+  }
+  let totalPrice = stockPrice * amount;
   if (totalPrice < 0) {
     totalPrice = 0;
   }
@@ -160,7 +167,7 @@ async function sellStock(root, {
       symbol: stockSymbol,
       amount,
       dateOfTrade: tempDate,
-      price: stockPrice * 100,
+      price: stockPrice,
       buySell: false,
       owner: {
         connect: {
@@ -205,7 +212,10 @@ async function sellFromStock(root, { stockPrice, stockSymbol, dateOfTrade, stock
   if (stock.amount < amount) {
     throw new Error("Not enough to sell");
   }
-  let totalPrice = stockPrice * 100 * amount;
+  if (stockPrice.toString().indexOf(".") !== -1) {
+    stockPrice = +(Math.round(stockPrice * 100) / 100 * 100).toFixed(0);
+  }
+  let totalPrice = stockPrice * amount;
   if (totalPrice < 0) {
     totalPrice = 0;
   }
@@ -283,7 +293,10 @@ async function sellAllStock(root, { stockPrice, stockSymbol, dateOfTrade, stockI
   if (stock.amount <= 0 || stock.amount % 1 !== 0) {
     throw new Error("Error in amount, must be greater than 0 and not a decimal");
   }
-  let totalPrice = stockPrice * 100 * stock.amount;
+  if (stockPrice.toString().indexOf(".") !== -1) {
+    stockPrice = +(Math.round(stockPrice * 100) / 100 * 100).toFixed(0);
+  }
+  let totalPrice = stockPrice * stock.amount;
   let newMoney = +user.money + +totalPrice;
   const newUser = await context.db.User.updateOne({
     where: {
@@ -310,7 +323,7 @@ async function sellAllStock(root, { stockPrice, stockSymbol, dateOfTrade, stockI
       symbol: stockSymbol,
       amount: stock.amount,
       dateOfTrade: tempDate,
-      price: stockPrice * 100,
+      price: stockPrice,
       buySell: false,
       owner: {
         connect: {
@@ -408,7 +421,7 @@ var extendGraphqlSchema = (schema) => (0, import_schema.mergeSchemas)({
     type Mutation {
       buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
       sellStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
-      sellFromStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String, stockID: ID!): Stock
+      sellFromStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String, stockID: ID!): Trade
       sellAllStock(stockPrice: Float!, stockSymbol: String!, dateOfTrade: String, stockID: ID!): Trade
     }
     

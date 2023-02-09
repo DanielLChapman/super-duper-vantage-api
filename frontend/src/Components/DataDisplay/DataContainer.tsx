@@ -3,7 +3,7 @@ import { user } from "../../../tools/lib";
 import StockCard from "./DataStockDisplay";
 import TradeCard from "./DataTradeDisplay";
 
-const DataContainer: React.FC<{ verifiedDates: 'boolean', selector: string | 'day' | 'monthly' | 'weekly' | 'intraday', user: user, dateToUse: {month: number, day: number, year: number} }> = ({ verifiedDates, user, dateToUse, selector }) => {
+const DataContainer: React.FC<{ verifiedDates: boolean, selector: string | 'day' | 'monthly' | 'weekly' | 'intraday', user: user, dateToUse: {month: number, day: number, year: number} }> = ({ verifiedDates, user, dateToUse, selector }) => {
     if (!user) {
         return <span>Loading....</span>;
     }

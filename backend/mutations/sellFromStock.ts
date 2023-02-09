@@ -14,7 +14,7 @@ async function sellFromStock(
     if (amount <= 0 || amount % 1 !== 0) {
         throw new Error('Error in amount, must be greater than 0 and not a decimal');
     }
-    
+
     const sesh = context.session as Session;
     const userId = context.session.itemId;
     if (!sesh.itemId) {
@@ -52,7 +52,11 @@ async function sellFromStock(
     }
 
     //MAKE SURE YOU HAVE MONEY FOR SALE
-    let totalPrice = (stockPrice*100 * amount);
+    
+    if (stockPrice.toString().indexOf('.') !== -1) {
+        stockPrice = +((Math.round(stockPrice * 100) / 100)*100).toFixed(0);
+    } 
+    let totalPrice = (stockPrice * amount);
     if (totalPrice < 0) 
     {totalPrice = 0;}
 

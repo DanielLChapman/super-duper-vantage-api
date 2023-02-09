@@ -16,7 +16,7 @@ async function buyStock(
     if (amount <= 0 || amount % 1 !== 0) {
         throw new Error('Error in amount, must be greater than 0 and not a decimal');
     }
-    
+
     const sesh = context.session as Session;
     const userId = context.session.itemId;
     
@@ -37,10 +37,15 @@ async function buyStock(
     }
 
     //MAKE SURE YOU HAVE MONEY FOR SALE
-    //CONVERT TO PENNIES SO * 100
-    let totalPrice = (stockPrice * amount)*100;
+    //CONVERTED TO PENNIES SO * 100
+    if (stockPrice.toString().indexOf('.') !== -1) {
+        stockPrice = +((Math.round(stockPrice * 100) / 100)*100).toFixed(0);
+    } 
+    let totalPrice = (stockPrice * amount);
     if (totalPrice < 0) 
     {totalPrice = 0;}
+
+    totalPrice = +totalPrice.toFixed(0);
 
     if (user.money < totalPrice) {
         throw new Error("You don't have enough money for this trade");
@@ -81,7 +86,7 @@ async function buyStock(
         data: {
             symbol: stockSymbol,
             amount: amount,
-            price: stockPrice * 100,
+            price: stockPrice,
             dateOfTrade: tempDate,
             owner: {
                 connect: {
@@ -105,7 +110,7 @@ async function buyStock(
             amount: amount,
             // @ts-ignore
             dateOfTrade: tempDate,
-            price: stockPrice * 100,
+            price: stockPrice,
             buySell: true,
             owner: {
                 connect: {

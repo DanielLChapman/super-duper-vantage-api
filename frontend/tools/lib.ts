@@ -125,6 +125,7 @@ export type tradeHistory = {
 }
 
 export type stock = {
+    id: string,
     //default buy since you cant own a sold stock right now
     symbol: string,
     amount: number,

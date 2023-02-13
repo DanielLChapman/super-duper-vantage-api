@@ -77,6 +77,7 @@ const StockCard: React.FC<Props> = ({
 }) => {
     const [sellAmount, setSellAmount] = useState(0);
     const [verifyThePrice, setTheVerifiedPrice] = useState(-1);
+    const [expand, setExpand] = useState(false);
 
     useEffect(() => {
         setTheVerifiedPrice(-1);
@@ -182,80 +183,111 @@ const StockCard: React.FC<Props> = ({
     const stockDate = new Date(stock.dateOfTrade) || new Date(Date.now());
 
     return (
-        <div className="stock-card">
+        <div className={`stock-card ${expand ? 'expanded-stock-card' : 'collapsed-stock-card'}`}>
             <div className="stock-card-header">
-                <h2 className="stock-card-symbol">{stock.symbol}</h2>
+                {
+                    expand && (
+                        <h2 className="expanded-stock-card-symbol">{stock.symbol}</h2>
+                    )
+                }
+               
                 <p className="stock-card-current-value">
+                    {!expand && (
+                        <span className='collapsed-stock-symbol'>{stock.symbol} </span>
+                    )}
+                    <span className={`${expand ? 'expanded-stock-card-value' : 'collapsed-stock-card-value'}`}>
                     Bought For: $
                     {(stock.amount * (stock.price / 100)).toFixed(2)}
-                    <span>
-                        {" "}
-                        On {stockDate.getMonth() + 1} / {stockDate.getDay()} /{" "}
-                        {stockDate.getFullYear()}
+                    {expand && (
+                        <span>
+                            {" "}
+                            On {stockDate.getMonth() + 1} / {stockDate.getDay()}{" "}
+                            / {stockDate.getFullYear()}
+                        </span>
+                    )}
                     </span>
                 </p>
+                <button
+                    onClick={() => {
+                        setExpand(!expand);
+                    }}
+                >
+                    {" "}
+                    {expand ? "Collapse" : "Expand"}{" "}
+                </button>
             </div>
-            <div className="stock-card-details">
-                <p className="stock-card-amount">Amount: {stock.amount}</p>
-                <p className="stock-card-price">
-                    Price: ${(stock.price / 100).toFixed(2)}
-                </p>
-            </div>
-            <div className="stock-card-actions">
-                <div className="stock-card-sell-container stock-card-sell-all-container">
-                    <span className="stock-card-sell-all-button-container">
-                        Total Price At Selected Date Above:
-                        {verifyThePrice === -1 ? (
-                            <button
-                                className="stock-card-sell-button"
-                                onClick={verifyPrice}
-                            >
-                                Get Price
-                            </button>
-                        ) : (
-                            <>
-                                <span>
-                                    {(verifyThePrice * stock.amount).toFixed(2)}
-                                </span>
-                                <button
-                                    className="stock-card-sell-button stock-card-sell-all-button"
-                                    onClick={handleSellAll}
-                                >
-                                    Sell All
-                                </button>
-                            </>
-                        )}
-                    </span>
-                </div>
-                <div className="stock-card-sell-some-container">
-                    <input
-                        type="number"
-                        value={sellAmount}
-                        max={stock.amount}
-                        onChange={(e) => setSellAmount(+e.target.value)}
-                        className="stock-card-sell-input"
-                    />
-                    <span className="stock-card-sell-some-button-container">
-                        Sell {verifyThePrice === -1 ? "Some" : sellAmount} At
-                        Selected Date Above:{" "}
-                        {verifyThePrice === -1 ? (
-                            <button
-                                className="stock-card-sell-button"
-                                onClick={verifyPrice}
-                            >
-                                Get Price
-                            </button>
-                        ) : (
-                            <button
-                                className="stock-card-sell-button stock-card-sell-some-button"
-                                onClick={handleSellSome}
-                            >
-                                {(verifyThePrice * sellAmount).toFixed(2)}
-                            </button>
-                        )}
-                    </span>
-                </div>
-            </div>
+            {expand && (
+                <>
+                    <div className="stock-card-details">
+                        <p className="stock-card-amount">
+                            Amount: {stock.amount}
+                        </p>
+                        <p className="stock-card-price">
+                            Price: ${(stock.price / 100).toFixed(2)}
+                        </p>
+                    </div>
+                    <div className="stock-card-actions">
+                        <div className="stock-card-sell-container stock-card-sell-all-container">
+                            <span className="stock-card-sell-all-button-container">
+                                Total Price At Selected Date Above:
+                                {verifyThePrice === -1 ? (
+                                    <button
+                                        className="stock-card-sell-button"
+                                        onClick={verifyPrice}
+                                    >
+                                        Get Price
+                                    </button>
+                                ) : (
+                                    <>
+                                        <span>
+                                            {(
+                                                verifyThePrice * stock.amount
+                                            ).toFixed(2)}
+                                        </span>
+                                        <button
+                                            className="stock-card-sell-button stock-card-sell-all-button"
+                                            onClick={handleSellAll}
+                                        >
+                                            Sell All
+                                        </button>
+                                    </>
+                                )}
+                            </span>
+                        </div>
+                        <div className="stock-card-sell-some-container">
+                            <input
+                                type="number"
+                                value={sellAmount}
+                                max={stock.amount}
+                                onChange={(e) => setSellAmount(+e.target.value)}
+                                className="stock-card-sell-input"
+                            />
+                            <span className="stock-card-sell-some-button-container">
+                                Sell{" "}
+                                {verifyThePrice === -1 ? "Some" : sellAmount} At
+                                Selected Date Above:{" "}
+                                {verifyThePrice === -1 ? (
+                                    <button
+                                        className="stock-card-sell-button"
+                                        onClick={verifyPrice}
+                                    >
+                                        Get Price
+                                    </button>
+                                ) : (
+                                    <button
+                                        className="stock-card-sell-button stock-card-sell-some-button"
+                                        onClick={handleSellSome}
+                                    >
+                                        {(verifyThePrice * sellAmount).toFixed(
+                                            2
+                                        )}
+                                    </button>
+                                )}
+                            </span>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 };

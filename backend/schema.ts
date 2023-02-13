@@ -86,6 +86,7 @@ export const lists: Lists = {
         // this sets the timestamp to Date.now() when the trade is first created
         defaultValue: { kind: 'now' },
       }),
+      
 
       buySell: checkbox({
         //true - buy, sell - false

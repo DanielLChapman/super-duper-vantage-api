@@ -1,25 +1,33 @@
-import gql from 'graphql-tag';
-import React from 'react';
-import { tradeHistory } from '../../../tools/lib';
+import gql from "graphql-tag";
+import React, { useState } from "react";
+import { tradeHistory } from "../../../tools/lib";
 
 interface Props {
-  trade: tradeHistory;
+    trade: tradeHistory;
 }
 
 const TradeCard: React.FC<Props> = ({ trade }) => {
-  return (
-    <div className={`trade-card ${trade.buySell ? 'trade-card-buy' : 'trade-card-sell'}`}>
-      <div className="trade-card-header">
-        <h2 className="trade-card-symbol">{trade.symbol}</h2>
-      </div>
-      <div className="trade-card-details">
-
-        <p className="trade-card-amount">{trade.buySell ? 'Bought ' : 'Sold '}Amount: {trade.amount}</p>
-        <p className="trade-card-price">Price: ${trade.price.toFixed(2)}</p>
-        <p className="trade-card-date">Date: {trade.dateOfTrade}</p>
-      </div>
-    </div>
-  );
+  let date = (trade.dateOfTrade + "").slice(0, 10);
+  if (date === null) {
+    date = "Lost Created Date";
+  }
+  
+    return (
+        <div
+            className={`trade-card ${
+                trade.buySell ? "trade-card-buy" : "trade-card-sell"
+            }`}
+        >
+            <div className="trade-card-details">
+                <span className="trade-card-date">{(trade?.dateOfTrade + "").slice(0, 10) || Date.now()} </span>
+                <span className="trade-card-symbol">{trade.symbol}</span>
+                <span className="trade-card-amount">
+                    {trade.buySell ? "Bought " : "Sold "}
+                    {trade.amount} for ${(trade.price / 100).toFixed(2)} ea.
+                </span>
+            </div>
+        </div>
+    );
 };
 
 export default TradeCard;

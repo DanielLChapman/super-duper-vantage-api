@@ -1,32 +1,56 @@
-import Router from 'next/router';
-import React from 'react';
-import {user as userType} from '../../tools/lib';
-import SignOut from './UserHandling/SignOut';
+import Router from "next/router";
+import React, { useState } from "react";
+import { user as userType } from "../../tools/lib";
+import SignOut from "./UserHandling/SignOut";
 
 export type UserOnlyProps = {
-    user: userType | null,
-}
+    user: userType | null;
+};
 
-const Header:React.FC<UserOnlyProps>  = ({user}) => {
+const Header: React.FC<UserOnlyProps> = ({ user }) => {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
+
+    const handleSignInClick = () => {
+        Router.push("./user/signin");
+    };
+
+    const handleAccountClick = () => {
+        Router.push("./user/account");
+    };
 
     return (
         <>
-        <header className="header-content">header</header>
-        {
-            (user.id === "-1") && (
-            <button onClick={() => {
-                Router.push('./user/signin')
-            }}>SignIn</button>
-            )
-        }
-        {
-            user.id !== "-1" && (
-                
-                <SignOut />
-            )
-        }
-        
-        
+            <header className="header-content">
+                <span>LOGO</span>
+                <section
+                    className="header-dropdown dropdown"
+                    onMouseEnter={toggleMenu}
+                    onMouseLeave={toggleMenu}
+                >
+                    <span className="dropdown-toggle" onClick={toggleMenu}>
+                        {user.username}
+                        <br />
+                        <span className="user-money">${user.money}</span>
+                    </span>
+                    {isMenuOpen && (
+                        <ul className="dropdown-menu">
+                            <li onClick={handleAccountClick}>Account</li>
+                            {user.id === "-1" && (
+                                <li onClick={handleSignInClick}>Sign In</li>
+                            )}
+                            {user.id !== "-1" && (
+                                <li>
+                                    <SignOut />
+                                </li>
+                            )}
+                        </ul>
+                    )}
+                </section>
+            </header>
         </>
     );
 };

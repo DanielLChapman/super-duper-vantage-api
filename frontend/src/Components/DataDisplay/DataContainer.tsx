@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import React, { useEffect, useState } from "react";
-import { tradeHistory, user } from "../../../tools/lib";
+import { stock, tradeHistory, user } from "../../../tools/lib";
 import StockCard from "./DataStockDisplay";
 import TradeCard from "./DataTradeDisplay";
 
@@ -23,6 +23,23 @@ const GET_TRADES = gql`
     }
 `;
 
+const GET_STOCKS = gql`
+    query Stocks($userID: ID!, $limit: Int!, $offset: Int!) {
+        stocks(
+            where: { owner: { id: { equals: $userID } } }
+            skip: $offset
+            take: $limit
+            orderBy: { dateOfTrade: desc }
+        ) {
+            id
+            symbol
+            amount
+            price
+            dateOfTrade
+        }
+    }
+`;
+
 const DataContainer: React.FC<{
     verifiedDates: boolean;
     selector: string | "day" | "monthly" | "weekly" | "intraday";
@@ -36,29 +53,53 @@ const DataContainer: React.FC<{
     const [showTrades, setShowTrades] = useState(false);
     const [checkedStocks, setCheckedStocks] = useState([]);
 
-    const [page, setPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [tradePage, setTradePage] = useState(1);
+    const [tradeItemsPerPage, setTradeItemsPerPage] = useState(10);
 
-    const { loading, error, data } = useQuery(GET_TRADES, {
+    const [stockPage, setStockPage] = useState(1);
+    const [stockItemsPerPage, setStockItemsPerPage] = useState(10);
+
+    const {
+        loading: tradesLoading,
+        error: tradesError,
+        data: tradesData,
+    } = useQuery(GET_TRADES, {
         variables: {
             userID: user.id,
-            limit: itemsPerPage,
-            offset: (page - 1) * itemsPerPage,
+            limit: tradeItemsPerPage,
+            offset: (tradePage - 1) * tradeItemsPerPage,
+        },
+    });
+
+    const {
+        loading: stockLoading,
+        error: stockError,
+        data: stockData,
+    } = useQuery(GET_STOCKS, {
+        variables: {
+            userID: user.id,
+            limit: tradeItemsPerPage,
+            offset: (tradePage - 1) * tradeItemsPerPage,
         },
     });
 
     let trades = [] as tradeHistory[];
+    let stocks = [] as stock[];
 
-    if (loading || error)
-    {
+    if (tradesLoading || tradesError) {
         trades = [];
     } else {
-        trades = data.trades;
+        trades = tradesData.trades;
     }
 
-    
+    if (stockLoading || stockError) {
+        stocks = [];
+    } else {
+        stocks = stockData.stocks;
+    }
 
     const totalTrades = trades.length;
+    const totalStocks = stocks.length;
 
     useEffect(() => {
         setCheckedStocks([]);
@@ -73,11 +114,11 @@ const DataContainer: React.FC<{
                         <span onClick={() => setShowStocks(!showStocks)}>
                             Stocks
                         </span>
-                        {showStocks && (
+                        {!stockError && !stockLoading && showStocks && (
                             <>
-                                {user.stocks.length > 0 ? (
+                                {stocks.length > 0 ? (
                                     <ul>
-                                        {user.stocks.map((stock, index) => (
+                                        {stocks.map((stock, index) => (
                                             <li key={index}>
                                                 <StockCard
                                                     checkedStocks={
@@ -100,6 +141,28 @@ const DataContainer: React.FC<{
                                 ) : (
                                     <p>No stocks found</p>
                                 )}
+                                {totalStocks > 0 && (
+                                    <>
+                                        <button
+                                            disabled={stockPage === 1}
+                                            onClick={() =>
+                                                setTradePage(stockPage - 1)
+                                            }
+                                        >
+                                            Previous
+                                        </button>
+                                        <button
+                                            disabled={
+                                                totalStocks < stockItemsPerPage
+                                            }
+                                            onClick={() =>
+                                                setTradePage(tradePage + 1)
+                                            }
+                                        >
+                                            Next
+                                        </button>
+                                    </>
+                                )}
                             </>
                         )}
                     </li>
@@ -107,34 +170,42 @@ const DataContainer: React.FC<{
                         <span onClick={() => setShowTrades(!showTrades)}>
                             Trades
                         </span>
-                        {!loading && !error && showTrades && (
+                        {!tradesLoading && !tradesError && showTrades && (
                             <>
-                                {data.trades.length > 0 ? (
+                                {trades.length > 0 ? (
                                     <>
                                         <ul>
-                                            {data.trades.map((trade, index) => (
+                                            {trades.map((trade, index) => (
                                                 <li key={index}>
                                                     <TradeCard trade={trade} />
                                                 </li>
                                             ))}
                                         </ul>
+                                    </>
+                                ) : (
+                                    <p>No trades found</p>
+                                )}
+                                {totalTrades > 0 && (
+                                    <>
                                         <button
-                                            disabled={page === 1}
-                                            onClick={() => setPage(page - 1)}
+                                            disabled={tradePage === 1}
+                                            onClick={() =>
+                                                setTradePage(tradePage - 1)
+                                            }
                                         >
                                             Previous
                                         </button>
                                         <button
                                             disabled={
-                                                totalTrades < itemsPerPage
+                                                totalTrades < tradeItemsPerPage
                                             }
-                                            onClick={() => setPage(page + 1)}
+                                            onClick={() =>
+                                                setTradePage(tradePage + 1)
+                                            }
                                         >
                                             Next
                                         </button>
                                     </>
-                                ) : (
-                                    <p>No trades found</p>
                                 )}
                             </>
                         )}

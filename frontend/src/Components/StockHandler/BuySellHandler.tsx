@@ -4,6 +4,7 @@ import React from 'react';
 import { CURRENT_USER_QUERY } from '../User';
 import { user as userType} from "../../../tools/lib";
 import roundToTwo from '../../../tools/roundToTwo';
+import { GET_STOCKS, GET_TRADES } from '../DataDisplay/DataContainer';
 
 type BuySellProps = {
     amount: number,
@@ -84,7 +85,11 @@ const BuySellHandler: React.FC<BuySellProps>  = ({user, amount, symbol, price, d
                 amount: +amount,
                 dateOfTrade: dateCheck,
             },
-            refetchQueries: [{query: CURRENT_USER_QUERY}]
+            refetchQueries: [{query: CURRENT_USER_QUERY}, {query: GET_STOCKS, variables: {
+                userID: user.id,
+                limit: 10,
+                offset: 0,
+            }}]
         }
     );
 
@@ -100,7 +105,11 @@ const BuySellHandler: React.FC<BuySellProps>  = ({user, amount, symbol, price, d
                 amount: +amount,
                 dateOfTrade: dateCheck,
             },
-            refetchQueries: [{query: CURRENT_USER_QUERY}]
+            refetchQueries: [{query: CURRENT_USER_QUERY}, {query: GET_TRADES, variables: {
+                userID: user.id,
+                limit: 10,
+                offset: 0
+            }}]
         }
     )
 
@@ -119,7 +128,6 @@ const BuySellHandler: React.FC<BuySellProps>  = ({user, amount, symbol, price, d
         }
     }
 
-    console.log(dateCheck)
     return (
         <div>
             <h5 className="buy-sell-info-text">{symbol.replace(/^\w/, c => c.toUpperCase())} has a price of {price.toLocaleString('USD', { style: 'currency', currency: 'USD'})} for each share at this {dateCheck.split('-').join(' / ')} (adjusted)</h5>

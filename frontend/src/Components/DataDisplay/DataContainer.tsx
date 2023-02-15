@@ -1,8 +1,10 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery} from "@apollo/client";
 import gql from "graphql-tag";
 import React, { useEffect, useState } from "react";
 import { stock, tradeHistory, user } from "../../../tools/lib";
-import StockCard from "./DataStockDisplay";
+import roundToTwo from "../../../tools/roundToTwo";
+import { CURRENT_USER_QUERY } from "../User";
+import StockCard, { SELL_ALL_HANDLER, SELL_SOME_HANDLER } from "./DataStockDisplay";
 import TradeCard from "./DataTradeDisplay";
 
 export const GET_TRADES = gql`
@@ -54,13 +56,23 @@ const DataContainer: React.FC<{
     }
     const [showStocks, setShowStocks] = useState(false);
     const [showTrades, setShowTrades] = useState(false);
-    
 
     const [tradePage, setTradePage] = useState(1);
     const [tradeItemsPerPage, setTradeItemsPerPage] = useState(10);
 
     const [stockPage, setStockPage] = useState(1);
     const [stockItemsPerPage, setStockItemsPerPage] = useState(10);
+    const [verifyThePrice, setTheVerifiedPrice] = useState(-1);
+
+    const [
+        sellAllStock,
+        { data: sellAllData, error: sellAllError, loading: sellAllLoading },
+    ] = useMutation(SELL_ALL_HANDLER);
+
+    const [
+        sellSomeStock,
+        { data: sellSomeData, error: sellSomeError, loading: sellSomeLoading },
+    ] = useMutation(SELL_SOME_HANDLER);
 
     const {
         loading: tradesLoading,
@@ -105,7 +117,56 @@ const DataContainer: React.FC<{
     const totalTrades = trades.length;
     const totalStocks = stocks.length;
 
+    const handleSell = async (stock: stock, sellAmount) => {
+        if (verifyThePrice === -1) {
+            return;
+        }
+        let convertedPrice = +(roundToTwo(+verifyThePrice) * 100).toFixed(0);
 
+        let res;
+        if (stock.amount === sellAmount) {
+            res = await sellSomeStock({
+                variables: {
+                    stockPrice: convertedPrice,
+                    stockSymbol: stock.symbol,
+                    stockID: stock.id,
+                    amount: sellAmount,
+                    dateOfTrade: Date.now() + "",
+                },
+                refetchQueries: [{ query: CURRENT_USER_QUERY }, { query: GET_STOCKS, variables: {
+                    userID: user.id,
+                    limit: stockItemsPerPage,
+                    offset: (stockPage - 1) * stockItemsPerPage,
+                }, }, { query: GET_TRADES, variables: {
+                    userID: user.id,
+                    limit: tradeItemsPerPage,
+                    offset: (tradePage - 1) * tradeItemsPerPage,
+                } }],
+            });
+        } else {
+            res = await sellAllStock({
+                variables: {
+                    stockPrice: convertedPrice,
+                    stockSymbol: stock.symbol,
+                    stockID: stock.id,
+                    dateOfTrade: Date.now() + "",
+                },
+                refetchQueries: [{ query: CURRENT_USER_QUERY }, { query: GET_STOCKS, variables: {
+                    userID: user.id,
+                    limit: stockItemsPerPage,
+                    offset: (stockPage - 1) * stockItemsPerPage,
+                }, }, { query: GET_TRADES, variables: {
+                    userID: user.id,
+                    limit: tradeItemsPerPage,
+                    offset: (tradePage - 1) * tradeItemsPerPage,
+                } }],
+            });
+        }
+
+        if (res.data) {
+            alert('Success!');
+        }
+    }
 
     useEffect(() => {
         setCheckedStocks([]);
@@ -140,11 +201,9 @@ const DataContainer: React.FC<{
                                                     dateToUse={dateToUse}
                                                     selector={selector}
                                                     stock={stock}
-                                                    userID={user.id}
-                                                    stockPage={stockPage}
-                                                    stockItemsPerPage={stockItemsPerPage}
-                                                    tradePage={stockPage}
-                                                    tradeItemsPerPage={stockItemsPerPage}
+                                                    verifyThePrice={verifyThePrice}
+                                                    setTheVerifiedPrice={setTheVerifiedPrice}
+                                                    handleSell={handleSell}
                                                 />
                                             </li>
                                         ))}
@@ -157,7 +216,7 @@ const DataContainer: React.FC<{
                                         <button
                                             disabled={stockPage === 1}
                                             onClick={() =>
-                                                setTradePage(stockPage - 1)
+                                                setStockPage(stockPage - 1)
                                             }
                                         >
                                             Previous
@@ -167,7 +226,7 @@ const DataContainer: React.FC<{
                                                 totalStocks < stockItemsPerPage
                                             }
                                             onClick={() =>
-                                                setTradePage(tradePage + 1)
+                                                setStockPage(stockPage + 1)
                                             }
                                         >
                                             Next

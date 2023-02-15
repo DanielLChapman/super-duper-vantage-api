@@ -65,11 +65,11 @@ interface Props {
     setCheckedStocks: React.Dispatch<
         React.SetStateAction<Array<[string, number]>>
     >;
-    userID: string;
-    stockItemsPerPage: number;
-    stockPage: number;
-    tradeItemsPerPage: number;
-    tradePage: number;
+    verifyThePrice: number;
+    setTheVerifiedPrice: React.Dispatch<
+    React.SetStateAction<number>
+>;
+    handleSell: (stock, number) => {}
 }
 
 const StockCard: React.FC<Props> = ({
@@ -79,88 +79,18 @@ const StockCard: React.FC<Props> = ({
     stock,
     apiKey,
     selector,
-    userID,
-    stockItemsPerPage,
-    stockPage,
     dateToUse,
-    tradeItemsPerPage,
-    tradePage,
+    verifyThePrice,
+    setTheVerifiedPrice,
+    handleSell,
 }) => {
     const [sellAmount, setSellAmount] = useState(0);
-    const [verifyThePrice, setTheVerifiedPrice] = useState(-1);
+    
     const [expand, setExpand] = useState(false);
 
     useEffect(() => {
         setTheVerifiedPrice(-1);
     }, [dateToUse, selector]);
-
-    const [
-        sellAllStock,
-        { data: sellAllData, error: sellAllError, loading: sellAllLoading },
-    ] = useMutation(SELL_ALL_HANDLER);
-
-    const [
-        sellSomeStock,
-        { data: sellSomeData, error: sellSomeError, loading: sellSomeLoading },
-    ] = useMutation(SELL_SOME_HANDLER);
-
-    const handleSellAll = async () => {
-        // Implement logic for selling all stock
-        if (verifyThePrice === -1) {
-            return;
-        }
-        let convertedPrice = +(roundToTwo(+verifyThePrice) * 100).toFixed(0);
-
-        const res = await sellAllStock({
-            variables: {
-                stockPrice: convertedPrice,
-                stockSymbol: stock.symbol,
-                stockID: stock.id,
-                dateOfTrade: Date.now() + "",
-            },
-            refetchQueries: [{ query: CURRENT_USER_QUERY }, { query: GET_STOCKS, variables: {
-                userID: userID,
-                limit: stockItemsPerPage,
-                offset: (stockPage - 1) * stockItemsPerPage,
-            }, }, { query: GET_TRADES, variables: {
-                userID: userID,
-                limit: tradeItemsPerPage,
-                offset: (tradePage - 1) * tradeItemsPerPage,
-            } }],
-        });
-        if (res.data) {
-            alert("Success");
-        }
-    };
-
-    const handleSellSome = async () => {
-        // Implement logic for selling some stock
-        if (verifyThePrice === -1) {
-            return;
-        }
-        let convertedPrice = +(roundToTwo(+verifyThePrice) * 100).toFixed(0);
-        const res = await sellSomeStock({
-            variables: {
-                stockPrice: convertedPrice,
-                stockSymbol: stock.symbol,
-                stockID: stock.id,
-                amount: sellAmount,
-                dateOfTrade: Date.now() + "",
-            },
-            refetchQueries: [{ query: CURRENT_USER_QUERY }, { query: GET_STOCKS, variables: {
-                userID: userID,
-                limit: stockItemsPerPage,
-                offset: (stockPage - 1) * stockItemsPerPage,
-            }, }, { query: GET_TRADES, variables: {
-                userID: userID,
-                limit: tradeItemsPerPage,
-                offset: (tradePage - 1) * tradeItemsPerPage,
-            } }],
-        });
-        if (res.data) {
-            alert("Success");
-        }
-    };
 
     //Logic to call API, or let user know to wait
     //get price, have state manager to switch between verify and sell button
@@ -243,6 +173,7 @@ const StockCard: React.FC<Props> = ({
             {expand && (
                 <>
                     <div className="stock-card-details">
+                        {stock.id}
                         <p className="stock-card-amount">
                             Amount: {stock.amount}
                         </p>
@@ -270,7 +201,9 @@ const StockCard: React.FC<Props> = ({
                                         </span>
                                         <button
                                             className="stock-card-sell-button stock-card-sell-all-button"
-                                            onClick={handleSellAll}
+                                            onClick={() => {
+                                                handleSell(stock, stock.amount)
+                                            }}
                                         >
                                             Sell All
                                         </button>
@@ -300,7 +233,9 @@ const StockCard: React.FC<Props> = ({
                                 ) : (
                                     <button
                                         className="stock-card-sell-button stock-card-sell-some-button"
-                                        onClick={handleSellSome}
+                                        onClick={() => {
+                                            handleSell(stock, sellAmount)
+                                        }}
                                     >
                                         {(verifyThePrice * sellAmount).toFixed(
                                             2

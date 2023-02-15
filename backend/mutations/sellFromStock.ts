@@ -11,8 +11,25 @@ async function sellFromStock(
     {stockPrice, stockSymbol, dateOfTrade, stockID, amount}: { amount: number, stockPrice: number, stockSymbol: string, dateOfTrade: string, stockID: ID},
     context: Context
 ) {
+
+    let stock;
+
     if (amount <= 0 || amount % 1 !== 0) {
-        throw new Error('Error in amount, must be greater than 0 and not a decimal');
+        stock = await context.db.Stock.findOne({
+            where: {
+                id: stockID
+            }
+        });
+        if (stock && stock.amount === 0) {
+            await context.db.Stock.deleteOne({
+                where: {
+                    id: stockID
+                }
+            });
+        } else {
+            throw new Error('Error in amount, must be greater than 0 and not a decimal, or error finding Stock');
+        }
+        
     }
 
     const sesh = context.session as Session;
@@ -33,12 +50,14 @@ async function sellFromStock(
         throw new Error('Please let an admin know, Error finding user on buyStock')
     }
 
-    const stock = await context.db.Stock.findOne({
-        where: {
-            id: stockID
-        }
-    });
-
+    if (amount > 0) {
+        stock = await context.db.Stock.findOne({
+            where: {
+                id: stockID
+            }
+        });
+    }
+    
     if (!stock) {
         throw new Error('Invalid stock');
     } 
@@ -50,6 +69,8 @@ async function sellFromStock(
     if (stock.amount < amount) {
         throw new Error('Not enough to sell');
     }
+
+    
 
     //MAKE SURE YOU HAVE MONEY FOR SALE
     
@@ -106,14 +127,25 @@ async function sellFromStock(
     }
 
     //UPDATE STOCK
-    return await context.db.Stock.updateOne({
-        where: {
-            id: stockID
-        },
-        data: {
-            amount: stock.amount - amount
-        }
-    })
+    if (stock.amount === amount && amount !== 0) {
+        await context.db.Stock.deleteOne({
+            where: {
+                id: stockID
+            }
+        });
+    } else {
+        await context.db.Stock.updateOne({
+            where: {
+                id: stockID
+            },
+            data: {
+                amount: stock.amount - amount
+            }
+        })
+    }
+
+    return trade;
+    
 
 }
 

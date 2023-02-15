@@ -5,7 +5,7 @@ import { stock, tradeHistory, user } from "../../../tools/lib";
 import StockCard from "./DataStockDisplay";
 import TradeCard from "./DataTradeDisplay";
 
-const GET_TRADES = gql`
+export const GET_TRADES = gql`
     query Trades($userID: ID!, $limit: Int!, $offset: Int!) {
         trades(
             where: { owner: { id: { equals: $userID } } }
@@ -23,7 +23,7 @@ const GET_TRADES = gql`
     }
 `;
 
-const GET_STOCKS = gql`
+export const GET_STOCKS = gql`
     query Stocks($userID: ID!, $limit: Int!, $offset: Int!) {
         stocks(
             where: { owner: { id: { equals: $userID } } }
@@ -45,13 +45,16 @@ const DataContainer: React.FC<{
     selector: string | "day" | "monthly" | "weekly" | "intraday";
     user: user;
     dateToUse: { month: number; day: number; year: number };
-}> = ({ verifiedDates, user, dateToUse, selector }) => {
+    checkedStocks: Array<[string, number]>;
+    setCheckedStocks: React.Dispatch<
+        React.SetStateAction<Array<[string, number]>>>
+}> = ({ verifiedDates, user, dateToUse, selector, checkedStocks, setCheckedStocks }) => {
     if (!user) {
         return <span>Loading....</span>;
     }
     const [showStocks, setShowStocks] = useState(false);
     const [showTrades, setShowTrades] = useState(false);
-    const [checkedStocks, setCheckedStocks] = useState([]);
+    
 
     const [tradePage, setTradePage] = useState(1);
     const [tradeItemsPerPage, setTradeItemsPerPage] = useState(10);
@@ -78,10 +81,11 @@ const DataContainer: React.FC<{
     } = useQuery(GET_STOCKS, {
         variables: {
             userID: user.id,
-            limit: tradeItemsPerPage,
-            offset: (tradePage - 1) * tradeItemsPerPage,
+            limit: stockItemsPerPage,
+            offset: (stockPage - 1) * stockItemsPerPage,
         },
     });
+
 
     let trades = [] as tradeHistory[];
     let stocks = [] as stock[];
@@ -100,6 +104,8 @@ const DataContainer: React.FC<{
 
     const totalTrades = trades.length;
     const totalStocks = stocks.length;
+
+
 
     useEffect(() => {
         setCheckedStocks([]);
@@ -134,6 +140,11 @@ const DataContainer: React.FC<{
                                                     dateToUse={dateToUse}
                                                     selector={selector}
                                                     stock={stock}
+                                                    userID={user.id}
+                                                    stockPage={stockPage}
+                                                    stockItemsPerPage={stockItemsPerPage}
+                                                    tradePage={stockPage}
+                                                    tradeItemsPerPage={stockItemsPerPage}
                                                 />
                                             </li>
                                         ))}

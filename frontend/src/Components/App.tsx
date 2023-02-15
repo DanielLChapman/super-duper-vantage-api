@@ -25,6 +25,7 @@ const App: React.FC<AppInitialProps> = () => {
         year: dateObject.getFullYear(),
     });
     const [verifiedDates, setVerifiedDates ] = useState(true);
+    const [checkedStocks, setCheckedStocks] = useState([]);
 
     const [selector, setSelector] = useState('Day');
 
@@ -32,8 +33,8 @@ const App: React.FC<AppInitialProps> = () => {
         <div className="App">
             <Header user={user} />
             <main className="main-content">
-                <StockSearch verifiedDates={verifiedDates} setVerifiedDates={setVerifiedDates} selector={selector} setSelector={setSelector} setDateToUse={setDateToUse} dateToUse={dateToUse} user={user} />
-                <DataContainer verifiedDates={verifiedDates} selector={selector} user={user} dateToUse={dateToUse} />
+                <StockSearch checkedStocks={checkedStocks} setCheckedStocks={setCheckedStocks} verifiedDates={verifiedDates} setVerifiedDates={setVerifiedDates} selector={selector} setSelector={setSelector} setDateToUse={setDateToUse} dateToUse={dateToUse} user={user} />
+                <DataContainer checkedStocks={checkedStocks} setCheckedStocks={setCheckedStocks} verifiedDates={verifiedDates} selector={selector} user={user} dateToUse={dateToUse} />
             </main>
             <footer className="footer-content">footer</footer>
         </div>

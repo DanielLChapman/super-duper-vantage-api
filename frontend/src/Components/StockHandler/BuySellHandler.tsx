@@ -118,9 +118,11 @@ const BuySellHandler: React.FC<BuySellProps>  = ({user, amount, symbol, price, d
                 console.log('error', swapOption);
         }
     }
+
+    console.log(dateCheck)
     return (
         <div>
-            <h5 className="buy-sell-info-text">{symbol.replace(/^\w/, c => c.toUpperCase())} has a price of {price.toLocaleString('USD', { style: 'currency', currency: 'USD'})} for each share at this date (adjusted)</h5>
+            <h5 className="buy-sell-info-text">{symbol.replace(/^\w/, c => c.toUpperCase())} has a price of {price.toLocaleString('USD', { style: 'currency', currency: 'USD'})} for each share at this {dateCheck.split('-').join(' / ')} (adjusted)</h5>
             <button className="buy-button" onClick={() => {buyHandler('buy')}}>Buy {amount}</button>
             <button className="sell-button" onClick={() => {buyHandler('sell')}}>Sell {amount}</button>
             <h5 className='buy-sell-text'>of {symbol} for {roundToTwo(price * amount).toLocaleString('USD', { style: 'currency', currency: 'USD'})}</h5>

@@ -136,7 +136,7 @@ const DateController: React.FC<DateControllersProps> = ({
             RETURN FUNCTION HERE TO MOVE ONTO STOCK HIGHER FUNCTION CALL
             
             */
-           
+           updateAllDates(m, d, y);
            return;
         }
 

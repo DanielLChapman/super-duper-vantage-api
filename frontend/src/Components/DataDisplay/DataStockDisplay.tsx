@@ -5,6 +5,7 @@ import { stock } from "../../../tools/lib";
 import roundToTwo from "../../../tools/roundToTwo";
 import { verifyFetch } from "../../helpers/fetchHelper";
 import { CURRENT_USER_QUERY } from "../User";
+import { GET_STOCKS, GET_TRADES } from "./DataContainer";
 
 export const SELL_ALL_HANDLER = gql`
     mutation SELL_ALL_MUTATION(
@@ -59,11 +60,16 @@ interface Props {
     };
     apiKey: string;
     selector: string;
-    verifiedDates: "boolean";
+    verifiedDates: boolean;
     checkedStocks: Array<[string, number]>;
     setCheckedStocks: React.Dispatch<
         React.SetStateAction<Array<[string, number]>>
     >;
+    userID: string;
+    stockItemsPerPage: number;
+    stockPage: number;
+    tradeItemsPerPage: number;
+    tradePage: number;
 }
 
 const StockCard: React.FC<Props> = ({
@@ -73,7 +79,12 @@ const StockCard: React.FC<Props> = ({
     stock,
     apiKey,
     selector,
+    userID,
+    stockItemsPerPage,
+    stockPage,
     dateToUse,
+    tradeItemsPerPage,
+    tradePage,
 }) => {
     const [sellAmount, setSellAmount] = useState(0);
     const [verifyThePrice, setTheVerifiedPrice] = useState(-1);
@@ -107,7 +118,15 @@ const StockCard: React.FC<Props> = ({
                 stockID: stock.id,
                 dateOfTrade: Date.now() + "",
             },
-            refetchQueries: [{ query: CURRENT_USER_QUERY }],
+            refetchQueries: [{ query: CURRENT_USER_QUERY }, { query: GET_STOCKS, variables: {
+                userID: userID,
+                limit: stockItemsPerPage,
+                offset: (stockPage - 1) * stockItemsPerPage,
+            }, }, { query: GET_TRADES, variables: {
+                userID: userID,
+                limit: tradeItemsPerPage,
+                offset: (tradePage - 1) * tradeItemsPerPage,
+            } }],
         });
         if (res.data) {
             alert("Success");
@@ -116,9 +135,6 @@ const StockCard: React.FC<Props> = ({
 
     const handleSellSome = async () => {
         // Implement logic for selling some stock
-        if (sellAmount >= stock.amount) {
-            handleSellAll();
-        }
         if (verifyThePrice === -1) {
             return;
         }
@@ -131,7 +147,15 @@ const StockCard: React.FC<Props> = ({
                 amount: sellAmount,
                 dateOfTrade: Date.now() + "",
             },
-            refetchQueries: [{ query: CURRENT_USER_QUERY }],
+            refetchQueries: [{ query: CURRENT_USER_QUERY }, { query: GET_STOCKS, variables: {
+                userID: userID,
+                limit: stockItemsPerPage,
+                offset: (stockPage - 1) * stockItemsPerPage,
+            }, }, { query: GET_TRADES, variables: {
+                userID: userID,
+                limit: tradeItemsPerPage,
+                offset: (tradePage - 1) * tradeItemsPerPage,
+            } }],
         });
         if (res.data) {
             alert("Success");

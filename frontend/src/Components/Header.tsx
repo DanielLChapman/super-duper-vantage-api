@@ -1,5 +1,6 @@
 import Router from "next/router";
 import React, { useState } from "react";
+import formatAmounts from "../../tools/convertAmounts";
 import { user as userType } from "../../tools/lib";
 import SignOut from "./UserHandling/SignOut";
 
@@ -34,7 +35,7 @@ const Header: React.FC<UserOnlyProps> = ({ user }) => {
                     <span className="dropdown-toggle" onClick={toggleMenu}>
                         {user.username}
                         <br />
-                        <span className="user-money">${user.money}</span>
+                        <span className="user-money">{formatAmounts( user.money)}</span>
                     </span>
                     {isMenuOpen && (
                         <ul className="dropdown-menu">

@@ -60,6 +60,12 @@ export const lists: Lists = {
 
       trades: relationship({ ref: 'Trade.owner', many: true }),
       stocks: relationship({ ref: 'Stock.owner', many: true }),
+      shortTermTaxes: integer({
+        defaultValue: 35,
+      }),
+      longTermTaxes: integer({
+        defaultValue: 15,
+      }),
 
       createdAt: timestamp({
         // this sets the timestamp to Date.now() when the user is first created
@@ -180,9 +186,9 @@ export const extendGraphqlSchema = (schema: GraphQLSchema) =>
     typeDefs: `
     type Mutation {
       buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
-      sellStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
-      sellFromStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String, stockID: ID!): Trade
-      sellAllStock(stockPrice: Float!, stockSymbol: String!, dateOfTrade: String, stockID: ID!): Trade
+      sellStock(taxes: Boolean, stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
+      sellFromStock(taxes: Boolean, stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String, stockID: ID!): Trade
+      sellAllStock(taxes: Boolean, stockPrice: Float!, stockSymbol: String!, dateOfTrade: String, stockID: ID!): Trade
     }
     
     `,

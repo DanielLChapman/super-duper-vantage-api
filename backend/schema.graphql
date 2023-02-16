@@ -11,6 +11,8 @@ type User {
   tradesCount(where: TradeWhereInput! = {}): Int
   stocks(where: StockWhereInput! = {}, orderBy: [StockOrderByInput!]! = [], take: Int, skip: Int! = 0): [Stock!]
   stocksCount(where: StockWhereInput! = {}): Int
+  shortTermTaxes: Int
+  longTermTaxes: Int
   createdAt: DateTime
 }
 
@@ -35,6 +37,8 @@ input UserWhereInput {
   money: IntFilter
   trades: TradeManyRelationFilter
   stocks: StockManyRelationFilter
+  shortTermTaxes: IntNullableFilter
+  longTermTaxes: IntNullableFilter
   createdAt: DateTimeNullableFilter
 }
 
@@ -100,6 +104,17 @@ input StockManyRelationFilter {
   none: StockWhereInput
 }
 
+input IntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: IntNullableFilter
+}
+
 input DateTimeNullableFilter {
   equals: DateTime
   in: [DateTime!]
@@ -116,6 +131,8 @@ input UserOrderByInput {
   username: OrderDirection
   apiKey: OrderDirection
   money: OrderDirection
+  shortTermTaxes: OrderDirection
+  longTermTaxes: OrderDirection
   createdAt: OrderDirection
 }
 
@@ -131,6 +148,8 @@ input UserUpdateInput {
   money: Int
   trades: TradeRelateToManyForUpdateInput
   stocks: StockRelateToManyForUpdateInput
+  shortTermTaxes: Int
+  longTermTaxes: Int
   createdAt: DateTime
 }
 
@@ -160,6 +179,8 @@ input UserCreateInput {
   money: Int
   trades: TradeRelateToManyForCreateInput
   stocks: StockRelateToManyForCreateInput
+  shortTermTaxes: Int
+  longTermTaxes: Int
   createdAt: DateTime
 }
 
@@ -335,9 +356,9 @@ type Mutation {
   authenticateUserWithPassword(username: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
   buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
-  sellStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
-  sellFromStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String, stockID: ID!): Trade
-  sellAllStock(stockPrice: Float!, stockSymbol: String!, dateOfTrade: String, stockID: ID!): Trade
+  sellStock(taxes: Boolean, stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
+  sellFromStock(taxes: Boolean, stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String, stockID: ID!): Trade
+  sellAllStock(taxes: Boolean, stockPrice: Float!, stockSymbol: String!, dateOfTrade: String, stockID: ID!): Trade
 }
 
 union UserAuthenticationWithPasswordResult = UserAuthenticationWithPasswordSuccess | UserAuthenticationWithPasswordFailure

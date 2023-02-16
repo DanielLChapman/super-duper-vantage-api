@@ -8,7 +8,7 @@ type ID = string;
 
 async function sellAllStock(
     root: any,
-    {stockPrice, stockSymbol, dateOfTrade, stockID}: {stockPrice: number, stockSymbol: string, dateOfTrade: string, stockID: ID},
+    {stockPrice, taxes, stockSymbol, dateOfTrade, stockID}: {taxes:boolean, stockPrice: number, stockSymbol: string, dateOfTrade: string, stockID: ID},
     context: Context
 ) {
 

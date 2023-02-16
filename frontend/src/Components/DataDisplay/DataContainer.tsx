@@ -186,7 +186,7 @@ const DataContainer: React.FC<{
                                 {stocks.length > 0 ? (
                                     <ul>
                                         {stocks.map((stock, index) => (
-                                            <li key={index}>
+                                            <li key={index + stock.id}>
                                                 <StockCard
                                                     checkedStocks={
                                                         checkedStocks

@@ -27,11 +27,14 @@ const App: React.FC<AppInitialProps> = () => {
     const [verifiedDates, setVerifiedDates ] = useState(true);
     const [checkedStocks, setCheckedStocks] = useState([]);
 
+    //(b-a)/(31556952000)
+    const [taxes, setTaxes] = useState(false);
+
     const [selector, setSelector] = useState('Day');
 
     return (
         <div className="App">
-            <Header user={user} />
+            <Header user={user} taxes={taxes} setTaxes={setTaxes} />
             <main className="main-content">
                 <StockSearch checkedStocks={checkedStocks} setCheckedStocks={setCheckedStocks} verifiedDates={verifiedDates} setVerifiedDates={setVerifiedDates} selector={selector} setSelector={setSelector} setDateToUse={setDateToUse} dateToUse={dateToUse} user={user} />
                 <DataContainer checkedStocks={checkedStocks} setCheckedStocks={setCheckedStocks} verifiedDates={verifiedDates} selector={selector} user={user} dateToUse={dateToUse} />

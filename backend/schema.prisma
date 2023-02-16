@@ -13,14 +13,16 @@ generator client {
 }
 
 model User {
-  id        String    @id @default(cuid())
-  username  String    @unique @default("")
-  password  String
-  apiKey    String    @default("")
-  money     Int       @default(10000000)
-  trades    Trade[]   @relation("Trade_owner")
-  stocks    Stock[]   @relation("Stock_owner")
-  createdAt DateTime? @default(now())
+  id             String    @id @default(cuid())
+  username       String    @unique @default("")
+  password       String
+  apiKey         String    @default("")
+  money          Int       @default(10000000)
+  trades         Trade[]   @relation("Trade_owner")
+  stocks         Stock[]   @relation("Stock_owner")
+  shortTermTaxes Int?      @default(35)
+  longTermTaxes  Int?      @default(15)
+  createdAt      DateTime? @default(now())
 }
 
 model Trade {

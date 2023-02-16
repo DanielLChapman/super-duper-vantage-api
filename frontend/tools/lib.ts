@@ -141,5 +141,7 @@ export type user = {
     money: number,
     trades?: [tradeHistory] | [],
     stocks?: [stock] | [],
+    shortTermTaxes: number,
+    longTermTaxes: number,
     createdAt?: Date
 }

@@ -6,9 +6,12 @@ import SignOut from "./UserHandling/SignOut";
 
 export type UserOnlyProps = {
     user: userType | null;
+    taxes: boolean;
+    setTaxes:  React.Dispatch<
+    React.SetStateAction<boolean>>
 };
 
-const Header: React.FC<UserOnlyProps> = ({ user }) => {
+const Header: React.FC<UserOnlyProps> = ({ user, taxes, setTaxes }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleMenu = () => {
@@ -39,6 +42,10 @@ const Header: React.FC<UserOnlyProps> = ({ user }) => {
                     </span>
                     {isMenuOpen && (
                         <ul className="dropdown-menu">
+                            <li>
+                                {/* Maybe a hover window to initially set it up */}
+                                <button onClick={() => {setTaxes(!taxes)}}>{taxes ? 'Disable Taxes' : 'Enable Taxes'}</button>
+                            </li>
                             <li onClick={handleAccountClick}>Account</li>
                             {user.id === "-1" && (
                                 <li onClick={handleSignInClick}>Sign In</li>

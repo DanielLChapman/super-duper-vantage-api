@@ -121,10 +121,13 @@ async function sellStock(root, {
   stockPrice,
   stockSymbol,
   amount,
+  taxes,
   dateOfTrade
 }, context) {
   if (amount <= 0 || amount % 1 !== 0) {
-    throw new Error("Error in amount, must be greater than 0 and not a decimal");
+    throw new Error(
+      "Error in amount, must be greater than 0 and not a decimal"
+    );
   }
   const sesh = context.session;
   const userId = context.session.itemId;
@@ -137,7 +140,9 @@ async function sellStock(root, {
     }
   });
   if (!user) {
-    throw new Error("Please let an admin know, Error finding user on buyStock");
+    throw new Error(
+      "Please let an admin know, Error finding user on buyStock"
+    );
   }
   if (stockPrice.toString().indexOf(".") !== -1) {
     stockPrice = +(Math.round(stockPrice * 100) / 100 * 100).toFixed(0);
@@ -181,7 +186,14 @@ var sellStock_default = sellStock;
 
 // mutations/sellFromStock.ts
 var graphql3 = String.raw;
-async function sellFromStock(root, { stockPrice, stockSymbol, dateOfTrade, stockID, amount }, context) {
+async function sellFromStock(root, {
+  stockPrice,
+  taxes,
+  stockSymbol,
+  dateOfTrade,
+  stockID,
+  amount
+}, context) {
   let stock;
   if (amount <= 0 || amount % 1 !== 0) {
     stock = await context.db.Stock.findOne({
@@ -196,7 +208,9 @@ async function sellFromStock(root, { stockPrice, stockSymbol, dateOfTrade, stock
         }
       });
     } else {
-      throw new Error("Error in amount, must be greater than 0 and not a decimal, or error finding Stock");
+      throw new Error(
+        "Error in amount, must be greater than 0 and not a decimal, or error finding Stock"
+      );
     }
   }
   const sesh = context.session;
@@ -210,7 +224,9 @@ async function sellFromStock(root, { stockPrice, stockSymbol, dateOfTrade, stock
     }
   });
   if (!user) {
-    throw new Error("Please let an admin know, Error finding user on buyStock");
+    throw new Error(
+      "Please let an admin know, Error finding user on buyStock"
+    );
   }
   if (amount > 0) {
     stock = await context.db.Stock.findOne({
@@ -266,7 +282,9 @@ async function sellFromStock(root, { stockPrice, stockSymbol, dateOfTrade, stock
     }
   });
   if (!trade || trade.errors) {
-    throw new Error("Something happened here with creating a trade, let an admin know");
+    throw new Error(
+      "Something happened here with creating a trade, let an admin know"
+    );
   }
   if (stock.amount === amount && amount !== 0) {
     await context.db.Stock.deleteOne({
@@ -290,7 +308,7 @@ var sellFromStock_default = sellFromStock;
 
 // mutations/sellAllStock.ts
 var graphql4 = String.raw;
-async function sellAllStock(root, { stockPrice, stockSymbol, dateOfTrade, stockID }, context) {
+async function sellAllStock(root, { stockPrice, taxes, stockSymbol, dateOfTrade, stockID }, context) {
   const sesh = context.session;
   const userId = context.session.itemId;
   if (!sesh.itemId) {
@@ -376,6 +394,12 @@ var lists = {
       }),
       trades: (0, import_fields.relationship)({ ref: "Trade.owner", many: true }),
       stocks: (0, import_fields.relationship)({ ref: "Stock.owner", many: true }),
+      shortTermTaxes: (0, import_fields.integer)({
+        defaultValue: 35
+      }),
+      longTermTaxes: (0, import_fields.integer)({
+        defaultValue: 15
+      }),
       createdAt: (0, import_fields.timestamp)({
         defaultValue: { kind: "now" }
       })
@@ -445,9 +469,9 @@ var extendGraphqlSchema = (schema) => (0, import_schema.mergeSchemas)({
   typeDefs: `
     type Mutation {
       buyStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
-      sellStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
-      sellFromStock(stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String, stockID: ID!): Trade
-      sellAllStock(stockPrice: Float!, stockSymbol: String!, dateOfTrade: String, stockID: ID!): Trade
+      sellStock(taxes: Boolean, stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String): Trade
+      sellFromStock(taxes: Boolean, stockPrice: Float!, stockSymbol: String!, amount: Float!, dateOfTrade: String, stockID: ID!): Trade
+      sellAllStock(taxes: Boolean, stockPrice: Float!, stockSymbol: String!, dateOfTrade: String, stockID: ID!): Trade
     }
     
     `,

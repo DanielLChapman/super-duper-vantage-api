@@ -12,12 +12,14 @@ export const SELL_ALL_HANDLER = gql`
         $stockPrice: Float!
         $stockSymbol: String!
         $stockID: ID!
+        $taxes: Boolean
         $dateOfTrade: String!
     ) {
         sellAllStock(
             stockPrice: $stockPrice
             stockSymbol: $stockSymbol
             stockID: $stockID
+            taxes: $taxes
             dateOfTrade: $dateOfTrade
         ) {
             id
@@ -34,6 +36,7 @@ export const SELL_SOME_HANDLER = gql`
         $stockSymbol: String!
         $amount: Float!
         $stockID: ID!
+        $taxes: Boolean
         $dateOfTrade: String!
     ) {
         sellFromStock(
@@ -42,6 +45,7 @@ export const SELL_SOME_HANDLER = gql`
             amount: $amount
             stockID: $stockID
             dateOfTrade: $dateOfTrade
+            taxes: $taxes
         ) {
             id
             symbol
@@ -173,7 +177,6 @@ const StockCard: React.FC<Props> = ({
             {expand && (
                 <>
                     <div className="stock-card-details">
-                        {stock.id}
                         <p className="stock-card-amount">
                             Amount: {stock.amount}
                         </p>

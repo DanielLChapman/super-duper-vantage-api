@@ -7,8 +7,7 @@ import SignOut from "./UserHandling/SignOut";
 export type UserOnlyProps = {
     user: userType | null;
     taxes: boolean;
-    setTaxes:  React.Dispatch<
-    React.SetStateAction<boolean>>
+    setTaxes: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const Header: React.FC<UserOnlyProps> = ({ user, taxes, setTaxes }) => {
@@ -28,37 +27,53 @@ const Header: React.FC<UserOnlyProps> = ({ user, taxes, setTaxes }) => {
 
     return (
         <>
-            <header className="header-content">
-                <span>LOGO</span>
-                <section
-                    className="header-dropdown dropdown"
-                    onMouseEnter={toggleMenu}
-                    onMouseLeave={toggleMenu}
-                >
-                    <span className="dropdown-toggle" onClick={toggleMenu}>
-                        {user.username}
-                        <br />
-                        <span className="user-money">{formatAmounts( user.money)}</span>
-                    </span>
-                    {isMenuOpen && (
-                        <ul className="dropdown-menu">
-                            <li>
-                                {/* Maybe a hover window to initially set it up */}
-                                <button onClick={() => {setTaxes(!taxes)}}>{taxes ? 'Disable Taxes' : 'Enable Taxes'}</button>
-                            </li>
-                            <li onClick={handleAccountClick}>Account</li>
-                            {user.id === "-1" && (
-                                <li onClick={handleSignInClick}>Sign In</li>
-                            )}
-                            {user.id !== "-1" && (
+            <nav className="container relative mx-auto p-6">
+                <div className="flex justify-between space-x-20 my-6">
+                    <div className="z-30">
+                        <img
+                            src="./fauxfolio-logo.svg"
+                            alt=""
+                            className="logo"
+                        />
+                    </div>
+
+                    <div
+                        className="header-dropdown dropdown relative mt-1 z-20"
+                        onMouseEnter={toggleMenu}
+                        onMouseLeave={toggleMenu}
+                    >
+                        <div className="dropdown-toggle text-right border" onClick={toggleMenu}>
+                            <h3 className="text-2xl">{user.username}</h3>
+                            <p className="user-money">{formatAmounts(user.money)}</p>
+                        </div>
+                        {isMenuOpen && (
+                            <ul className="dropdown-menu absolute text-right text-lg w-[300px] right-0  border">
                                 <li>
-                                    <SignOut />
+                                    {/* Maybe a hover window to initially set it up */}
+                                    <button
+                                        onClick={() => {
+                                            setTaxes(!taxes);
+                                        }}
+                                    >
+                                        {taxes
+                                            ? "Disable Taxes"
+                                            : "Enable Taxes"}
+                                    </button>
                                 </li>
-                            )}
-                        </ul>
-                    )}
-                </section>
-            </header>
+                                <li onClick={handleAccountClick}>Account</li>
+                                {user.id === "-1" && (
+                                    <li onClick={handleSignInClick}>Sign In</li>
+                                )}
+                                {user.id !== "-1" && (
+                                    <li>
+                                        <SignOut />
+                                    </li>
+                                )}
+                            </ul>
+                        )}
+                    </div>
+                </div>
+            </nav>
         </>
     );
 };

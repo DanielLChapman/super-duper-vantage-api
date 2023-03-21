@@ -10,6 +10,7 @@ import {
 } from "@apollo/client";
 import withData from '../library/apollo'
 import { endpoint, prodEndpoint } from "../config";
+import '../src/index.css'
 
 function MyApp({ Component, pageProps, apollo }) {
     return (

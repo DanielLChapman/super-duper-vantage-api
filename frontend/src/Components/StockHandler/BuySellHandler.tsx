@@ -45,6 +45,7 @@ export const SELL_STOCK_HANDLER = gql`
         $stockPrice: Float!
         $stockSymbol: String!
         $amount: Float!
+        $taxes: Boolean
         $dateOfTrade: String
     ) {
         sellStock(
@@ -52,6 +53,7 @@ export const SELL_STOCK_HANDLER = gql`
                 stockSymbol: $stockSymbol
                 amount: $amount
                 dateOfTrade: $dateOfTrade
+                taxes: $taxes
             
         ) {
             id

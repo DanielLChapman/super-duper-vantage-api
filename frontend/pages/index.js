@@ -2,6 +2,7 @@ import React from "react";
 import Head from "next/head";
 import App from "../src/Components/App"
 
+
 function index(props) {
 
     return (

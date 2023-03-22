@@ -28,27 +28,38 @@ const Header: React.FC<UserOnlyProps> = ({ user, taxes, setTaxes }) => {
     return (
         <>
             <nav className="container relative mx-auto p-6">
-                <div className="flex justify-between space-x-20 my-6">
-                    <div className="z-30">
+                 {/*"flex flex-row justify-center space-x-20 my-6 md:justify-between"*/}
+                <div className="flex flex-col flex-wrap sm:flex-row items-center justify-between mx-auto">
+                    <a href="localhost:7777" className="z-30 flex items-center">
                         <img
                             src="./fauxfolio-logo.svg"
                             alt=""
                             className="logo"
                         />
-                    </div>
+                    </a>
 
                     <div
-                        className="header-dropdown dropdown relative mt-1 z-20"
+                        className="header-dropdown dropdown relative z-20 pt-2 sm:pt-4"
                         onMouseEnter={toggleMenu}
                         onMouseLeave={toggleMenu}
                     >
-                        <div className="dropdown-toggle text-right border" onClick={toggleMenu}>
-                            <h3 className="text-2xl">{user.username}</h3>
-                            <p className="user-money">{formatAmounts(user.money)}</p>
+                        <div
+                            className="dropdown-toggle text-center sm:text-right  tracking-wide"
+                            onClick={toggleMenu}
+                        >
+                            <h3 className="text-2xl">
+                                {" "}
+                                <a href="#" className="text-jet hover:text-persianRed font-bold">
+                                    {user.username}
+                                </a>{" "}
+                            </h3>
+                            <p className="user-money text-persianGreen font-semibold">
+                                {formatAmounts(user.money)}
+                            </p>
                         </div>
                         {isMenuOpen && (
-                            <ul className="dropdown-menu absolute text-right text-lg w-[300px] right-0  border">
-                                <li>
+                            <ul className="bg-snow dropdown-menu pt-1 sm:pt-1 z-30 sm:absolute text-center sm:text-right text-lg sm:w-[300px] text-jet font-semibold  sm:right-0 ">
+                                <li className="text-jet hover:text-persianRed cursor-pointer">
                                     {/* Maybe a hover window to initially set it up */}
                                     <button
                                         onClick={() => {
@@ -60,9 +71,9 @@ const Header: React.FC<UserOnlyProps> = ({ user, taxes, setTaxes }) => {
                                             : "Enable Taxes"}
                                     </button>
                                 </li>
-                                <li onClick={handleAccountClick}>Account</li>
+                                <li  className="cursor-pointer hover:text-persianRed" onClick={handleAccountClick}>Account</li>
                                 {user.id === "-1" && (
-                                    <li onClick={handleSignInClick}>Sign In</li>
+                                    <li  className="cursor-pointer hover:text-persianRed" onClick={handleSignInClick}>Sign In</li>
                                 )}
                                 {user.id !== "-1" && (
                                     <li>

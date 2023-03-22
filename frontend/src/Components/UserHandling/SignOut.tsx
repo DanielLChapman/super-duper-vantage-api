@@ -16,6 +16,7 @@ function SignOut() {
   return (
     <button
       type="button"
+      className="hover:text-persianRed"
       disabled={loading}
       onClick={() => {
         signout();

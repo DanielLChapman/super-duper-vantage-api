@@ -258,11 +258,11 @@ const DateController: React.FC<DateControllersProps> = ({
     };
 
     return (
-        <section className="date-selector">
-            <h2>Check Date To Use: </h2>
-            <form onSubmit={formHandler}>
-                <div className="form-control">
-                    <label htmlFor="month">Month</label>
+        <div className="date-selector w-2/3 pb-4 max-auto flex flex-col space-y-4">
+            <h2 className="text-1xl text-jet font-semibold text-center lg:text-2xl lg:text-left">Check Date To Use: </h2>
+            <form onSubmit={formHandler} className="flex flex-row align-middle justify-between">
+                <div className="form-control flex">
+                    <label htmlFor="month" className="text-lg p-2">Month: </label>
                     <input
                         name="month"
                         type="number"
@@ -272,10 +272,11 @@ const DateController: React.FC<DateControllersProps> = ({
                         value={month}
                         onChange={(e) => handleChange(e, "month")}
                         data-testid="date-controller-form-month"
+                        className="flex-grow block p-2 pl-7 w-full text-md text-gray-900 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 "
                     />
                 </div>
-                <div className="form-control">
-                    <label htmlFor="month">Day</label>
+                <div className="form-control  flex">
+                    <label htmlFor="month" className="text-lg p-2">Day: </label>
                     <input
                         name="day"
                         type="number"
@@ -285,10 +286,12 @@ const DateController: React.FC<DateControllersProps> = ({
                         value={day}
                         onChange={(e) => handleChange(e, "day")}
                         data-testid="date-controller-form-day"
+                        className="flex-grow block p-2 pl-7 w-full text-md text-gray-900 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 "
+
                     />
                 </div>
-                <div className="form-control">
-                    <label htmlFor="month">Year</label>
+                <div className="form-control flex">
+                    <label htmlFor="month" className="text-lg p-2">Year: </label>
                     <input
                         name="day"
                         type="number"
@@ -298,16 +301,21 @@ const DateController: React.FC<DateControllersProps> = ({
                         value={year}
                         onChange={(e) => handleChange(e, "year")}
                         data-testid="date-controller-form-year"
+                        className="flex-grow block p-2 pl-7 w-full text-md text-gray-900 rounded-lg border border-lavenderWebBlueish focus:ring-blue-500 focus:border-blue-500 "
+
                     />
                 </div>
-                <button data-testid="date-controller-form-submit" type="submit">Set Sell Date</button>
+                <button data-testid="date-controller-form-submit" type="submit"
+                className="text-white  bg-delftBlue hover:bg-electricBlue hover:text-jet border-delftBlue focus:border-delftBlue
+                focus:ring-4 transition duration-150 focus:outline-none focus:scale-105 font-medium rounded-lg text-sm px-4 py-2 "
+                >Set Sell Date</button>
             </form>
             <DateOffers
                 dateOffering={dateOptions}
                 updateSelectedDate={updateDateByOffering}
                 setURLSelector={setURLSelector}
             />
-        </section>
+        </div>
     );
 };
 

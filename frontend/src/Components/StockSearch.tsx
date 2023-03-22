@@ -19,7 +19,8 @@ type StockSearchProps = {
     setVerifiedDates: React.Dispatch<React.SetStateAction<boolean>>;
     checkedStocks: Array<[string, number]>;
     setCheckedStocks: React.Dispatch<
-        React.SetStateAction<Array<[string, number]>>>
+        React.SetStateAction<Array<[string, number]>>
+    >;
 };
 
 const views = {
@@ -49,7 +50,6 @@ const StockSearch: React.FC<StockSearchProps> = ({
 
     const [buySellAppear, setBuySellAppear] = useState(false);
     const [viewStateManager, setViewStateManager] = useState(views["dates"]);
-    
 
     const handleStateManager = (trigger: "advance" | "back") => {
         if (trigger === "advance") {
@@ -145,7 +145,10 @@ const StockSearch: React.FC<StockSearchProps> = ({
                 return closingPrice;
             }
 
-            setCheckedStocks([...checkedStocks, [stockData.symbol, closingPrice]]);
+            setCheckedStocks([
+                ...checkedStocks,
+                [stockData.symbol, closingPrice],
+            ]);
         }
 
         setStockData({
@@ -153,7 +156,6 @@ const StockSearch: React.FC<StockSearchProps> = ({
             price: closingPrice,
         });
 
-        
         setVerifiedDates(true);
         handleStateManager("advance");
 
@@ -166,41 +168,59 @@ const StockSearch: React.FC<StockSearchProps> = ({
     const buySellHandler = () => {};
 
     return (
-        <div className="stock-search-container">
-            <section className="stock-search-view-container">
-                {viewStateManager === views["dates"] && (
-                    <DateController
-                        dateBuild={dateToUse}
-                        updateHandler={handleDateChange}
-                        updateAllDates={updateAllDates}
-                        setURLSelector={setSelector}
-                    />
-                )}
-                {viewStateManager === views["stockSymbol"] && (
-                    <>
-                        <button className="go-back" onClick={() => {handleStateManager('back')}}>Go Back</button>
-                        <StockSymbolForm
-                            stockSymbol={stockData.symbol}
-                            amount={stockData.amount}
-                            handleStockChange={handleStockChange}
-                            verify={verify}
+        <div className="stock-search-container container flex flex-col ">
+            <section className="stock-search-view-container border-2 border-electricBlue rounded-lg container  mx-auto p-2 py-6 md:px-0 flex flex-col">
+                <div className="flex justify-center items-center ">
+                    {viewStateManager === views["dates"] && (
+                        <DateController
+                            dateBuild={dateToUse}
+                            updateHandler={handleDateChange}
+                            updateAllDates={updateAllDates}
+                            setURLSelector={setSelector}
                         />
-                    </>
-                )}
-                {viewStateManager === views["buySell"] && (
-                    <>
-                        <button className="go-back" onClick={() => {handleStateManager('back')}}>Go Back</button>
-                        <BuySellHandler
-                            date={`${dateToUse.month}-${dateToUse.day}-${dateToUse.year}`}
-                            user={user}
-                            buySellHandler={buySellHandler}
-                            symbol={stockData.symbol}
-                            amount={stockData.amount}
-                            price={stockData.price}
-                        />
-                    </>
-                )}
-                <button className="reset-button" onClick={resetDate}>Reset</button>
+                    )}
+                    {viewStateManager === views["stockSymbol"] && (
+                        <>
+                            <button
+                                className="go-back"
+                                onClick={() => {
+                                    handleStateManager("back");
+                                }}
+                            >
+                                Go Back
+                            </button>
+                            <StockSymbolForm
+                                stockSymbol={stockData.symbol}
+                                amount={stockData.amount}
+                                handleStockChange={handleStockChange}
+                                verify={verify}
+                            />
+                        </>
+                    )}
+                    {viewStateManager === views["buySell"] && (
+                        <>
+                            <button
+                                className="go-back"
+                                onClick={() => {
+                                    handleStateManager("back");
+                                }}
+                            >
+                                Go Back
+                            </button>
+                            <BuySellHandler
+                                date={`${dateToUse.month}-${dateToUse.day}-${dateToUse.year}`}
+                                user={user}
+                                buySellHandler={buySellHandler}
+                                symbol={stockData.symbol}
+                                amount={stockData.amount}
+                                price={stockData.price}
+                            />
+                        </>
+                    )}
+                </div>
+                <button className="reset-button" onClick={resetDate}>
+                    Reset
+                </button>
             </section>
         </div>
     );

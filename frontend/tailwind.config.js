@@ -13,7 +13,22 @@ module.exports = {
      // add more paths here
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        lavenderWebBlueish: 'rgb(231,230,247)',
+        delftBlue: 'rgb(49, 59, 114)',
+        palePurple: 'rgb(227, 208, 216)',
+        roseQuartz: 'rgb(174, 163, 176)',
+        lavenderWeb: 'rgb(198, 210, 237)',
+        olive: '#A5B0A3',
+        jet: '#484349',
+        snow: '#F7F0F0',
+        electricBlue: '#8AF3FF',
+        persianRed: '#CC2936',
+        persianGreen: '#18A999',
+        darkOrange: '#F58F29'
+      }
+    },
   },
   plugins: [],
 }

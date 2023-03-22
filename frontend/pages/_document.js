@@ -32,7 +32,7 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en-CA">
         <Head />
-        <body>
+        <body className='bg-snow'>
           <Main />
           <NextScript />
         </body>

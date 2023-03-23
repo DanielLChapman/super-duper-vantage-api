@@ -20,15 +20,16 @@ const DateOffers: React.FC<DateOffersProps> = ({
 
     return (
         <div className="date-offers">
-            <h3>
+            <h3 className="text-red-700 font-bold text-lg">
                 Sorry, after 90 days the dates are more strict in requirements,
-                please select one to use
+                please select one to use:
             </h3>
-            <h6>Weekly Options (Month-Date-Year)</h6>
-            <ul>
+            <h6 className="mt-1 font-semibold text-jet">Weekly Options (Month-Date-Year)</h6>
+            <ul className="text-jet">
                 {dateOffering.weekly?.map((x, i) => {
                     return (
                         <li
+                            className="cursor-pointer hover:text-darkOrange hover:scale-105 hover:ml-3 font-medium"
                             onClick={() => {
                                 updateSelectedDate(
                                     +x.getMonth() + 1,
@@ -45,11 +46,12 @@ const DateOffers: React.FC<DateOffersProps> = ({
                     );
                 })}
             </ul>
-            <h6>Monthly Options (Month-Date-Year)</h6>
+            <h6 className="mt-1 font-semibold text-jet">Monthly Options (Month-Date-Year)</h6>
             <ul>
                 {dateOffering.monthly?.map((x, i) => {
                     return (
                         <li
+                        className="cursor-pointer hover:text-darkOrange hover:scale-105 hover:ml-3 font-medium"
                             onClick={() => {
                                 updateSelectedDate(
                                     +x.getMonth() + 1,

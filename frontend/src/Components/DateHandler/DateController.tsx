@@ -146,7 +146,7 @@ const DateController: React.FC<DateControllersProps> = ({
                 `Can't select a future date, we are adjusting this request to todays values`
             );
             tempDateOfWeek = dateObject2;
-            console.log(tempDateOfWeek);
+
             day = tempDateOfWeek.getDate();
             month = tempDateOfWeek.getMonth() + 1;
             year = tempDateOfWeek.getFullYear();
@@ -189,6 +189,13 @@ const DateController: React.FC<DateControllersProps> = ({
             if (dayTemp === curMonth.numDays) {
                 setURLSelector('Month');
                 //End of Month, use monthly
+                updateDateByOffering(
+                    +month,
+                    +day,
+                    +year
+                );
+                setURLSelector("Weekly");
+                return
                 /* 
 
                 CALL THE OKAY DATE FUNCTION
@@ -206,6 +213,13 @@ const DateController: React.FC<DateControllersProps> = ({
                 CALL THE OKAY DATE FUNCTION
                 RETURN
                 */
+                updateDateByOffering(
+                    +month,
+                    +day,
+                    +year
+                );
+                setURLSelector("Weekly");
+                return;
             }
 
             //Check if its a friday or end of the month already, otherwise do this
@@ -260,9 +274,9 @@ const DateController: React.FC<DateControllersProps> = ({
     return (
         <div className="date-selector w-2/3 pb-4 max-auto flex flex-col space-y-4">
             <h2 className="text-1xl text-jet font-semibold text-center lg:text-2xl lg:text-left">Check Date To Use: </h2>
-            <form onSubmit={formHandler} className="flex flex-row align-middle justify-between">
+            <form onSubmit={formHandler} className="flex flex-col space-y-4 lg:space-y-0 lg:flex-row align-middle justify-between">
                 <div className="form-control flex">
-                    <label htmlFor="month" className="text-lg p-2">Month: </label>
+                    <label htmlFor="month" className="font-semibold text-lg p-2 w-[150px] lg:w-auto">Month: </label>
                     <input
                         name="month"
                         type="number"
@@ -276,7 +290,7 @@ const DateController: React.FC<DateControllersProps> = ({
                     />
                 </div>
                 <div className="form-control  flex">
-                    <label htmlFor="month" className="text-lg p-2">Day: </label>
+                    <label htmlFor="month" className="font-semibold text-lg p-2 w-[150px] lg:w-auto">Day: </label>
                     <input
                         name="day"
                         type="number"
@@ -291,7 +305,7 @@ const DateController: React.FC<DateControllersProps> = ({
                     />
                 </div>
                 <div className="form-control flex">
-                    <label htmlFor="month" className="text-lg p-2">Year: </label>
+                    <label htmlFor="month" className="font-semibold text-lg p-2 w-[150px] lg:w-auto">Year: </label>
                     <input
                         name="day"
                         type="number"

@@ -100,7 +100,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
         setVerifiedDates(true);
         setCheckedStocks([]);
         setViewStateManager(views["dates"]);
-        setNuKey(Math.random() * 1000)
+        setNuKey(Math.random() * 1000);
 
         //hide symbol window
         //hide sell windows
@@ -172,6 +172,16 @@ const StockSearch: React.FC<StockSearchProps> = ({
     return (
         <div className="stock-search-container container flex flex-col ">
             <section className="stock-search-view-container border-4 border-electricBlue rounded-lg container max-w-[1500px] mx-auto p-2 py-6 md:px-0 flex flex-col">
+                {viewStateManager !== views["dates"] && (
+                    <button
+                        className="go-back text-persianGreen cursor-pointer hover:text-persianRed hover:scale-105 hover:ml-3"
+                        onClick={() => {
+                            handleStateManager("back");
+                        }}
+                    >
+                        Go Back To Previous Form
+                    </button>
+                )}
                 <div className="flex justify-center items-center " key={nuKey}>
                     {viewStateManager === views["dates"] && (
                         <DateController
@@ -183,14 +193,6 @@ const StockSearch: React.FC<StockSearchProps> = ({
                     )}
                     {viewStateManager === views["stockSymbol"] && (
                         <>
-                            <button
-                                className="go-back"
-                                onClick={() => {
-                                    handleStateManager("back");
-                                }}
-                            >
-                                Go Back
-                            </button>
                             <StockSymbolForm
                                 stockSymbol={stockData.symbol}
                                 amount={stockData.amount}
@@ -201,14 +203,6 @@ const StockSearch: React.FC<StockSearchProps> = ({
                     )}
                     {viewStateManager === views["buySell"] && (
                         <>
-                            <button
-                                className="go-back"
-                                onClick={() => {
-                                    handleStateManager("back");
-                                }}
-                            >
-                                Go Back
-                            </button>
                             <BuySellHandler
                                 date={`${dateToUse.month}-${dateToUse.day}-${dateToUse.year}`}
                                 user={user}
@@ -220,7 +214,9 @@ const StockSearch: React.FC<StockSearchProps> = ({
                         </>
                     )}
                 </div>
-                <button onClick={resetDate} className="reset-button mt-1  lg:mt-4 w-2/3 max-w-lg relative mx-auto text-white  bg-delftBlue hover:bg-electricBlue hover:text-jet border-delftBlue focus:border-delftBlue
+                <button
+                    onClick={resetDate}
+                    className="reset-button mt-1  lg:mt-4 w-2/3 max-w-lg relative mx-auto text-white  bg-delftBlue hover:bg-electricBlue hover:text-jet border-delftBlue focus:border-delftBlue
                 focus:ring-4 transition duration-150 focus:outline-none focus:scale-105 font-medium rounded-lg text-sm px-4 py-2 "
                 >
                     Reset

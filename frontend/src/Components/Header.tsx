@@ -58,7 +58,7 @@ const Header: React.FC<UserOnlyProps> = ({ user, taxes, setTaxes }) => {
                             </p>
                         </div>
                         {isMenuOpen && (
-                            <ul className="bg-snow dropdown-menu pt-1 sm:pt-1 z-30 sm:absolute text-center sm:text-right text-lg sm:w-[300px] text-jet font-semibold  sm:right-0 ">
+                            <ul className="bg-snow dropdown-menu pt-1 sm:pt-1 z-30 sm:absolute text-center sm:text-right text-lg sm:w-[200px] text-jet font-semibold  sm:right-0 bg-opacity-60 group hover:bg-opacity-100">
                                 <li className="text-jet hover:text-persianRed cursor-pointer">
                                     {/* Maybe a hover window to initially set it up */}
                                     <button

@@ -206,9 +206,9 @@ const DataContainer: React.FC<{
         <div className="data-container container flex flex-col font-open">
             <div className="stock-search-view-container border-4 border-t-0 border-electricBlue rounded-lg container max-w-[1500px] mx-auto p-6 flex flex-col">
                 <h2 className="font-bold text-2xl text-jet">Stocks // Trade History</h2>
-                <section id="data-container" className="data-container">
+                <section id="data-container" className="data-container font-bold">
                     <ul>
-                        <li>
+                        <li className="mb-5">
                             <h6 onClick={() => setShowStocks(!showStocks)} className={`text-xl font-semibold text-jet 
                             transition-colors duration-150 hover:text-persianRed cursor-pointer hover:text-2xl 
                             ${!stockError && !stockLoading && showStocks ? 'text-xl text-persianRed' : ''}`}>
@@ -249,12 +249,14 @@ const DataContainer: React.FC<{
                                         <p>No stocks found</p>
                                     )}
                                     {totalStocks > 0 && (
-                                        <>
+                                        <div className="ml-4">
                                             <button
+                                                aria-disabled={stockPage === 1}
                                                 disabled={stockPage === 1}
                                                 onClick={() =>
                                                     setStockPage(stockPage - 1)
                                                 }
+                                                className="disabled:opacity-50 get-price-button w-[100px] hover:scale-105 hover:ml-1 hover:bg-darkOrange disabled:hover:bg-delftBlue hover:shadow-md"
                                             >
                                                 Previous
                                             </button>
@@ -263,13 +265,15 @@ const DataContainer: React.FC<{
                                                     totalStocks <
                                                     stockItemsPerPage
                                                 }
+                                                aria-disabled={stockPage === 1}
                                                 onClick={() =>
                                                     setStockPage(stockPage + 1)
                                                 }
+                                                className="disabled:opacity-50 get-price-button w-[100px] hover:scale-105 hover:ml-1 hover:bg-darkOrange disabled:hover:bg-delftBlue hover:shadow-md"
                                             >
                                                 Next
                                             </button>
-                                        </>
+                                        </div>
                                     )}
                                 </>
                             )}

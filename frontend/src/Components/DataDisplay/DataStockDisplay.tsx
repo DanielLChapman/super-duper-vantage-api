@@ -140,25 +140,29 @@ const StockCard: React.FC<Props> = ({
 
     return (
         <div
-            className={`stock-card ${
+            className={`stock-card border-2 border-gray-600 px-2 py-2 rounded-lg ${
                 expand
-                    ? "expanded-stock-card"
+                    ? "expanded-stock-card pt-1"
                     : "collapsed-stock-card font-semibold"
             } text-jet`}
         >
             <div
-                className="stock-card-header flex flex-row items-center justify-between  text-sm sm:text-base"
+                className="stock-card-header flex flex-row items-center justify-between  text-sm sm:text-base "
                 onClick={() => {
                     setExpand(!expand);
                 }}
             >
                 {expand && (
-                    <h2 className="expanded-stock-card-symbol text-darkOrange font-bold">
+                    <h2 className="expanded-stock-card-symbol text-darkOrange font-bold ">
                         {stock.symbol}
                     </h2>
                 )}
 
-                <p className={`stock-card-current-value font-bold ${expand ? 'hidden sm:block' : ''}`}>
+                <p
+                    className={`stock-card-current-value font-bold ${
+                        expand ? "hidden sm:block" : ""
+                    }`}
+                >
                     {!expand && (
                         <span className="collapsed-stock-symbol text-darkOrange">
                             {stock.symbol}{" "}
@@ -184,7 +188,7 @@ const StockCard: React.FC<Props> = ({
                         )}
                     </span>
                 </p>
-                <button className="py-2 px-6 bg-delftBlue text-white rounded-lg">
+                <button className={`py-2 ${expand ? 'mt-1' : '' } px-6 bg-delftBlue text-white rounded-lg`}>
                     {" "}
                     {expand ? "Collapse" : "Expand"}{" "}
                 </button>
@@ -230,26 +234,26 @@ const StockCard: React.FC<Props> = ({
                             </span>
                         </p>
                     </div>
-                    <div className="stock-card-actions">
-                        <div className="stock-card-sell-container stock-card-sell-all-container">
+                    <div className="stock-card-actions font-merriweather">
+                        <div className="stock-card-sell-container stock-card-sell-all-container pb-1">
                             <span className="stock-card-sell-all-button-container">
-                                Total Price At Selected Date Above:
+                                Total Price At Selected Date Above:{" "}
                                 {verifyThePrice === -1 ? (
                                     <button
-                                        className="stock-card-sell-button"
+                                        className="stock-card-sell-button get-price-button"
                                         onClick={verifyPrice}
                                     >
                                         Get Price
                                     </button>
                                 ) : (
                                     <>
-                                        <span>
-                                            {(
+                                        <span className="px-2 text-persianGreen">
+                                            ${(
                                                 verifyThePrice * stock.amount
                                             ).toFixed(2)}
                                         </span>
                                         <button
-                                            className="stock-card-sell-button stock-card-sell-all-button"
+                                            className="stock-card-sell-button get-price-button stock-card-sell-all-button -ml-1 px-4"
                                             onClick={() => {
                                                 handleSell(stock, stock.amount);
                                             }}
@@ -261,32 +265,35 @@ const StockCard: React.FC<Props> = ({
                             </span>
                         </div>
                         <div className="stock-card-sell-some-container">
+                            
+                            <span className="stock-card-sell-some-button-container">
+                                Sell{" "}
+                            </span>
                             <input
                                 type="number"
                                 value={sellAmount}
                                 max={stock.amount}
                                 onChange={(e) => setSellAmount(+e.target.value)}
-                                className="stock-card-sell-input"
+                                className="stock-card-sell-input w-24"
                             />
-                            <span className="stock-card-sell-some-button-container">
-                                Sell{" "}
-                                {verifyThePrice === -1 ? "Some" : sellAmount} At
-                                Selected Date Above:{" "}
+                            <span>
+                                {verifyThePrice === -1 ? " Shares" : ' Shares'} At
+                                Selected Date Above For: {" "}
                                 {verifyThePrice === -1 ? (
                                     <button
-                                        className="stock-card-sell-button"
+                                        className="stock-card-sell-button get-price-button"
                                         onClick={verifyPrice}
                                     >
                                         Get Price
                                     </button>
                                 ) : (
                                     <button
-                                        className="stock-card-sell-button stock-card-sell-some-button"
+                                        className="stock-card-sell-button stock-card-sell-some-button get-price-button border-2 border-delftBlue bg-transparent text-persianGreen"
                                         onClick={() => {
                                             handleSell(stock, sellAmount);
                                         }}
                                     >
-                                        {(verifyThePrice * sellAmount).toFixed(
+                                        ${(verifyThePrice * sellAmount).toFixed(
                                             2
                                         )}
                                     </button>

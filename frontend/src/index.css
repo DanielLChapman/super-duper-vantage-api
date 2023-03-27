@@ -4,7 +4,11 @@
 
 @layer components {
     .data-container-table {
-        @apply p-4 border border-gray-300 space-y-2
+        @apply p-4 space-y-2
+    }
+
+    .get-price-button {
+        @apply text-sm bg-delftBlue p-1 px-2 rounded-lg text-white
     }
 
 }

@@ -2,3 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+    .data-container-table {
+        @apply p-4 border border-gray-300 space-y-2
+    }
+
+}

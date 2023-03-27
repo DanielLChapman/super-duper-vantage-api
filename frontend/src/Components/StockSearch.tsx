@@ -171,10 +171,10 @@ const StockSearch: React.FC<StockSearchProps> = ({
 
     return (
         <div className="stock-search-container container flex flex-col ">
-            <section className="stock-search-view-container border-4 border-electricBlue rounded-lg container max-w-[1500px] mx-auto p-2 py-6 md:px-0 flex flex-col">
+            <div className="stock-search-view-container border-4 font-open border-electricBlue rounded-lg container max-w-[1500px] mx-auto p-2 py-6 md:px-0 flex flex-col">
                 {viewStateManager !== views["dates"] && (
                     <button
-                        className="go-back text-persianGreen cursor-pointer hover:text-persianRed hover:scale-105 hover:ml-3"
+                        className="go-back font-merriweather text-persianGreen cursor-pointer hover:text-persianRed hover:scale-105 hover:ml-3"
                         onClick={() => {
                             handleStateManager("back");
                         }}
@@ -216,12 +216,12 @@ const StockSearch: React.FC<StockSearchProps> = ({
                 </div>
                 <button
                     onClick={resetDate}
-                    className="reset-button mt-1  lg:mt-4 w-2/3 max-w-lg relative mx-auto text-white  bg-delftBlue hover:bg-electricBlue hover:text-jet border-delftBlue focus:border-delftBlue
+                    className="reset-button mt-1 font-merriweather lg:mt-4 w-2/3 max-w-lg relative mx-auto text-white  bg-delftBlue hover:bg-electricBlue hover:text-jet border-delftBlue focus:border-delftBlue
                 focus:ring-4 transition duration-150 focus:outline-none focus:scale-105 font-medium rounded-lg text-sm px-4 py-2 "
                 >
                     Reset
                 </button>
-            </section>
+            </div>
         </div>
     );
 };

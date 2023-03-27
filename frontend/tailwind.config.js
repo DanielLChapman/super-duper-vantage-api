@@ -27,6 +27,10 @@ module.exports = {
         persianRed: '#CC2936',
         persianGreen: '#18A999',
         darkOrange: '#F58F29'
+      },
+      fontFamily: {
+        open: ['Open Sans', 'sans-serif'],
+        merriweather: ['Merriweather', 'serif'],
       }
     },
   },

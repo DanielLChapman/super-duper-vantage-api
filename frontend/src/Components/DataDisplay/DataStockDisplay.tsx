@@ -70,10 +70,8 @@ interface Props {
         React.SetStateAction<Array<[string, number]>>
     >;
     verifyThePrice: number;
-    setTheVerifiedPrice: React.Dispatch<
-    React.SetStateAction<number>
->;
-    handleSell: (stock, number) => {}
+    setTheVerifiedPrice: React.Dispatch<React.SetStateAction<number>>;
+    handleSell: (stock, number) => {};
 }
 
 const StockCard: React.FC<Props> = ({
@@ -89,7 +87,7 @@ const StockCard: React.FC<Props> = ({
     handleSell,
 }) => {
     const [sellAmount, setSellAmount] = useState(0);
-    
+
     const [expand, setExpand] = useState(false);
 
     useEffect(() => {
@@ -141,47 +139,95 @@ const StockCard: React.FC<Props> = ({
     const stockDate = new Date(stock.dateOfTrade) || new Date(Date.now());
 
     return (
-        <div className={`stock-card ${expand ? 'expanded-stock-card' : 'collapsed-stock-card'}`}>
-            <div className="stock-card-header">
-                {
-                    expand && (
-                        <h2 className="expanded-stock-card-symbol">{stock.symbol}</h2>
-                    )
-                }
-               
-                <p className="stock-card-current-value">
+        <div
+            className={`stock-card ${
+                expand
+                    ? "expanded-stock-card"
+                    : "collapsed-stock-card font-semibold"
+            } text-jet`}
+        >
+            <div
+                className="stock-card-header flex flex-row items-center justify-between  text-sm sm:text-base"
+                onClick={() => {
+                    setExpand(!expand);
+                }}
+            >
+                {expand && (
+                    <h2 className="expanded-stock-card-symbol text-darkOrange font-bold">
+                        {stock.symbol}
+                    </h2>
+                )}
+
+                <p className={`stock-card-current-value font-bold ${expand ? 'hidden sm:block' : ''}`}>
                     {!expand && (
-                        <span className='collapsed-stock-symbol'>{stock.symbol} </span>
-                    )}
-                    <span className={`${expand ? 'expanded-stock-card-value' : 'collapsed-stock-card-value'}`}>
-                    Bought For: $
-                    {(stock.amount * (stock.price / 100)).toFixed(2)}
-                    {expand && (
-                        <span>
-                            {" "}
-                            On {stockDate.getMonth() + 1} / {stockDate.getDay()}{" "}
-                            / {stockDate.getFullYear()}
+                        <span className="collapsed-stock-symbol text-darkOrange">
+                            {stock.symbol}{" "}
                         </span>
                     )}
+                    <span
+                        className={` ${
+                            expand
+                                ? "expanded-stock-card-value"
+                                : "collapsed-stock-card-value"
+                        }`}
+                    >
+                        Bought For:{" "}
+                        <span className="text-persianGreen">
+                            ${(stock.amount * (stock.price / 100)).toFixed(2)}
+                        </span>
+                        {expand && (
+                            <span className=" ">
+                                {" "}
+                                On {stockDate.getMonth() + 1} /{" "}
+                                {stockDate.getDay()} / {stockDate.getFullYear()}
+                            </span>
+                        )}
                     </span>
                 </p>
-                <button
-                    onClick={() => {
-                        setExpand(!expand);
-                    }}
-                >
+                <button className="py-2 px-6 bg-delftBlue text-white rounded-lg">
                     {" "}
                     {expand ? "Collapse" : "Expand"}{" "}
                 </button>
             </div>
             {expand && (
-                <>
-                    <div className="stock-card-details">
+                <div className=" flex flex-col space-y-2 text-sm sm:text-base">
+                    <div className="stock-card-details flex flex-col space-y-2 font-semibold">
+                        <span
+                            className={`block md:hidden${
+                                expand
+                                    ? "expanded-stock-card-value"
+                                    : "collapsed-stock-card-value"
+                            }`}
+                        >
+                            Bought For:{" "}
+                            <span className="text-persianGreen">
+                                $
+                                {(stock.amount * (stock.price / 100)).toFixed(
+                                    2
+                                )}
+                            </span>
+                            {expand && (
+                                <span>
+                                    {" "}
+                                    On {stockDate.getMonth() + 1} /{" "}
+                                    {stockDate.getDay()} /{" "}
+                                    {stockDate.getFullYear()}
+                                </span>
+                            )}
+                        </span>
                         <p className="stock-card-amount">
-                            Amount: {stock.amount}
+                            Total Amount Of Shares:{" "}
+                            <span className="text-persianRed">
+                                {" "}
+                                {stock.amount}
+                            </span>
                         </p>
                         <p className="stock-card-price">
-                            Price: ${(stock.price / 100).toFixed(2)}
+                            Price Per Share:{" "}
+                            <span className="text-persianGreen">
+                                {" "}
+                                ${(stock.price / 100).toFixed(2)}
+                            </span>
                         </p>
                     </div>
                     <div className="stock-card-actions">
@@ -205,7 +251,7 @@ const StockCard: React.FC<Props> = ({
                                         <button
                                             className="stock-card-sell-button stock-card-sell-all-button"
                                             onClick={() => {
-                                                handleSell(stock, stock.amount)
+                                                handleSell(stock, stock.amount);
                                             }}
                                         >
                                             Sell All
@@ -237,7 +283,7 @@ const StockCard: React.FC<Props> = ({
                                     <button
                                         className="stock-card-sell-button stock-card-sell-some-button"
                                         onClick={() => {
-                                            handleSell(stock, sellAmount)
+                                            handleSell(stock, sellAmount);
                                         }}
                                     >
                                         {(verifyThePrice * sellAmount).toFixed(
@@ -248,7 +294,7 @@ const StockCard: React.FC<Props> = ({
                             </span>
                         </div>
                     </div>
-                </>
+                </div>
             )}
         </div>
     );

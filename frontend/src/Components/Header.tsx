@@ -49,16 +49,16 @@ const Header: React.FC<UserOnlyProps> = ({ user, taxes, setTaxes }) => {
                         >
                             <h3 className="text-2xl">
                                 {" "}
-                                <a href="#" className="text-jet hover:text-persianRed font-bold">
+                                <a href="#" className="text-jet hover:text-persianRed font-bold font-open">
                                     {user.username}
                                 </a>{" "}
                             </h3>
-                            <p className="user-money text-persianGreen font-semibold">
+                            <p className="user-money text-persianGreen font-semibold font-open">
                                 {formatAmounts(user.money)}
                             </p>
                         </div>
                         {isMenuOpen && (
-                            <ul className="bg-snow dropdown-menu pt-1 sm:pt-1 z-30 sm:absolute text-center sm:text-right text-lg sm:w-[200px] text-jet font-semibold  sm:right-0 bg-opacity-60 group hover:bg-opacity-100">
+                            <ul className="bg-snow font-merriweather dropdown-menu pt-1 sm:pt-1 z-30 sm:absolute text-center sm:text-right text-lg sm:w-[200px] text-jet font-semibold  sm:right-0 bg-opacity-60 group hover:bg-opacity-100">
                                 <li className="text-jet hover:text-persianRed cursor-pointer">
                                     {/* Maybe a hover window to initially set it up */}
                                     <button

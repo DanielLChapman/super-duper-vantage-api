@@ -163,7 +163,7 @@ const BuySellHandler: React.FC<BuySellProps> = ({
             </h5>
             <div className="flex flex-row justify-center align-middle w-full">
                 <button
-                    className="buy-button bg-persianGreen py-2 px-4 text-lg font-semibold text-white rounded-lg  hover:bg-olive hover:text-jet  focus:outline-none focus:ring-4 focus:ring-persianGreen "
+                    className="buy-button bg-persianGreen transition duration-150 hover:scale-105 py-2 px-4 text-lg font-semibold text-white rounded-lg  hover:bg-olive hover:text-jet  focus:outline-none focus:ring-4 focus:ring-persianGreen "
                     onClick={() => {
                         buyHandler("buy");
                     }}
@@ -171,7 +171,7 @@ const BuySellHandler: React.FC<BuySellProps> = ({
                     Buy {amount}
                 </button>
                 <button
-                    className="sell-button bg-persianRed  py-2 px-4 text-lg font-semibold text-white rounded-lg hover:bg-olive hover:text-jet focus:ring-opacity-100 focus:outline-none focus:ring-4 focus:ring-persianRed"
+                    className="sell-button bg-persianRed  transition duration-150 hover:scale-105 py-2 px-4 text-lg font-semibold text-white rounded-lg hover:bg-olive hover:text-jet focus:ring-opacity-100 focus:outline-none focus:ring-4 focus:ring-persianRed"
                     onClick={() => {
                         buyHandler("sell");
                     }}

@@ -1,3 +1,4 @@
+import Head from "next/head";
 import React, { useState } from "react";
 import { user } from "../../tools/lib";
 import DataContainer from "./DataDisplay/DataContainer";
@@ -34,8 +35,9 @@ const App: React.FC<AppInitialProps> = () => {
 
     return (
         <div className="App">
+            
             <Header user={user} taxes={taxes} setTaxes={setTaxes} />
-            <main className="main-content container mx-auto flex flex-col ">
+            <main className="main-content container mx-auto">
                 <StockSearch checkedStocks={checkedStocks} setCheckedStocks={setCheckedStocks} verifiedDates={verifiedDates} setVerifiedDates={setVerifiedDates} selector={selector} setSelector={setSelector} setDateToUse={setDateToUse} dateToUse={dateToUse} user={user} />
                 <DataContainer checkedStocks={checkedStocks} setCheckedStocks={setCheckedStocks} verifiedDates={verifiedDates} selector={selector} user={user} dateToUse={dateToUse} />
             </main>

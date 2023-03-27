@@ -1,10 +1,13 @@
-import { useMutation, useQuery} from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import React, { useEffect, useState } from "react";
 import { stock, tradeHistory, user } from "../../../tools/lib";
 import roundToTwo from "../../../tools/roundToTwo";
 import { CURRENT_USER_QUERY } from "../User";
-import StockCard, { SELL_ALL_HANDLER, SELL_SOME_HANDLER } from "./DataStockDisplay";
+import StockCard, {
+    SELL_ALL_HANDLER,
+    SELL_SOME_HANDLER,
+} from "./DataStockDisplay";
 import TradeCard from "./DataTradeDisplay";
 
 export const GET_TRADES = gql`
@@ -49,8 +52,16 @@ const DataContainer: React.FC<{
     dateToUse: { month: number; day: number; year: number };
     checkedStocks: Array<[string, number]>;
     setCheckedStocks: React.Dispatch<
-        React.SetStateAction<Array<[string, number]>>>
-}> = ({ verifiedDates, user, dateToUse, selector, checkedStocks, setCheckedStocks }) => {
+        React.SetStateAction<Array<[string, number]>>
+    >;
+}> = ({
+    verifiedDates,
+    user,
+    dateToUse,
+    selector,
+    checkedStocks,
+    setCheckedStocks,
+}) => {
     if (!user) {
         return <span>Loading....</span>;
     }
@@ -98,7 +109,6 @@ const DataContainer: React.FC<{
         },
     });
 
-
     let trades = [] as tradeHistory[];
     let stocks = [] as stock[];
 
@@ -133,15 +143,25 @@ const DataContainer: React.FC<{
                     amount: sellAmount,
                     dateOfTrade: Date.now() + "",
                 },
-                refetchQueries: [{ query: CURRENT_USER_QUERY }, { query: GET_STOCKS, variables: {
-                    userID: user.id,
-                    limit: stockItemsPerPage,
-                    offset: (stockPage - 1) * stockItemsPerPage,
-                }, }, { query: GET_TRADES, variables: {
-                    userID: user.id,
-                    limit: tradeItemsPerPage,
-                    offset: (tradePage - 1) * tradeItemsPerPage,
-                } }],
+                refetchQueries: [
+                    { query: CURRENT_USER_QUERY },
+                    {
+                        query: GET_STOCKS,
+                        variables: {
+                            userID: user.id,
+                            limit: stockItemsPerPage,
+                            offset: (stockPage - 1) * stockItemsPerPage,
+                        },
+                    },
+                    {
+                        query: GET_TRADES,
+                        variables: {
+                            userID: user.id,
+                            limit: tradeItemsPerPage,
+                            offset: (tradePage - 1) * tradeItemsPerPage,
+                        },
+                    },
+                ],
             });
         } else {
             res = await sellAllStock({
@@ -151,138 +171,164 @@ const DataContainer: React.FC<{
                     stockID: stock.id,
                     dateOfTrade: Date.now() + "",
                 },
-                refetchQueries: [{ query: CURRENT_USER_QUERY }, { query: GET_STOCKS, variables: {
-                    userID: user.id,
-                    limit: stockItemsPerPage,
-                    offset: (stockPage - 1) * stockItemsPerPage,
-                }, }, { query: GET_TRADES, variables: {
-                    userID: user.id,
-                    limit: tradeItemsPerPage,
-                    offset: (tradePage - 1) * tradeItemsPerPage,
-                } }],
+                refetchQueries: [
+                    { query: CURRENT_USER_QUERY },
+                    {
+                        query: GET_STOCKS,
+                        variables: {
+                            userID: user.id,
+                            limit: stockItemsPerPage,
+                            offset: (stockPage - 1) * stockItemsPerPage,
+                        },
+                    },
+                    {
+                        query: GET_TRADES,
+                        variables: {
+                            userID: user.id,
+                            limit: tradeItemsPerPage,
+                            offset: (tradePage - 1) * tradeItemsPerPage,
+                        },
+                    },
+                ],
             });
         }
 
         if (res.data) {
-            alert('Success!');
+            alert("Success!");
         }
-    }
+    };
 
     useEffect(() => {
         setCheckedStocks([]);
     }, [dateToUse, selector]);
 
     return (
-        <>
-            <h2>Stocks // Trade History</h2>
-            <section className="data-container">
-                <ul>
-                    <li>
-                        <span onClick={() => setShowStocks(!showStocks)}>
-                            Stocks
-                        </span>
-                        {!stockError && !stockLoading && showStocks && (
-                            <>
-                                {stocks.length > 0 ? (
-                                    <ul>
-                                        {stocks.map((stock, index) => (
-                                            <li key={index + stock.id}>
-                                                <StockCard
-                                                    checkedStocks={
-                                                        checkedStocks
-                                                    }
-                                                    setCheckedStocks={
-                                                        setCheckedStocks
-                                                    }
-                                                    verifiedDates={
-                                                        verifiedDates
-                                                    }
-                                                    apiKey={user.apiKey}
-                                                    dateToUse={dateToUse}
-                                                    selector={selector}
-                                                    stock={stock}
-                                                    verifyThePrice={verifyThePrice}
-                                                    setTheVerifiedPrice={setTheVerifiedPrice}
-                                                    handleSell={handleSell}
-                                                />
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p>No stocks found</p>
-                                )}
-                                {totalStocks > 0 && (
-                                    <>
-                                        <button
-                                            disabled={stockPage === 1}
-                                            onClick={() =>
-                                                setStockPage(stockPage - 1)
-                                            }
-                                        >
-                                            Previous
-                                        </button>
-                                        <button
-                                            disabled={
-                                                totalStocks < stockItemsPerPage
-                                            }
-                                            onClick={() =>
-                                                setStockPage(stockPage + 1)
-                                            }
-                                        >
-                                            Next
-                                        </button>
-                                    </>
-                                )}
-                            </>
-                        )}
-                    </li>
-                    <li>
-                        <span onClick={() => setShowTrades(!showTrades)}>
-                            Trades
-                        </span>
-                        {!tradesLoading && !tradesError && showTrades && (
-                            <>
-                                {trades.length > 0 ? (
-                                    <>
-                                        <ul>
-                                            {trades.map((trade, index) => (
-                                                <li key={index}>
-                                                    <TradeCard trade={trade} />
+        <div className="data-container container flex flex-col font-open">
+            <div className="stock-search-view-container border-4 border-t-0 border-electricBlue rounded-lg container max-w-[1500px] mx-auto p-6 flex flex-col">
+                <h2 className="font-bold text-2xl text-jet">Stocks // Trade History</h2>
+                <section id="data-container" className="data-container">
+                    <ul>
+                        <li>
+                            <h6 onClick={() => setShowStocks(!showStocks)} className={`text-xl font-semibold text-jet 
+                            transition-colors duration-150 hover:text-persianRed cursor-pointer hover:text-2xl 
+                            ${!stockError && !stockLoading && showStocks ? 'text-xl text-persianRed' : ''}`}>
+                                Stocks
+                            </h6>
+                            {!stockError && !stockLoading && showStocks && (
+                                <>
+                                    {stocks.length > 0 ? (
+                                        <ul className="data-container-table">
+                                            {stocks.map((stock, index) => (
+                                                <li key={index + stock.id}>
+                                                    <StockCard
+                                                        checkedStocks={
+                                                            checkedStocks
+                                                        }
+                                                        setCheckedStocks={
+                                                            setCheckedStocks
+                                                        }
+                                                        verifiedDates={
+                                                            verifiedDates
+                                                        }
+                                                        apiKey={user.apiKey}
+                                                        dateToUse={dateToUse}
+                                                        selector={selector}
+                                                        stock={stock}
+                                                        verifyThePrice={
+                                                            verifyThePrice
+                                                        }
+                                                        setTheVerifiedPrice={
+                                                            setTheVerifiedPrice
+                                                        }
+                                                        handleSell={handleSell}
+                                                    />
                                                 </li>
                                             ))}
                                         </ul>
-                                    </>
-                                ) : (
-                                    <p>No trades found</p>
-                                )}
-                                {totalTrades > 0 && (
-                                    <>
-                                        <button
-                                            disabled={tradePage === 1}
-                                            onClick={() =>
-                                                setTradePage(tradePage - 1)
-                                            }
-                                        >
-                                            Previous
-                                        </button>
-                                        <button
-                                            disabled={
-                                                totalTrades < tradeItemsPerPage
-                                            }
-                                            onClick={() =>
-                                                setTradePage(tradePage + 1)
-                                            }
-                                        >
-                                            Next
-                                        </button>
-                                    </>
-                                )}
-                            </>
-                        )}
-                    </li>
-                </ul>
-            </section>
-        </>
+                                    ) : (
+                                        <p>No stocks found</p>
+                                    )}
+                                    {totalStocks > 0 && (
+                                        <>
+                                            <button
+                                                disabled={stockPage === 1}
+                                                onClick={() =>
+                                                    setStockPage(stockPage - 1)
+                                                }
+                                            >
+                                                Previous
+                                            </button>
+                                            <button
+                                                disabled={
+                                                    totalStocks <
+                                                    stockItemsPerPage
+                                                }
+                                                onClick={() =>
+                                                    setStockPage(stockPage + 1)
+                                                }
+                                            >
+                                                Next
+                                            </button>
+                                        </>
+                                    )}
+                                </>
+                            )}
+                        </li>
+                        <li>
+                            <h6 id="data-container-trades" onClick={() => {
+                                setShowTrades(!showTrades)
+                            }} className={`text-xl font-semibold text-jet transition-colors duration-150
+                             hover:text-delftBlue cursor-pointer hover:text-2xl
+                             ${!tradesLoading && !tradesError && showTrades ? 'text-xl text-delftBlue' : ''}`}>
+                                Trades
+                            </h6>
+                            {!tradesLoading && !tradesError && showTrades && (
+                                <>
+                                    {trades.length > 0 ? (
+                                        <>
+                                            <ul className="data-container-table">
+                                                {trades.map((trade, index) => (
+                                                    <li key={index}>
+                                                        <TradeCard
+                                                            trade={trade}
+                                                        />
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </>
+                                    ) : (
+                                        <p>No trades found</p>
+                                    )}
+                                    {totalTrades > 0 && (
+                                        <>
+                                            <button
+                                                disabled={tradePage === 1}
+                                                onClick={() =>
+                                                    setTradePage(tradePage - 1)
+                                                }
+                                            >
+                                                Previous
+                                            </button>
+                                            <button
+                                                disabled={
+                                                    totalTrades <
+                                                    tradeItemsPerPage
+                                                }
+                                                onClick={() =>
+                                                    setTradePage(tradePage + 1)
+                                                }
+                                            >
+                                                Next
+                                            </button>
+                                        </>
+                                    )}
+                                </>
+                            )}
+                        </li>
+                    </ul>
+                </section>
+            </div>
+        </div>
     );
 };
 

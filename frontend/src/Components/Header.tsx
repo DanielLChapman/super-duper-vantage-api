@@ -27,7 +27,7 @@ const Header: React.FC<UserOnlyProps> = ({ user, taxes, setTaxes }) => {
 
     return (
         <>
-            <nav className="container relative mx-auto p-6">
+            <nav className="container relative mx-auto p-6 bg-snow">
                  {/*"flex flex-row justify-center space-x-20 my-6 md:justify-between"*/}
                 <div className="flex flex-col flex-wrap sm:flex-row items-center justify-between mx-auto">
                     <a href="localhost:7777" className="z-30 flex items-center">

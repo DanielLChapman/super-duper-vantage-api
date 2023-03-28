@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { user } from "../../tools/lib";
 import DataContainer from "./DataDisplay/DataContainer";
 import DateController from "./DateHandler/DateController";
+import Footer from "./Footer";
 import Header from "./Header";
 import StockSearch from "./StockSearch";
 import { useUser } from "./User";
@@ -34,14 +35,14 @@ const App: React.FC<AppInitialProps> = () => {
     const [selector, setSelector] = useState('Day');
 
     return (
-        <div className="App">
+        <div className="App flex flex-col min-h-screen justify-between">
             
             <Header user={user} taxes={taxes} setTaxes={setTaxes} />
-            <main className="main-content container mx-auto">
+            <main className="main-content container mx-auto bg-snow border-2 mb-auto">
                 <StockSearch checkedStocks={checkedStocks} setCheckedStocks={setCheckedStocks} verifiedDates={verifiedDates} setVerifiedDates={setVerifiedDates} selector={selector} setSelector={setSelector} setDateToUse={setDateToUse} dateToUse={dateToUse} user={user} />
                 <DataContainer checkedStocks={checkedStocks} setCheckedStocks={setCheckedStocks} verifiedDates={verifiedDates} selector={selector} user={user} dateToUse={dateToUse} />
             </main>
-            <footer className="footer-content">footer</footer>
+            <Footer />
         </div>
     );
 };

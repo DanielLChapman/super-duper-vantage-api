@@ -139,171 +139,221 @@ const StockCard: React.FC<Props> = ({
     const stockDate = new Date(stock.dateOfTrade) || new Date(Date.now());
 
     return (
-        <div
-            className={`stock-card border-2 border-gray-600 px-2 py-2 rounded-lg ${
-                expand
-                    ? "expanded-stock-card pt-1"
-                    : "collapsed-stock-card font-semibold"
-            } text-jet`}
-        >
-            <div
-                className="stock-card-header flex flex-row items-center justify-between  text-sm sm:text-base "
-                onClick={() => {
-                    setExpand(!expand);
-                }}
-            >
-                {expand && (
-                    <h2 className="expanded-stock-card-symbol text-darkOrange font-bold ">
-                        {stock.symbol}
-                    </h2>
-                )}
-
-                <p
-                    className={`stock-card-current-value font-bold ${
-                        expand ? "hidden sm:block" : ""
-                    }`}
-                >
-                    {!expand && (
-                        <span className="collapsed-stock-symbol text-darkOrange">
-                            {stock.symbol}{" "}
-                        </span>
-                    )}
-                    <span
-                        className={` ${
-                            expand
-                                ? "expanded-stock-card-value"
-                                : "collapsed-stock-card-value"
-                        }`}
-                    >
-                        Bought For:{" "}
-                        <span className="text-persianGreen">
-                            ${(stock.amount * (stock.price / 100)).toFixed(2)}
-                        </span>
-                        {expand && (
-                            <span className=" ">
-                                {" "}
-                                On {stockDate.getMonth() + 1} /{" "}
-                                {stockDate.getDay()} / {stockDate.getFullYear()}
-                            </span>
-                        )}
-                    </span>
-                </p>
-                <button className={`py-2 ${expand ? 'mt-1' : '' } px-6 bg-delftBlue text-white rounded-lg`}>
-                    {" "}
-                    {expand ? "Collapse" : "Expand"}{" "}
-                </button>
-            </div>
+        <>
             {expand && (
-                <div className=" flex flex-col space-y-2 text-sm sm:text-base">
-                    <div className="stock-card-details flex flex-col space-y-2 font-semibold">
-                        <span
-                            className={`block md:hidden${
-                                expand
-                                    ? "expanded-stock-card-value"
-                                    : "collapsed-stock-card-value"
+                <div
+                    className={`stock-card border-2 border-gray-600 px-2 py-2 rounded-lg expanded-stock-card pt-1 text-jet`}
+                >
+                    <div
+                        className="stock-card-header flex flex-row items-center justify-between text-sm sm:text-base "
+                        onClick={() => {
+                            setExpand(!expand);
+                        }}
+                    >
+                        <h2 className="expanded-stock-card-symbol text-darkOrange font-bold ">
+                            {stock.symbol}
+                        </h2>
+
+                        <p
+                            className={`stock-card-current-value font-bold ${
+                                expand ? "hidden sm:block" : ""
                             }`}
                         >
-                            Bought For:{" "}
-                            <span className="text-persianGreen">
-                                $
-                                {(stock.amount * (stock.price / 100)).toFixed(
-                                    2
-                                )}
-                            </span>
-                            {expand && (
-                                <span>
-                                    {" "}
-                                    On {stockDate.getMonth() + 1} /{" "}
-                                    {stockDate.getDay()} /{" "}
-                                    {stockDate.getFullYear()}
+                            <span
+                                className={` ${
+                                    expand
+                                        ? "expanded-stock-card-value"
+                                        : "collapsed-stock-card-value"
+                                }`}
+                            >
+                                Bought For:{" "}
+                                <span className="text-persianGreen">
+                                    $
+                                    {(
+                                        stock.amount *
+                                        (stock.price / 100)
+                                    ).toFixed(2)}
                                 </span>
-                            )}
-                        </span>
-                        <p className="stock-card-amount">
-                            Total Amount Of Shares:{" "}
-                            <span className="text-persianRed">
-                                {" "}
-                                {stock.amount}
+                                {expand && (
+                                    <span className=" ">
+                                        {" "}
+                                        On {stockDate.getMonth() + 1} /{" "}
+                                        {stockDate.getDay()} /{" "}
+                                        {stockDate.getFullYear()}
+                                    </span>
+                                )}
                             </span>
                         </p>
-                        <p className="stock-card-price">
-                            Price Per Share:{" "}
-                            <span className="text-persianGreen">
-                                {" "}
-                                ${(stock.price / 100).toFixed(2)}
-                            </span>
-                        </p>
+
+                        <button
+                            className={`py-2 mt-1 px-6 bg-delftBlue text-white rounded-lg`}
+                        >
+                            {" "}
+                            {expand ? "Collapse" : "Expand"}{" "}
+                        </button>
                     </div>
-                    <div className="stock-card-actions font-merriweather">
-                        <div className="stock-card-sell-container stock-card-sell-all-container pb-1">
-                            <span className="stock-card-sell-all-button-container">
-                                Total Price At Selected Date Above:{" "}
-                                {verifyThePrice === -1 ? (
-                                    <button
-                                        className="stock-card-sell-button get-price-button"
-                                        onClick={verifyPrice}
-                                    >
-                                        Get Price
-                                    </button>
-                                ) : (
-                                    <>
-                                        <span className="px-2 text-persianGreen">
-                                            ${(
-                                                verifyThePrice * stock.amount
-                                            ).toFixed(2)}
+                    {expand && (
+                        <div className=" flex flex-col space-y-2 text-sm sm:text-base">
+                            <div className="stock-card-details flex flex-col space-y-2 font-semibold sm:-mt-2">
+                                <span
+                                    className={`block sm:hidden ${
+                                        expand
+                                            ? "expanded-stock-card-value"
+                                            : "collapsed-stock-card-value"
+                                    }`}
+                                >
+                                    Bought For:{" "}
+                                    <span className="text-persianGreen">
+                                        $
+                                        {(
+                                            stock.amount *
+                                            (stock.price / 100)
+                                        ).toFixed(2)}
+                                    </span>
+                                    {expand && (
+                                        <span>
+                                            {" "}
+                                            On {stockDate.getMonth() + 1} /{" "}
+                                            {stockDate.getDay()} /{" "}
+                                            {stockDate.getFullYear()}
                                         </span>
-                                        <button
-                                            className="stock-card-sell-button get-price-button stock-card-sell-all-button -ml-1 px-4"
-                                            onClick={() => {
-                                                handleSell(stock, stock.amount);
-                                            }}
-                                        >
-                                            Sell All
-                                        </button>
-                                    </>
-                                )}
-                            </span>
-                        </div>
-                        <div className="stock-card-sell-some-container">
-                            
-                            <span className="stock-card-sell-some-button-container">
-                                Sell{" "}
-                            </span>
-                            <input
-                                type="number"
-                                value={sellAmount}
-                                max={stock.amount}
-                                onChange={(e) => setSellAmount(+e.target.value)}
-                                className="stock-card-sell-input w-24"
-                            />
-                            <span>
-                                {verifyThePrice === -1 ? " Shares" : ' Shares'} At
-                                Selected Date Above For: {" "}
-                                {verifyThePrice === -1 ? (
-                                    <button
-                                        className="stock-card-sell-button get-price-button"
-                                        onClick={verifyPrice}
-                                    >
-                                        Get Price
-                                    </button>
-                                ) : (
-                                    <button
-                                        className="stock-card-sell-button stock-card-sell-some-button get-price-button border-2 border-delftBlue bg-transparent text-persianGreen"
-                                        onClick={() => {
-                                            handleSell(stock, sellAmount);
-                                        }}
-                                    >
-                                        ${(verifyThePrice * sellAmount).toFixed(
-                                            2
+                                    )}
+                                </span>
+                                <p className="stock-card-amount">
+                                    Total Amount Of Shares:{" "}
+                                    <span className="text-persianRed">
+                                        {" "}
+                                        {stock.amount}
+                                    </span>
+                                </p>
+                                <p className="stock-card-price">
+                                    Price Per Share:{" "}
+                                    <span className="text-persianGreen">
+                                        {" "}
+                                        ${(stock.price / 100).toFixed(2)}
+                                    </span>
+                                </p>
+                            </div>
+                            <div className="stock-card-actions font-merriweather">
+                                <div className="stock-card-sell-container stock-card-sell-all-container pb-1">
+                                    <span className="stock-card-sell-all-button-container">
+                                        Total Price At Selected Date Above:{" "}
+                                        {verifyThePrice === -1 ? (
+                                            <button
+                                                className="stock-card-sell-button get-price-button"
+                                                onClick={verifyPrice}
+                                            >
+                                                Get Price
+                                            </button>
+                                        ) : (
+                                            <>
+                                                <span className="px-2 text-persianGreen">
+                                                    $
+                                                    {(
+                                                        verifyThePrice *
+                                                        stock.amount
+                                                    ).toFixed(2)}
+                                                </span>
+                                                <button
+                                                    className="stock-card-sell-button get-price-button stock-card-sell-all-button -ml-1 px-4"
+                                                    onClick={() => {
+                                                        handleSell(
+                                                            stock,
+                                                            stock.amount
+                                                        );
+                                                    }}
+                                                >
+                                                    Sell All
+                                                </button>
+                                            </>
                                         )}
-                                    </button>
-                                )}
-                            </span>
+                                    </span>
+                                </div>
+                                <div className="stock-card-sell-some-container">
+                                    <span className="stock-card-sell-some-button-container">
+                                        Sell{" "}
+                                    </span>
+                                    <input
+                                        type="number"
+                                        value={sellAmount}
+                                        max={stock.amount}
+                                        onChange={(e) =>
+                                            setSellAmount(+e.target.value)
+                                        }
+                                        className="stock-card-sell-input w-24"
+                                    />
+                                    <span>
+                                        {verifyThePrice === -1
+                                            ? " Shares"
+                                            : " Shares"}{" "}
+                                        At Selected Date Above For:{" "}
+                                        {verifyThePrice === -1 ? (
+                                            <button
+                                                className="stock-card-sell-button get-price-button"
+                                                onClick={verifyPrice}
+                                            >
+                                                Get Price
+                                            </button>
+                                        ) : (
+                                            <button
+                                                className="stock-card-sell-button stock-card-sell-some-button get-price-button border-2 border-delftBlue bg-transparent text-persianGreen"
+                                                onClick={() => {
+                                                    handleSell(
+                                                        stock,
+                                                        sellAmount
+                                                    );
+                                                }}
+                                            >
+                                                $
+                                                {(
+                                                    verifyThePrice * sellAmount
+                                                ).toFixed(2)}
+                                            </button>
+                                        )}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
+                    )}
+                </div>
+            )}
+            {!expand && (
+                <div
+                    className={`stock-card border-2 border-gray-600 px-2 py-2 rounded-lg ${
+                        expand ? "hidden" : "collapsed-stock-card font-semibold"
+                    } text-jet`}
+                >
+                    <div
+                        className="stock-card-header flex flex-row items-center justify-between align-center text-sm sm:text-base "
+                        onClick={() => {
+                            setExpand(!expand);
+                        }}
+                    >
+                        <p
+                            className={`stock-card-current-value font-bold flex flex-row justify-between flex-grow`}
+                        >
+                            <span className="collapsed-stock-symbol py-2 text-darkOrange">
+                                {stock.symbol}{" "}
+                            </span>
+
+                            <span className="py-2"> 
+                                Bought For:{" "}
+                                <span className="text-persianGreen ">
+                                    $
+                                    {(stock.amount * stock.price / 100).toFixed(2)}
+                                </span>
+                            </span>
+                            <button
+                                className={`py-2 px-6 bg-delftBlue text-white rounded-lg`}
+                            >
+                                {" "}
+                                {expand ? "Collapse" : "Expand"}{" "}
+                            </button>
+                        </p>
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

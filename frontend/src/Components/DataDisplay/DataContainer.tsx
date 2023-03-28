@@ -304,12 +304,13 @@ const DataContainer: React.FC<{
                                         <p>No trades found</p>
                                     )}
                                     {totalTrades > 0 && (
-                                        <>
+                                        <div className="ml-4">
                                             <button
                                                 disabled={tradePage === 1}
                                                 onClick={() =>
                                                     setTradePage(tradePage - 1)
                                                 }
+                                                className="disabled:opacity-50 get-price-button w-[100px] hover:scale-105 hover:ml-1 hover:bg-darkOrange disabled:hover:bg-delftBlue hover:shadow-md"
                                             >
                                                 Previous
                                             </button>
@@ -321,10 +322,11 @@ const DataContainer: React.FC<{
                                                 onClick={() =>
                                                     setTradePage(tradePage + 1)
                                                 }
+                                                className="disabled:opacity-50 get-price-button w-[100px] hover:scale-105 hover:ml-1 hover:bg-darkOrange disabled:hover:bg-delftBlue hover:shadow-md"
                                             >
                                                 Next
                                             </button>
-                                        </>
+                                        </div>
                                     )}
                                 </>
                             )}

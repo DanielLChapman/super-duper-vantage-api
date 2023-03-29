@@ -50,3 +50,12 @@ model Stock {
 
   @@index([ownerId])
 }
+
+model CacheStorage {
+  id         String    @id @default(cuid())
+  symbol     String    @default("")
+  price      Int
+  identifier String    @unique @default("")
+  createdAt  DateTime? @default(now())
+  date       DateTime? @default(now())
+}

@@ -462,6 +462,20 @@ var lists = {
         many: false
       })
     }
+  }),
+  CacheStorage: (0, import_core.list)({
+    access: import_access.allowAll,
+    fields: {
+      symbol: (0, import_fields.text)({ validation: { isRequired: true } }),
+      price: (0, import_fields.integer)({ validation: { isRequired: true } }),
+      identifier: (0, import_fields.text)({ validation: { isRequired: true }, isIndexed: "unique" }),
+      createdAt: (0, import_fields.timestamp)({
+        defaultValue: { kind: "now" }
+      }),
+      date: (0, import_fields.timestamp)({
+        defaultValue: { kind: "now" }
+      })
+    }
   })
 };
 var extendGraphqlSchema = (schema) => (0, import_schema.mergeSchemas)({

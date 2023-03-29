@@ -176,6 +176,30 @@ export const lists: Lists = {
 
     },
   }),
+  CacheStorage: list({
+    access: allowAll,
+
+    // this is the fields for our Post list
+    fields: {
+      symbol: text({ validation: { isRequired: true } }),
+      //converting to pennies
+      price: integer({ validation: { isRequired: true } }),
+
+      identifier: text({ validation: { isRequired: true}, isIndexed: 'unique' }),
+  
+
+      createdAt: timestamp({
+        // this sets the timestamp to Date.now() when the user is first created
+        defaultValue: { kind: 'now' },
+      }),
+
+      date: timestamp({
+        // this sets the timestamp to Date.now() when the trade is first created
+        defaultValue: { kind: 'now' },
+      }),
+
+    },
+  }),
 
 };
 

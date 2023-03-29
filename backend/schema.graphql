@@ -328,6 +328,62 @@ input StockCreateInput {
   owner: UserRelateToOneForCreateInput
 }
 
+type CacheStorage {
+  id: ID!
+  symbol: String
+  price: Int
+  identifier: String
+  createdAt: DateTime
+  date: DateTime
+}
+
+input CacheStorageWhereUniqueInput {
+  id: ID
+  identifier: String
+}
+
+input CacheStorageWhereInput {
+  AND: [CacheStorageWhereInput!]
+  OR: [CacheStorageWhereInput!]
+  NOT: [CacheStorageWhereInput!]
+  id: IDFilter
+  symbol: StringFilter
+  price: IntFilter
+  identifier: StringFilter
+  createdAt: DateTimeNullableFilter
+  date: DateTimeNullableFilter
+}
+
+input CacheStorageOrderByInput {
+  id: OrderDirection
+  symbol: OrderDirection
+  price: OrderDirection
+  identifier: OrderDirection
+  createdAt: OrderDirection
+  date: OrderDirection
+}
+
+input CacheStorageUpdateInput {
+  symbol: String
+  price: Int
+  identifier: String
+  createdAt: DateTime
+  date: DateTime
+}
+
+input CacheStorageUpdateArgs {
+  where: CacheStorageWhereUniqueInput!
+  data: CacheStorageUpdateInput!
+}
+
+input CacheStorageCreateInput {
+  symbol: String
+  price: Int
+  identifier: String
+  createdAt: DateTime
+  date: DateTime
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -352,6 +408,12 @@ type Mutation {
   updateStocks(data: [StockUpdateArgs!]!): [Stock]
   deleteStock(where: StockWhereUniqueInput!): Stock
   deleteStocks(where: [StockWhereUniqueInput!]!): [Stock]
+  createCacheStorage(data: CacheStorageCreateInput!): CacheStorage
+  createCacheStorages(data: [CacheStorageCreateInput!]!): [CacheStorage]
+  updateCacheStorage(where: CacheStorageWhereUniqueInput!, data: CacheStorageUpdateInput!): CacheStorage
+  updateCacheStorages(data: [CacheStorageUpdateArgs!]!): [CacheStorage]
+  deleteCacheStorage(where: CacheStorageWhereUniqueInput!): CacheStorage
+  deleteCacheStorages(where: [CacheStorageWhereUniqueInput!]!): [CacheStorage]
   endSession: Boolean!
   authenticateUserWithPassword(username: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -388,6 +450,9 @@ type Query {
   stocks(where: StockWhereInput! = {}, orderBy: [StockOrderByInput!]! = [], take: Int, skip: Int! = 0): [Stock!]
   stock(where: StockWhereUniqueInput!): Stock
   stocksCount(where: StockWhereInput! = {}): Int
+  cacheStorages(where: CacheStorageWhereInput! = {}, orderBy: [CacheStorageOrderByInput!]! = [], take: Int, skip: Int! = 0): [CacheStorage!]
+  cacheStorage(where: CacheStorageWhereUniqueInput!): CacheStorage
+  cacheStoragesCount(where: CacheStorageWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }

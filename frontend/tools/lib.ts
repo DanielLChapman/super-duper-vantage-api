@@ -13,6 +13,15 @@ export const monthList = [
     "December",
 ];
 
+export type CacheStorage = {
+    symbol: string;
+    price: number;
+    date: Date;
+    //symbol-month-date-year
+    identifier: string;
+
+}
+
 export type Month = {
     name: string;
     numDays: number;

@@ -12,6 +12,7 @@ module.exports = {
      "./components/**/*.{js,ts,jsx,tsx}",
      // add more paths here
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {

@@ -38,7 +38,7 @@ const App: React.FC<AppInitialProps> = () => {
         <div className="App flex flex-col min-h-screen justify-between">
             
             <Header user={user} taxes={taxes} setTaxes={setTaxes} />
-            <main className="main-content container mx-auto bg-snow border-2 mb-auto">
+            <main className="main-content container mx-auto bg-snow dark:bg-jet mb-auto">
                 <StockSearch checkedStocks={checkedStocks} setCheckedStocks={setCheckedStocks} verifiedDates={verifiedDates} setVerifiedDates={setVerifiedDates} selector={selector} setSelector={setSelector} setDateToUse={setDateToUse} dateToUse={dateToUse} user={user} />
                 <DataContainer checkedStocks={checkedStocks} setCheckedStocks={setCheckedStocks} verifiedDates={verifiedDates} selector={selector} user={user} dateToUse={dateToUse} />
             </main>

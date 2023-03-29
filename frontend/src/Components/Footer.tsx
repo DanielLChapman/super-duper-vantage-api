@@ -14,7 +14,12 @@ const Footer = () => {
                     <img
                         src="./fauxfolio-logo.svg"
                         alt=""
-                        className="mb-1 pt-2"
+                        className="mb-1 pt-2 block dark:hidden"
+                    />
+                    <img
+                        src="./fauxfolio-logo-svg-dark.svg"
+                        alt=""
+                        className="mb-1 pt-2 hidden dark:block"
                     />
                     {/* Account / Sign In */}
                     {user ? (<a

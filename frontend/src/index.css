@@ -12,3 +12,7 @@
     }
 
 }
+
+.dark #logo {
+    filter: brightness(0) saturate(100%) invert(97%) sepia(0%) saturate(5999%) hue-rotate(260deg) brightness(119%) contrast(88%);
+}

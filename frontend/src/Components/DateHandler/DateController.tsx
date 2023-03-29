@@ -273,10 +273,10 @@ const DateController: React.FC<DateControllersProps> = ({
 
     return (
         <div className="date-selector w-2/3 pb-4 max-auto flex flex-col space-y-4">
-            <h2 className="text-1xl text-jet font-semibold text-center lg:text-2xl lg:text-left">Check Date To Use: </h2>
+            <h2 className="text-1xl text-jet dark:text-snow font-semibold text-center lg:text-2xl lg:text-left">Check Date To Use: </h2>
             <form onSubmit={formHandler} className="flex flex-col space-y-4 lg:space-y-0 lg:flex-row align-middle justify-between">
                 <div className="form-control flex">
-                    <label htmlFor="month" className="font-semibold text-lg p-2 w-[150px] lg:w-auto">Month: </label>
+                    <label htmlFor="month" className="font-semibold text-lg p-2 w-[150px] lg:w-auto dark:text-snow">Month: </label>
                     <input
                         name="month"
                         type="number"
@@ -290,7 +290,7 @@ const DateController: React.FC<DateControllersProps> = ({
                     />
                 </div>
                 <div className="form-control  flex">
-                    <label htmlFor="month" className="font-semibold text-lg p-2 w-[150px] lg:w-auto">Day: </label>
+                    <label htmlFor="month" className="font-semibold text-lg p-2 w-[150px] lg:w-auto dark:text-snow">Day: </label>
                     <input
                         name="day"
                         type="number"
@@ -305,7 +305,7 @@ const DateController: React.FC<DateControllersProps> = ({
                     />
                 </div>
                 <div className="form-control flex">
-                    <label htmlFor="month" className="font-semibold text-lg p-2 w-[150px] lg:w-auto">Year: </label>
+                    <label htmlFor="month" className="font-semibold text-lg p-2 w-[150px] lg:w-auto dark:text-snow">Year: </label>
                     <input
                         name="day"
                         type="number"

@@ -1,4 +1,5 @@
 import Document, { Html, Head, NextScript, Main } from "next/document";
+import { useState } from "react";
 
 export default class MyDocument extends Document {
     /*static getInitialProps({ renderPage }) {
@@ -27,10 +28,13 @@ export default class MyDocument extends Document {
 
         return initialProps;
     }
+    
+    
 
     render() {
+        
         return (
-            <Html lang="en-CA">
+            <Html lang="en-CA" id="htmlDocument">
                 <Head>
                     <link
                         rel="preconnect"
@@ -47,7 +51,7 @@ export default class MyDocument extends Document {
                     />
                 </Head>
 
-                <body className="bg-snow">
+                <body className="bg-snow dark:bg-jet">
                     <Main />
                     <NextScript />
                 </body>

@@ -205,11 +205,11 @@ const DataContainer: React.FC<{
     return (
         <div className="data-container container flex flex-col font-open">
             <div className="stock-search-view-container border-4 border-t-0 border-electricBlue rounded-lg container max-w-[1500px] mx-auto p-6 flex flex-col">
-                <h2 className="font-bold text-2xl text-jet">Stocks // Trade History</h2>
+                <h2 className="font-bold text-2xl text-jet dark:text-snow">Stocks // Trade History</h2>
                 <section id="data-container" className="data-container font-bold">
                     <ul>
                         <li className="mb-5">
-                            <h6 onClick={() => setShowStocks(!showStocks)} className={`text-xl font-semibold text-jet 
+                            <h6 onClick={() => setShowStocks(!showStocks)} className={`text-xl font-semibold text-jet dark:text-snow 
                             transition-colors duration-150 hover:text-persianRed cursor-pointer hover:text-2xl 
                             ${!stockError && !stockLoading && showStocks ? 'text-xl text-persianRed' : ''}`}>
                                 Stocks
@@ -281,7 +281,7 @@ const DataContainer: React.FC<{
                         <li>
                             <h6 id="data-container-trades" onClick={() => {
                                 setShowTrades(!showTrades)
-                            }} className={`text-xl font-semibold text-jet transition-colors duration-150
+                            }} className={`text-xl font-semibold text-jet dark:text-snow transition-colors duration-150
                              hover:text-delftBlue cursor-pointer hover:text-2xl
                              ${!tradesLoading && !tradesError && showTrades ? 'text-xl text-delftBlue' : ''}`}>
                                 Trades

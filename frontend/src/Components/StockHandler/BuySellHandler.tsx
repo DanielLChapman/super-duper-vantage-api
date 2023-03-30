@@ -149,7 +149,7 @@ const BuySellHandler: React.FC<BuySellProps> = ({
                 </span>{" "}
                 has a price of{" "}
                 <span className="text-persianGreen">
-                    $
+                  
                     {price.toLocaleString("USD", {
                         style: "currency",
                         currency: "USD",

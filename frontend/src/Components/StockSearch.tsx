@@ -1,6 +1,12 @@
+import { useMutation, useQuery } from "@apollo/client";
 import React, { useState, useContext } from "react";
-import { user as userType } from "../../tools/lib";
+import { CacheStorage, user as userType } from "../../tools/lib";
 import { verifyFetch } from "../helpers/fetchHelper";
+import {
+    ADD_CACHE,
+    getCachesByIdentifiers,
+    GET_CACHES_BY_IDENTIFIERS,
+} from "./Cache";
 import DateController from "./DateHandler/DateController";
 import BuySellHandler from "./StockHandler/BuySellHandler";
 import StockSymbolForm from "./StockHandler/StockSymbolForm";
@@ -51,6 +57,28 @@ const StockSearch: React.FC<StockSearchProps> = ({
     const [buySellAppear, setBuySellAppear] = useState(false);
     const [viewStateManager, setViewStateManager] = useState(views["dates"]);
     const [nuKey, setNuKey] = useState(Math.random() * 1000);
+
+    const [addCache] = useMutation(ADD_CACHE);
+    const [identifiers, setIdentifiers] = useState([]);
+
+    const [verifyError, setVerifyError] = useState(null)
+
+    const {
+        data: cacheCheck,
+        error: cacheError,
+        loading: cacheLoading,
+        refetch,
+    } = useQuery(GET_CACHES_BY_IDENTIFIERS, {
+        variables: { identifiers },
+        onCompleted: (data) => {
+            if (data && data?.cacheStorages?.length === 1) {
+                const cache = data.cacheStorages[0];
+                postVerify(cache.price / 100);
+            } else if(identifiers[0]) {
+                postVerify(-1);
+            }
+        },
+    });
 
     const handleStateManager = (trigger: "advance" | "back") => {
         if (trigger === "advance") {
@@ -126,14 +154,8 @@ const StockSearch: React.FC<StockSearchProps> = ({
         });
     };
 
-    const verify = async () => {
-        let closingPrice: any = -1;
-
-        for (let [s, price] of checkedStocks) {
-            if (s === stockData.symbol) {
-                closingPrice = +price;
-            }
-        }
+    const postVerify = async (cP) => {
+        let closingPrice = cP;
 
         if (closingPrice === -1) {
             closingPrice = await verifyFetch(
@@ -144,8 +166,35 @@ const StockSearch: React.FC<StockSearchProps> = ({
             );
 
             if (closingPrice.error) {
-                return closingPrice;
+                setVerifyError(closingPrice);
+                return;
+            } else {
+                setVerifyError(null);
             }
+
+            /*cache adding */
+            if (!cacheCheck) {
+                let newPrice = closingPrice * 100;
+                let nudate = new Date(
+                    `${dateToUse.month}-${dateToUse.day}-${dateToUse.year}`
+                );
+    
+                let identifierNew = `${stockData.symbol.toUpperCase()}-${
+                    dateToUse.month
+                }-${dateToUse.day}-${dateToUse.year}`;
+    
+                const variables: CacheStorage = {
+                    symbol: stockData.symbol,
+                    price: Math.floor(newPrice),
+                    date: nudate,
+                    identifier: identifierNew,
+                };
+                
+                const { data } = await addCache({ variables });
+            }
+            
+
+            
 
             setCheckedStocks([
                 ...checkedStocks,
@@ -167,7 +216,35 @@ const StockSearch: React.FC<StockSearchProps> = ({
         };
     };
 
+    const verify = async () => {
+        let closingPrice: any = -1;
+
+        for (let [s, price] of checkedStocks) {
+            if (s === stockData.symbol) {
+                closingPrice = +price;
+            }
+        }
+
+        //check if its in the cache
+        let identifierNew = `${stockData.symbol.toUpperCase()}-${
+            dateToUse.month
+        }-${dateToUse.day}-${dateToUse.year}`;
+
+        if (identifiers[0] === identifierNew || closingPrice !== -1) {
+            postVerify(closingPrice !== -1 ? closingPrice : cacheCheck.cacheStorages[0].price / 100)
+
+            
+        }
+
+        setIdentifiers([identifierNew]);
+        refetch();
+    };
+
     const buySellHandler = () => {};
+
+    console.log(cacheCheck)
+
+    
 
     return (
         <div className="stock-search-container container flex flex-col ">
@@ -198,6 +275,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
                                 amount={stockData.amount}
                                 handleStockChange={handleStockChange}
                                 verify={verify}
+                                verifyError={verifyError}
                             />
                         </>
                     )}

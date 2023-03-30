@@ -1,4 +1,5 @@
 export const verifyAPIHandler = async (url) => {
+    console.log('here')
     let dataFromApi: object;
     await fetch(url)
         .then((response) => response.json())

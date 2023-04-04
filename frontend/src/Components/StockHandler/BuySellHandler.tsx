@@ -12,7 +12,6 @@ type BuySellProps = {
     price: number;
     user: userType;
     date: string;
-    buySellHandler: () => void;
 };
 
 export const BUY_STOCK_HANDLER = gql`

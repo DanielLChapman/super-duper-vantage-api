@@ -1,7 +1,9 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useState, useContext } from "react";
 import { CacheStorage, user as userType } from "../../tools/lib";
+import { handleDateChange, resetDate, updateAllDates } from "../helpers/dateContext";
 import { verifyFetch } from "../helpers/fetchHelper";
+import { handleStateManager, views } from "../helpers/handleStateView";
 import {
     ADD_CACHE,
     getCachesByIdentifiers,
@@ -27,12 +29,6 @@ type StockSearchProps = {
     setCheckedStocks: React.Dispatch<
         React.SetStateAction<Array<[string, number]>>
     >;
-};
-
-const views = {
-    dates: "DATE_VIEW",
-    stockSymbol: "STOCK_SYMBOL",
-    buySell: "BUY_SELL",
 };
 
 const StockSearch: React.FC<StockSearchProps> = ({
@@ -61,7 +57,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
     const [addCache] = useMutation(ADD_CACHE);
     const [identifiers, setIdentifiers] = useState([]);
 
-    const [verifyError, setVerifyError] = useState(null)
+    const [verifyError, setVerifyError] = useState(null);
 
     const {
         data: cacheCheck,
@@ -74,30 +70,23 @@ const StockSearch: React.FC<StockSearchProps> = ({
             if (data && data?.cacheStorages?.length === 1) {
                 const cache = data.cacheStorages[0];
                 postVerify(cache.price / 100);
-            } else if(identifiers[0]) {
+            } else if (identifiers[0]) {
                 postVerify(-1);
             }
         },
     });
 
-    const handleStateManager = (trigger: "advance" | "back") => {
-        if (trigger === "advance") {
-            if (viewStateManager === views["dates"]) {
-                setViewStateManager(views["stockSymbol"]);
-            } else {
-                setViewStateManager(views["buySell"]);
-            }
-        } else {
-            if (viewStateManager === views["buySell"]) {
-                setViewStateManager(views["stockSymbol"]);
-            } else {
-                setViewStateManager(views["dates"]);
-            }
-        }
+    const handleStateManagerWrapper = (trigger: "advance" | "back") => {
+        handleStateManager(viewStateManager, setViewStateManager, trigger)
+
     };
 
     //DATES:
-
+    
+    const handleDateChangeWrapper = (val: number, selector: string) => {
+        handleDateChange(val, selector, dateToUse, setDateToUse, setVerifiedDates, setCheckedStocks, setViewStateManager, views["dates"])
+    }
+    /*
     const handleDateChange = (val: number, selector: string) => {
         setDateToUse({
             ...dateToUse,
@@ -106,32 +95,14 @@ const StockSearch: React.FC<StockSearchProps> = ({
         setVerifiedDates(false);
         setCheckedStocks([]);
         setViewStateManager(views["dates"]);
-    };
+    };*/
 
-    const updateAllDates = (m: number, d: number, y: number) => {
-        setDateToUse({
-            month: m,
-            day: d,
-            year: y,
-        });
-        setVerifiedDates(true);
-        setCheckedStocks([]);
-        handleStateManager("advance");
-    };
+    const updateAllDatesWrapper = (m: number, d: number, y: number) => {
+        updateAllDates(m, d, y, setDateToUse, setVerifiedDates, setCheckedStocks, handleStateManagerWrapper);
+      };
 
-    const resetDate = () => {
-        setDateToUse({
-            month: dateObject.getMonth() + 1,
-            day: dateObject.getDate(),
-            year: dateObject.getFullYear(),
-        });
-        setVerifiedDates(true);
-        setCheckedStocks([]);
-        setViewStateManager(views["dates"]);
-        setNuKey(Math.random() * 1000);
-
-        //hide symbol window
-        //hide sell windows
+    const resetDateWrapper = () => {
+        resetDate(setDateToUse, views["dates"], setVerifiedDates, setCheckedStocks, setViewStateManager, setNuKey, dateObject);
     };
 
     //STOCK AND AMOUNT
@@ -178,23 +149,20 @@ const StockSearch: React.FC<StockSearchProps> = ({
                 let nudate = new Date(
                     `${dateToUse.month}-${dateToUse.day}-${dateToUse.year}`
                 );
-    
+
                 let identifierNew = `${stockData.symbol.toUpperCase()}-${
                     dateToUse.month
                 }-${dateToUse.day}-${dateToUse.year}`;
-    
+
                 const variables: CacheStorage = {
                     symbol: stockData.symbol,
                     price: Math.floor(newPrice),
                     date: nudate,
                     identifier: identifierNew,
                 };
-                
+
                 const { data } = await addCache({ variables });
             }
-            
-
-            
 
             setCheckedStocks([
                 ...checkedStocks,
@@ -208,7 +176,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
         });
 
         setVerifiedDates(true);
-        handleStateManager("advance");
+        handleStateManagerWrapper("advance");
 
         return {
             symbol: stockData.symbol,
@@ -230,21 +198,18 @@ const StockSearch: React.FC<StockSearchProps> = ({
             dateToUse.month
         }-${dateToUse.day}-${dateToUse.year}`;
 
-        if (identifiers[0] === identifierNew || closingPrice !== -1) {
-            postVerify(closingPrice !== -1 ? closingPrice : cacheCheck.cacheStorages[0].price / 100)
+        if ((identifiers[0] === identifierNew && cacheCheck.cacheStorages.length > 0)|| closingPrice !== -1) {
 
-            
+            postVerify(
+                closingPrice !== -1
+                    ? closingPrice
+                    : cacheCheck.cacheStorages[0].price / 100
+            );
         }
 
         setIdentifiers([identifierNew]);
         refetch();
     };
-
-    const buySellHandler = () => {};
-
-    console.log(cacheCheck)
-
-    
 
     return (
         <div className="stock-search-container container flex flex-col ">
@@ -253,7 +218,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
                     <button
                         className="go-back font-merriweather text-persianGreen cursor-pointer hover:text-persianRed hover:scale-105 hover:ml-3"
                         onClick={() => {
-                            handleStateManager("back");
+                            handleStateManagerWrapper("back");
                         }}
                     >
                         Go Back To Previous Form
@@ -263,8 +228,8 @@ const StockSearch: React.FC<StockSearchProps> = ({
                     {viewStateManager === views["dates"] && (
                         <DateController
                             dateBuild={dateToUse}
-                            updateHandler={handleDateChange}
-                            updateAllDates={updateAllDates}
+                            updateHandler={handleDateChangeWrapper}
+                            updateAllDates={updateAllDatesWrapper}
                             setURLSelector={setSelector}
                         />
                     )}
@@ -284,7 +249,6 @@ const StockSearch: React.FC<StockSearchProps> = ({
                             <BuySellHandler
                                 date={`${dateToUse.month}-${dateToUse.day}-${dateToUse.year}`}
                                 user={user}
-                                buySellHandler={buySellHandler}
                                 symbol={stockData.symbol}
                                 amount={stockData.amount}
                                 price={stockData.price}
@@ -293,7 +257,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
                     )}
                 </div>
                 <button
-                    onClick={resetDate}
+                    onClick={resetDateWrapper}
                     className="reset-button mt-1 font-merriweather lg:mt-4 w-2/3 max-w-lg relative mx-auto text-white  bg-delftBlue hover:bg-electricBlue hover:text-jet border-delftBlue focus:border-delftBlue
                 focus:ring-4 transition duration-150 focus:outline-none focus:scale-105 font-medium rounded-lg text-sm px-4 py-2 "
                 >

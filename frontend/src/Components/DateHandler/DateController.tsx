@@ -11,13 +11,15 @@ type DateControllersProps = {
     updateHandler: (val: number, selector: string) => void;
     updateAllDates: (m: number, d: number, y: number) => void;
     setURLSelector: (action: any | ((prevState: any) => any)) => void;
+    
 };
 
 const DateController: React.FC<DateControllersProps> = ({
     dateBuild,
     updateHandler,
     updateAllDates,
-    setURLSelector
+    setURLSelector,
+    
 }) => {
     const dateObject = new Date(Date.now());
     if (!dateBuild) return <span className="loading-span">Loading...</span>;

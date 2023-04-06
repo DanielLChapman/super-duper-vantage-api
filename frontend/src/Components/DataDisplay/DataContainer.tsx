@@ -50,9 +50,10 @@ const DataContainer: React.FC<{
     selector: string | "day" | "monthly" | "weekly" | "intraday";
     user: user;
     dateToUse: { month: number; day: number; year: number };
-    checkedStocks: Array<[string, number]>;
+    checkedStocks: Array<[string, number, string]>;
+    storedCache: any;
     setCheckedStocks: React.Dispatch<
-        React.SetStateAction<Array<[string, number]>>
+        React.SetStateAction<Array<[string, number, string]>>
     >;
 }> = ({
     verifiedDates,
@@ -61,6 +62,7 @@ const DataContainer: React.FC<{
     selector,
     checkedStocks,
     setCheckedStocks,
+    storedCache,
 }) => {
     if (!user) {
         return <span>Loading....</span>;
@@ -198,6 +200,15 @@ const DataContainer: React.FC<{
         }
     };
 
+    let t = storedCache?.cacheStorages?.map((x) => {
+        return [x.symbol, x.price, x.identifier];
+    })
+    
+    let newCheckedStocks = [...checkedStocks];
+    if (t && t.length > 0) {
+        newCheckedStocks = [...newCheckedStocks, ...t]
+    }
+
     useEffect(() => {
         setCheckedStocks([]);
     }, [dateToUse, selector]);
@@ -222,7 +233,7 @@ const DataContainer: React.FC<{
                                                 <li key={index + stock.id}>
                                                     <StockCard
                                                         checkedStocks={
-                                                            checkedStocks
+                                                            newCheckedStocks
                                                         }
                                                         setCheckedStocks={
                                                             setCheckedStocks

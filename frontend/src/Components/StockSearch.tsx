@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import React, { useState, useContext } from "react";
 import { CacheStorage, user as userType } from "../../tools/lib";
 import { handleDateChange, resetDate, updateAllDates } from "../helpers/dateContext";
@@ -25,10 +25,11 @@ type StockSearchProps = {
     setSelector: React.Dispatch<React.SetStateAction<string>>;
     verifiedDates: boolean;
     setVerifiedDates: React.Dispatch<React.SetStateAction<boolean>>;
-    checkedStocks: Array<[string, number]>;
+    checkedStocks: Array<[string, number, string]>;
     setCheckedStocks: React.Dispatch<
-        React.SetStateAction<Array<[string, number]>>
+        React.SetStateAction<Array<[string, number, string]>>
     >;
+    storedCache: any,
 };
 
 const StockSearch: React.FC<StockSearchProps> = ({
@@ -41,6 +42,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
     user,
     dateToUse,
     setDateToUse,
+    storedCache,
 }) => {
     const dateObject = new Date(Date.now());
     const [allowStockSymbol, setAllowStockSymbol] = useState(true); //default if using today, it should be allowed
@@ -58,19 +60,20 @@ const StockSearch: React.FC<StockSearchProps> = ({
     const [identifiers, setIdentifiers] = useState([]);
 
     const [verifyError, setVerifyError] = useState(null);
+    const [submitCalled, setSubmitCalled] = useState(false);
 
-    const {
+    const [getCaches, {
         data: cacheCheck,
         error: cacheError,
         loading: cacheLoading,
         refetch,
-    } = useQuery(GET_CACHES_BY_IDENTIFIERS, {
-        variables: { identifiers },
+    }] = useLazyQuery(GET_CACHES_BY_IDENTIFIERS, {
+        variables: { ids: identifiers },
         onCompleted: (data) => {
             if (data && data?.cacheStorages?.length === 1) {
-                const cache = data.cacheStorages[0];
-                postVerify(cache.price / 100);
-            } else if (identifiers[0]) {
+
+                postVerify(data.cacheStorages[0].price / 100);
+            } else {
                 postVerify(-1);
             }
         },
@@ -109,7 +112,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
     const handleStockChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let val = event.target.value;
         if (event.target.name === "symbol") {
-            console.log(/^[a-z0-9]+$/i.test(val));
+            
             if (/^[a-z0-9]+$/i.test(val) || val === "") {
                 val = val;
             } else {
@@ -127,6 +130,15 @@ const StockSearch: React.FC<StockSearchProps> = ({
 
     const postVerify = async (cP) => {
         let closingPrice = cP;
+
+        let nudate = new Date(
+            `${dateToUse.month}-${dateToUse.day}-${dateToUse.year}`
+        );
+
+        let identifierNew = `${stockData.symbol.toUpperCase()}-${
+            dateToUse.month
+        }-${dateToUse.day}-${dateToUse.year}`;
+
 
         if (closingPrice === -1) {
             closingPrice = await verifyFetch(
@@ -146,13 +158,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
             /*cache adding */
             if (!cacheCheck) {
                 let newPrice = closingPrice * 100;
-                let nudate = new Date(
-                    `${dateToUse.month}-${dateToUse.day}-${dateToUse.year}`
-                );
-
-                let identifierNew = `${stockData.symbol.toUpperCase()}-${
-                    dateToUse.month
-                }-${dateToUse.day}-${dateToUse.year}`;
+                
 
                 const variables: CacheStorage = {
                     symbol: stockData.symbol,
@@ -166,7 +172,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
 
             setCheckedStocks([
                 ...checkedStocks,
-                [stockData.symbol, closingPrice],
+                [stockData.symbol, closingPrice, identifierNew],
             ]);
         }
 
@@ -176,6 +182,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
         });
 
         setVerifiedDates(true);
+        
         handleStateManagerWrapper("advance");
 
         return {
@@ -187,28 +194,41 @@ const StockSearch: React.FC<StockSearchProps> = ({
     const verify = async () => {
         let closingPrice: any = -1;
 
-        for (let [s, price] of checkedStocks) {
-            if (s === stockData.symbol) {
-                closingPrice = +price;
-            }
-        }
 
         //check if its in the cache
         let identifierNew = `${stockData.symbol.toUpperCase()}-${
             dateToUse.month
         }-${dateToUse.day}-${dateToUse.year}`;
 
-        if ((identifiers[0] === identifierNew && cacheCheck.cacheStorages.length > 0)|| closingPrice !== -1) {
+        for (let [s, price, d] of checkedStocks) {
+            if (d === identifierNew) {
+                closingPrice = +price;
+            }
+        }
+        if (cacheCheck && cacheCheck.cacheStorages.length > 0) {
+            for (let {price, identifier, symbol} of cacheCheck.cacheStorages) {
+                if (identifier === identifierNew) {
+                    closingPrice = +price;
+                }
+            }
+        }
+        
+        
 
+        let found = false;
+        if (closingPrice !== -1) {
+            //means we've searched it before or 
             postVerify(
                 closingPrice !== -1
                     ? closingPrice
                     : cacheCheck.cacheStorages[0].price / 100
             );
+        } else {
+            setIdentifiers([identifierNew]);
+            getCaches()
         }
 
-        setIdentifiers([identifierNew]);
-        refetch();
+        
     };
 
     return (
@@ -231,6 +251,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
                             updateHandler={handleDateChangeWrapper}
                             updateAllDates={updateAllDatesWrapper}
                             setURLSelector={setSelector}
+                            
                         />
                     )}
                     {viewStateManager === views["stockSymbol"] && (
@@ -241,6 +262,8 @@ const StockSearch: React.FC<StockSearchProps> = ({
                                 handleStockChange={handleStockChange}
                                 verify={verify}
                                 verifyError={verifyError}
+                                submitCalled={submitCalled}
+                                setSubmitCalled={setSubmitCalled}
                             />
                         </>
                     )}

@@ -1,6 +1,6 @@
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
-import { user, CacheStorage } from "../../tools/lib";
+import { user, CacheStorage, stock } from "../../tools/lib";
 import { GET_CACHES_BY_IDENTIFIERS, getCachesByIdentifiers } from "./Cache";
 import DataContainer from "./DataDisplay/DataContainer";
 import DateController from "./DateHandler/DateController";
@@ -25,7 +25,9 @@ const App: React.FC<AppInitialProps> = () => {
         year: dateObject.getFullYear(),
     });
     const [verifiedDates, setVerifiedDates] = useState(true);
-    const [checkedStocks, setCheckedStocks] = useState([]);
+    const [checkedStocks, setCheckedStocks] = useState<
+        Array<[string, number, string]>
+    >([]);
 
     //(b-a)/(31556952000)
     const [taxes, setTaxes] = useState(false);
@@ -37,45 +39,49 @@ const App: React.FC<AppInitialProps> = () => {
     const [dataFromCache, setDataFromCache] = useState<Cache[]>([]);
     const [identifierArray, setIdentifierArray] = useState<String[]>([""]);
 
-    if (!user ) {
-        if (setDataFromCache.length !== 0) {
-            setDataFromCache([]);
-            setIdentifierArray([]);
-        }
-    } else if (user && user.stocks.length > 0 && identifierArray.length === 0)  {
-        let identifiers: String[] = [];
-        user.stocks.forEach((x) => {
-            let t = new Date(x.dateOfTrade);
-            identifiers.push(
-                `${x.symbol.toUpperCase}-${
-                    t.getMonth() + 1
-                }-${t.getDay()}-${t.getFullYear()}`
-            );
-        });
-        setIdentifierArray(identifiers)
-    }
-
+    const [called, setCalled] = useState(false);
     const {
         data,
         error,
         loading,
+        variables,
         refetch: newCaches,
     } = useQuery(GET_CACHES_BY_IDENTIFIERS, {
-        variables: { 
-            identifierArray 
+        variables: {
+            ids: identifierArray,
         },
-        skip: !user,
+        skip: !user || called,
         onCompleted: (data) => {
             if (data && data?.cacheStorages?.length > 0) {
-                console.log(data);
-                setDataFromCache(dataFromCache);
+                console.log(data, variables);
+                setCalled(true);
             }
         },
         onError: (error) => {
             console.log(error);
-        }
+        },
     });
 
+    if (
+        user &&
+        user.stocks.length > 0 &&
+        identifierArray[0] === "" &&
+        !called
+    ) {
+        let identifierSet: Set<string> = new Set();
+
+        user.stocks.forEach((x: stock) => {
+            let t = new Date(x.dateOfTrade);
+            let identifier = `${x.symbol.toUpperCase()}-${
+                t.getMonth() + 1
+            }-${t.getDate()}-${t.getFullYear()}`;
+            identifierSet.add(identifier);
+        });
+
+        let identifierArrayFromSet: String[] = Array.from(identifierSet);
+        setIdentifierArray(identifierArrayFromSet);
+        newCaches();
+    }
 
     return (
         <div className="App flex flex-col min-h-screen justify-between">
@@ -91,6 +97,7 @@ const App: React.FC<AppInitialProps> = () => {
                     setDateToUse={setDateToUse}
                     dateToUse={dateToUse}
                     user={user}
+                    storedCache={data}
                 />
                 <DataContainer
                     checkedStocks={checkedStocks}
@@ -99,6 +106,7 @@ const App: React.FC<AppInitialProps> = () => {
                     selector={selector}
                     user={user}
                     dateToUse={dateToUse}
+                    storedCache={data}
                 />
             </main>
             <Footer />

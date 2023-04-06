@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { CURRENT_USER_QUERY } from "../User";
 import { user as userType } from "../../../tools/lib";
 import roundToTwo from "../../../tools/roundToTwo";
@@ -76,6 +76,30 @@ const BuySellHandler: React.FC<BuySellProps> = ({
         dateCheck = date;
     }
 
+    const [message, setMessage] = useState<String>();
+    const [messageTimeout, setMessageTimeout] = useState<any>();
+    const [visible, setVisible] = useState(false);
+
+    const showMessage = (msg: string) => {
+        setMessage(msg);
+        setVisible(true);
+        clearTimeout(messageTimeout);
+        const timeoutId = setTimeout(() => {
+            setVisible(false);
+            setTimeout(() => {
+                setMessage("");
+            }, 500);
+        }, 3000);
+
+        setMessageTimeout(timeoutId);
+    };
+
+    useEffect(() => {
+        return () => {
+            clearTimeout(messageTimeout);
+        };
+    }, []);
+
     let convertedPrice = +(roundToTwo(+price) * 100).toFixed(0);
 
     const [buyStock, { data: buyData, error: buyError, loading: buyLoading }] =
@@ -138,6 +162,15 @@ const BuySellHandler: React.FC<BuySellProps> = ({
             default:
                 console.log("error", swapOption);
         }
+        if (res.data) {
+            showMessage(
+                `Successfully ${
+                    swapOption === "buy" ? "Bought" : "Sold"
+                } ${amount} of ${symbol}`
+            );
+        } else {
+            showMessage(res?.error);
+        }
     };
 
     return (
@@ -148,7 +181,6 @@ const BuySellHandler: React.FC<BuySellProps> = ({
                 </span>{" "}
                 has a price of{" "}
                 <span className="text-persianGreen">
-                  
                     {price.toLocaleString("USD", {
                         style: "currency",
                         currency: "USD",
@@ -188,6 +220,16 @@ const BuySellHandler: React.FC<BuySellProps> = ({
                     })}
                 </span>
             </h5>
+
+            {message && (
+                <h5
+                    className={`buy-sell-text text-center text-lg py-4 font-semibold transition-opacity duration-500 ${
+                        visible ? "opacity-100" : "opacity-0"
+                    }`}
+                >
+                    {message}
+                </h5>
+            )}
         </div>
     );
 };

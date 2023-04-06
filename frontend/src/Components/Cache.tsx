@@ -28,8 +28,8 @@ export const ADD_CACHE = gql`
 `;
 
 export const GET_CACHES_BY_IDENTIFIERS = gql`
-    query GetCachesByIdentifiers($identifiers: [String!]) {
-        cacheStorages(where: { identifier: { in: $identifiers } }) {
+    query GetCachesByIdentifiers($ids: [String!]) {
+        cacheStorages(where: { identifier: { in: $ids } }) {
             id
             symbol
             price

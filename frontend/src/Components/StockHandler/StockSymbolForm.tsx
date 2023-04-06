@@ -13,6 +13,9 @@ type DateControllersProps = {
     handleStockChange: (e) => void;
     verify: FetchBoth;
     verifyError: any;
+    submitCalled: boolean,
+    setSubmitCalled: React.Dispatch<
+    React.SetStateAction<boolean>>;
 };
 
 const StockSymbolForm: React.FC<DateControllersProps> = ({
@@ -21,6 +24,8 @@ const StockSymbolForm: React.FC<DateControllersProps> = ({
     handleStockChange,
     verify,
     verifyError,
+    submitCalled,
+    setSubmitCalled
 }) => {
     const [enabled, setEnabled] = useState(true);
     const [error, setError] = useState(null);
@@ -60,7 +65,7 @@ const StockSymbolForm: React.FC<DateControllersProps> = ({
                     Check Stock Symbol
                 </h2>
                 {error && (
-                    <span className="form-error-message mb-4 font-extrabold text-persianRed">
+                    <span className="form-error-message mb-4 font-extrabold text-persianRed text-center">
                         {error}
                     </span>
                 )}

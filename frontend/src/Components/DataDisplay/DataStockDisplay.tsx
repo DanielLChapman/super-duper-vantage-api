@@ -65,9 +65,9 @@ interface Props {
     apiKey: string;
     selector: string;
     verifiedDates: boolean;
-    checkedStocks: Array<[string, number]>;
+    checkedStocks: Array<[string, number, string]>;
     setCheckedStocks: React.Dispatch<
-        React.SetStateAction<Array<[string, number]>>
+        React.SetStateAction<Array<[string, number, string]>>
     >;
     verifyThePrice: number;
     setTheVerifiedPrice: React.Dispatch<React.SetStateAction<number>>;
@@ -105,14 +105,26 @@ const StockCard: React.FC<Props> = ({
         }
         let closingPrice: any = -1;
 
-        for (let [s, price] of checkedStocks) {
-            if (s === stock.symbol) {
+        let nudate = new Date(
+            `${dateToUse.month}-${dateToUse.day}-${dateToUse.year}`
+        );
+
+        let identifierNew = `${stock.symbol.toUpperCase()}-${
+            dateToUse.month
+        }-${dateToUse.day}-${dateToUse.year}`;
+
+        for (let [s, price, identifier] of checkedStocks) {
+            if (identifier === identifierNew) {
+                console.log('here')
                 closingPrice = +price;
                 setTheVerifiedPrice(closingPrice);
             }
         }
 
-        if (closingPrice !== -1) return;
+        if (closingPrice !== -1) {
+            //it works!
+            return;
+        }
 
         closingPrice = await verifyFetch(
             stock.symbol,
@@ -125,8 +137,10 @@ const StockCard: React.FC<Props> = ({
             return closingPrice;
         }
 
+        
+
         setTheVerifiedPrice(closingPrice);
-        setCheckedStocks([...checkedStocks, [stock.symbol, closingPrice]]);
+        setCheckedStocks([...checkedStocks, [stock.symbol, closingPrice, identifierNew]]);
     };
 
     //if the props change, setState back to verify.
@@ -134,7 +148,7 @@ const StockCard: React.FC<Props> = ({
         if (verifiedDates && checkedStocks.length > 0) {
             verifyPrice();
         }
-    }, [checkedStocks]);
+    }, [dateToUse, checkedStocks]);
 
     const stockDate = new Date(stock.dateOfTrade) || new Date(Date.now());
 

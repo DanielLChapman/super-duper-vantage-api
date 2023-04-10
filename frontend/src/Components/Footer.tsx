@@ -11,32 +11,36 @@ const Footer = () => {
             <div className="container flex flex-col items-center justify-between mx-auto space-y-16 px-6 md:flex-row md:space-y-0">
                 {/* Logo/Menu Container */}
                 <div className="flex flex-col items-center justify-between space-y-8 text-lg font-bold md:flex-row md:space-y-0 md:space-x-10 text-grayishBlue">
-                    <img
-                        src="./fauxfolio-logo.svg"
-                        alt=""
-                        className="mb-1 pt-2 block dark:hidden"
-                    />
-                    <img
-                        src="./fauxfolio-logo-svg-dark.svg"
-                        alt=""
-                        className="mb-1 pt-2 hidden dark:block"
-                    />
+                    <div className="z-30 flex items-center">
+                        <img
+                            src="/fauxfolio-logo.svg"
+                            alt=""
+                            className="mb-1 pt-2 block dark:hidden"
+                        />
+                        <img
+                            src="/fauxfolio-logo-svg-dark.svg"
+                            alt=""
+                            className="mb-1 pt-2 hidden dark:block"
+                        />
+                    </div>
+
                     {/* Account / Sign In */}
-                    {user ? (<a
-                        href="./user/settings/edit"
-                        className="uppercase text-sm md:text-base hover:text-persianRed "
-                    >
-                        Account
-                    </a>) : (
+                    {user ? (
                         <a
-                        href="./signin"
-                        className="uppercase text-sm md:text-base hover:text-persianRed "
-                    >
-                        Sign In
-                    </a>
+                            href="./user/settings/edit"
+                            className="uppercase text-sm md:text-base hover:text-persianRed "
+                        >
+                            Account
+                        </a>
+                    ) : (
+                        <a
+                            href="./signin"
+                            className="uppercase text-sm md:text-base hover:text-persianRed "
+                        >
+                            Sign In
+                        </a>
                     )}
-                    
-                    
+
                     <a
                         href="./faq"
                         className="uppercase text-sm md:text-base hover:text-persianRed"

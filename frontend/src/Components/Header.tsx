@@ -66,8 +66,8 @@ const Header: React.FC<UserOnlyProps> = ({ user, taxes, setTaxes }) => {
                             </p>
                         </div>
                         {isMenuOpen && (
-                            <ul className="bg-snow dark:bg-jet font-merriweather dropdown-menu pt-1 ml-2 sm:pt-1 z-30 sm:absolute text-center sm:text-right text-lg sm:w-[200px] text-jet dark:text-snow font-semibold  sm:-right-2 bg-opacity-60 group hover:bg-opacity-100 pr-2">
-                                <li className="text-jet dark:text-snow hover:text-persianRed dark:hover:text-persianRed cursor-pointer">
+                            <ul className="bg-snow dark:bg-jet rounded-lg font-merriweather text-semibold dropdown-menu pt-1 ml-2 sm:pt-1 z-30 sm:absolute text-center sm:text-right text-lg sm:w-[200px] text-jet dark:text-snow font-normal sm:-right-2 bg-opacity-60 group hover:bg-opacity-100 pr-2">
+                                <li className="text-jet dark:text-snow hover:text-persianRed dark:hover:text-persianRed cursor-pointer hover:font-semibold">
                                     {/* Maybe a hover window to initially set it up */}
                                     <button
                                         onClick={() => {
@@ -79,12 +79,12 @@ const Header: React.FC<UserOnlyProps> = ({ user, taxes, setTaxes }) => {
                                             : "Enable Taxes"}
                                     </button>
                                 </li>
-                                <li  className="cursor-pointer hover:text-persianRed" onClick={handleAccountClick}>Account</li>
+                                <li  className="cursor-pointer hover:text-persianRed hover:font-semibold" onClick={handleAccountClick}>Account</li>
                                 {user.id === "-1" && (
-                                    <li  className="cursor-pointer hover:text-persianRed" onClick={handleSignInClick}>Sign In</li>
+                                    <li  className="cursor-pointer hover:text-persianRed hover:font-semibold" onClick={handleSignInClick}>Sign In</li>
                                 )}
                                 {user.id !== "-1" && (
-                                    <li>
+                                    <li className="">
                                         <SignOut />
                                     </li>
                                 )}

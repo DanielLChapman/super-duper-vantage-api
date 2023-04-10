@@ -14,10 +14,15 @@ interface signUp {
     apiKey: string;
 }
 
-
 export const SIGNUP_MUTATION = gql`
-    mutation SIGNUP_MUTATION($username: String!, $apiKey: String!, $password: String!) {
-        createUser(data: { username: $username, password: $password, apiKey: $apiKey }) {
+    mutation SIGNUP_MUTATION(
+        $username: String!
+        $apiKey: String!
+        $password: String!
+    ) {
+        createUser(
+            data: { username: $username, password: $password, apiKey: $apiKey }
+        ) {
             id
             username
         }
@@ -50,7 +55,7 @@ export default function SignUp(props) {
         let vars = {
             username: inputs.username,
             password: inputs.password,
-            apiKey: inputs.apiKey
+            apiKey: inputs.apiKey,
         };
 
         if (inputs.password.length < 8) {
@@ -59,7 +64,7 @@ export default function SignUp(props) {
         }
 
         if (inputs.apiKey.length === 0) {
-            setError('Need an API key');
+            setError("Need an API key");
             return;
         }
 
@@ -92,14 +97,9 @@ export default function SignUp(props) {
     };
 
     return (
-        <form method="POST" onSubmit={
-            
-            handleSubmit
-            
-            }>
-            <h2>Sign Up For An Account</h2>
+        <form method="POST" onSubmit={handleSubmit}>
             {submitError ? <div>{submitError}</div> : <></>}
-            <fieldset>
+            <fieldset className="flex flex-col space-y-6">
                 {data?.createUser && (
                     <p data-testid="success-signup-message">
                         Signed Up With {data.createUser.email} - Please Go Ahead
@@ -107,7 +107,7 @@ export default function SignUp(props) {
                     </p>
                 )}
 
-                <div className="input">
+                <div className="input flex flex-col-reverse">
                     <input
                         type="name"
                         name="username"
@@ -115,15 +115,18 @@ export default function SignUp(props) {
                         autoComplete="username"
                         value={inputs.username}
                         onChange={handleChange}
-                        className="input_field"
+                        className="input_field font-merriweather"
                         required
                     />
-                    <label className="input_label" htmlFor="name">
+                    <label
+                        className="input_label font-semibold text-lg font-open"
+                        htmlFor="name"
+                    >
                         Username
                     </label>
                 </div>
 
-                <div className="input">
+                <div className="input flex flex-col-reverse">
                     <input
                         type="text"
                         name="apiKey"
@@ -131,15 +134,31 @@ export default function SignUp(props) {
                         autoComplete="apiKey"
                         value={inputs.apiKey}
                         onChange={handleChange}
-                        className="input_field"
+                        className="input_field font-merriweather"
                         required
                     />
-                    <label className="input_label" htmlFor="apiKey">
-                        API Key from <a target="_blank" href='https://www.alphavantage.co/'>Alpha Vantage (free)</a> 
+                    <label
+                        className="input_label font-semibold text-lg font-open"
+                        htmlFor="apiKey"
+                    >
+                        API Key from{" "}
+                        <a
+                            target="_blank"
+                            className="text-persianGreen dark:text-electricBlue"
+                            href="https://www.alphavantage.co/"
+                        >
+                            Alpha Vantage (free)
+                        </a>
                     </label>
                 </div>
 
-                <div className="input">
+                <div className="input flex flex-col">
+                    <label
+                        className="input_label font-semibold text-lg font-open"
+                        htmlFor="password"
+                    >
+                        Password
+                    </label>
                     <input
                         type="password"
                         name="password"
@@ -147,25 +166,31 @@ export default function SignUp(props) {
                         autoComplete="password"
                         value={inputs.password}
                         onChange={handleChange}
-                        className="input_field"
+                        className="input_field font-merriweather"
                         required
                     />
-                    <label className="input_label" htmlFor="password">
-                        Password
-                    </label>
-                    <PasswordChecklist
-                        rules={[
-                            "minLength",
-                            "specialChar",
-                            "number",
-                            "capital",
-                        ]}
-                        minLength={5}
-                        value={inputs.password}
-                        onChange={(isValid) => setIsValid(isValid)}
-                    />
+                    <div className="mt-2 border-2 border-gray-300 p-2 font-open">
+                        <PasswordChecklist
+                            rules={[
+                                "minLength",
+                                "specialChar",
+                                "number",
+                                "capital",
+                            ]}
+                            minLength={5}
+                            value={inputs.password}
+                            onChange={(isValid) => setIsValid(isValid)}
+                        />
+                    </div>
                 </div>
-                <button type="submit" disabled={!isValid} aria-disabled={!isValid}>Sign Up</button>
+                <button
+                    type="submit"
+                    disabled={!isValid}
+                    aria-disabled={!isValid}
+                    className="cursor-pointer transform rounded-lg bg-electricBlue dark:bg-delftBlue dark:text-white py-2 font-bold duration-300 hover:bg-delftBlue hover:text-white dark:hover:bg-electricBlue dark:hover:text-jet"
+                >
+                    Sign Up
+                </button>
             </fieldset>
         </form>
     );

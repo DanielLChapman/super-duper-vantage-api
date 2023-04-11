@@ -5,7 +5,7 @@ import useForm from "../../../tools/useForm";
 import { CURRENT_USER_QUERY } from "../User";
 import Router from "next/router";
 
-const SIGNIN_MUTATION = gql`
+export const SIGNIN_MUTATION = gql`
     mutation SignInMutation($username: String!, $password: String!) {
         authenticateUserWithPassword(username: $username, password: $password) {
             ... on UserAuthenticationWithPasswordSuccess {

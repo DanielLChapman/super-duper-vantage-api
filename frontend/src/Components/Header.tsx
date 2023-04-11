@@ -33,13 +33,13 @@ const Header: React.FC<UserOnlyProps> = ({ user, taxes, setTaxes }) => {
                 <div className="flex flex-col flex-wrap sm:flex-row items-center justify-between mx-auto">
                     <a href="localhost:7777" className="z-30 flex items-center">
                         <img
-                            src="./fauxfolio-logo.svg"
+                            src="/fauxfolio-logo.svg"
                             alt=""
                             className="logo dark:hidden"
                             
                         />
                         <img
-                            src="./fauxfolio-logo-svg-dark.svg"
+                            src="/fauxfolio-logo-svg-dark.svg"
                             alt=""
                             className="logo hidden dark:block"
                             
@@ -88,7 +88,7 @@ const Header: React.FC<UserOnlyProps> = ({ user, taxes, setTaxes }) => {
                                         <SignOut />
                                     </li>
                                 )}
-                                <li>
+                                <li className="">
                                     <button onClick={() => {
                                         if (darkMode) {
                                             document.querySelector("#htmlDocument").classList.remove('dark')

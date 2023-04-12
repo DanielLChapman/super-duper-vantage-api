@@ -383,13 +383,30 @@ var lists = {
   User: (0, import_core.list)({
     access: import_access.allowAll,
     fields: {
-      username: (0, import_fields.text)({ validation: { isRequired: true }, isIndexed: "unique" }),
+      username: (0, import_fields.text)({
+        validation: { isRequired: true },
+        isIndexed: "unique"
+      }),
       password: (0, import_fields.password)({ validation: { isRequired: true } }),
       apiKey: (0, import_fields.text)({ validation: { isRequired: true } }),
       money: (0, import_fields.integer)({
         defaultValue: 1e7,
         validation: {
           isRequired: true
+        }
+      }),
+      email: (0, import_fields.text)({
+        hooks: {
+          validateInput: async ({ resolvedData, item, context, addValidationError }) => {
+            const { email } = resolvedData;
+            const existingUser = await context.db.User.findMany({
+              where: { email: { equals: email } }
+            });
+            console.log(existingUser);
+            if (existingUser && existingUser.length > 0 && existingUser.id !== item?.id) {
+              addValidationError("Invalid Email Entry");
+            }
+          }
         }
       }),
       trades: (0, import_fields.relationship)({ ref: "Trade.owner", many: true }),
@@ -468,7 +485,10 @@ var lists = {
     fields: {
       symbol: (0, import_fields.text)({ validation: { isRequired: true } }),
       price: (0, import_fields.integer)({ validation: { isRequired: true } }),
-      identifier: (0, import_fields.text)({ validation: { isRequired: true }, isIndexed: "unique" }),
+      identifier: (0, import_fields.text)({
+        validation: { isRequired: true },
+        isIndexed: "unique"
+      }),
       createdAt: (0, import_fields.timestamp)({
         defaultValue: { kind: "now" }
       }),

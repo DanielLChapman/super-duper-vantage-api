@@ -18,6 +18,7 @@ model User {
   password       String
   apiKey         String    @default("")
   money          Int       @default(10000000)
+  email          String    @default("")
   trades         Trade[]   @relation("Trade_owner")
   stocks         Stock[]   @relation("Stock_owner")
   shortTermTaxes Int?      @default(35)

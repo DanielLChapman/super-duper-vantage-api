@@ -7,6 +7,7 @@ type User {
   password: PasswordState
   apiKey: String
   money: Int
+  email: String
   trades(where: TradeWhereInput! = {}, orderBy: [TradeOrderByInput!]! = [], take: Int, skip: Int! = 0): [Trade!]
   tradesCount(where: TradeWhereInput! = {}): Int
   stocks(where: StockWhereInput! = {}, orderBy: [StockOrderByInput!]! = [], take: Int, skip: Int! = 0): [Stock!]
@@ -35,6 +36,7 @@ input UserWhereInput {
   username: StringFilter
   apiKey: StringFilter
   money: IntFilter
+  email: StringFilter
   trades: TradeManyRelationFilter
   stocks: StockManyRelationFilter
   shortTermTaxes: IntNullableFilter
@@ -131,6 +133,7 @@ input UserOrderByInput {
   username: OrderDirection
   apiKey: OrderDirection
   money: OrderDirection
+  email: OrderDirection
   shortTermTaxes: OrderDirection
   longTermTaxes: OrderDirection
   createdAt: OrderDirection
@@ -146,6 +149,7 @@ input UserUpdateInput {
   password: String
   apiKey: String
   money: Int
+  email: String
   trades: TradeRelateToManyForUpdateInput
   stocks: StockRelateToManyForUpdateInput
   shortTermTaxes: Int
@@ -177,6 +181,7 @@ input UserCreateInput {
   password: String
   apiKey: String
   money: Int
+  email: String
   trades: TradeRelateToManyForCreateInput
   stocks: StockRelateToManyForCreateInput
   shortTermTaxes: Int

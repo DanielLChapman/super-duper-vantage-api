@@ -153,4 +153,5 @@ export type user = {
     shortTermTaxes: number,
     longTermTaxes: number,
     createdAt?: Date
+    email: string,
 }

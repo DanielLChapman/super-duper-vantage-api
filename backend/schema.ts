@@ -62,24 +62,37 @@ export const lists: Lists = {
                 },
             }),
             email: text({
-              hooks: {
-                validateInput:async ({resolvedData, item, context, addValidationError }) => {
-                  //@ts-ignore
-                  const {email} = resolvedData;
+                hooks: {
+                    validateInput: async ({
+                        resolvedData,
+                        item,
+                        context,
+                        addValidationError,
+                    }) => {
+                        //@ts-ignore
+                        console.log(resolvedData);
 
-                  const existingUser = await context.db.User.findMany({
-                    where: { email: {equals: email}},
-                  });
+                        const { email } = resolvedData;
 
-                  console.log(existingUser);
+                        if (!email) {
+                            return true;
+                        } else {
+                            const existingUser = await context.db.User.findMany(
+                                {
+                                    where: { email: { equals: email } },
+                                }
+                            );
 
-                  if (existingUser && existingUser.length > 0 && existingUser.id !== item?.id) {
-                    addValidationError("Invalid Email Entry");
-                  }
-
-
-                }
-              }
+                            if (
+                                existingUser &&
+                                existingUser.length > 0 &&
+                                existingUser.id !== item?.id
+                            ) {
+                                addValidationError("Invalid Email Entry");
+                            }
+                        }
+                    },
+                },
             }),
 
             trades: relationship({ ref: "Trade.owner", many: true }),
@@ -96,7 +109,6 @@ export const lists: Lists = {
                 defaultValue: { kind: "now" },
             }),
         },
-        
     }),
 
     Trade: list({

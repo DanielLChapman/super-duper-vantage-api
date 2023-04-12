@@ -2,24 +2,71 @@
 import React, { useState, MouseEvent, FormEvent } from "react";
 import { user } from "../../../tools/lib";
 import { CURRENT_USER_QUERY } from "../User";
-import { useMutation } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import { SIGNIN_MUTATION } from "./SignIn";
+import { MutationTuple } from '@apollo/client';
+import UpdateFieldForm from "./UpdateFieldForm";
+//import ReactPasswordChecklist from "react-password-checklist";
+
 
 interface EditAccountInfoProps {
-    onUpdate: (username: string, password: string) => void;
+    formValues: {
+      password: string;
+      newUsername: string;
+      newPassword: string;
+      newEmail: string;
+      newApiKey: string;
+      shortTermTaxes: number;
+      longTermTaxes: number;
+    };
+    setFormValues: React.Dispatch<React.SetStateAction<{
+      password: string;
+      newUsername: string;
+      newPassword: string;
+      newEmail: string;
+      newApiKey: string;
+      shortTermTaxes: number;
+      longTermTaxes: number;
+    }>>;
+    setFormErrors: React.Dispatch<React.SetStateAction<{
+      username: string;
+      password: string;
+      email: string;
+      api: string;
+      shortTermTaxes: string;
+      longTermTaxes: string;
+    }>>;
+    formErrors: {
+      username: string;
+      password: string;
+      email: string;
+      api: string;
+      shortTermTaxes: string;
+      longTermTaxes: string;
+    };
+    handleUpdate: (type: string) => Promise<void>;
     user: user;
-}
+    data: any; // Replace 'any' with the specific type of data returned by the 'authenticateUserWithPassword' mutation.
+    newSignIn: MutationTuple<any, any>; // Replace the two 'any' types with the specific types of your SIGNIN_MUTATION.
+  }
 
 const EditAccountInfo: React.FC<EditAccountInfoProps> = ({
-    onUpdate,
+    formValues,
+    formErrors,
+    setFormValues,
+    setFormErrors,
+    handleUpdate,
     user,
+    data,
+    newSignIn
 }) => {
     const [isPasswordValidated, setIsPasswordValidated] = useState(false);
-    const [password, setPassword] = useState("");
-    const [newUsername, setNewUsername] = useState(user?.username || "");
-    const [newPassword, setNewPassword] = useState("");
 
-    const [newSignIn, { data, error, loading }] = useMutation(SIGNIN_MUTATION);
+
+    let [isValid, setIsValid] = useState(true);
+
+    const [signInError, setSignInError] = useState("");
+    
 
     const validatePassword = async (event: FormEvent) => {
         // Call your Apollo GraphQL mutation to check the password here.
@@ -34,7 +81,7 @@ const EditAccountInfo: React.FC<EditAccountInfoProps> = ({
         let res = await newSignIn({
             variables: {
                 username: user.username,
-                password,
+                password: formValues.password,
             },
             refetchQueries: [{ query: CURRENT_USER_QUERY }],
         });
@@ -43,15 +90,83 @@ const EditAccountInfo: React.FC<EditAccountInfoProps> = ({
             res.data.authenticateUserWithPassword.__typename ===
             "UserAuthenticationWithPasswordSuccess"
         ) {
+            setSignInError("");
             setIsPasswordValidated(true);
+        } else {
+            setSignInError("Invalid Password");
         }
     };
+    /*
+    const handleUpdate = async (type) => {
+        if (!isValid && type === "password") {
+            setFormErrors({
+                ...formErrors,
+                password: "Not a Valid Password",
+            });
+            return;
+        }
 
-    const handleUpdate = () => {
-        onUpdate(newUsername, newPassword);
+        let variables: UserUpdateInput = { id: user?.id };
+        switch (type) {
+            case "username":
+                variables.username = formValues.newUsername;
+                break;
+            case "password":
+                variables.password = formValues.newPassword;
+                break;
+            case "email":
+                //weird error, should be caught on the backend but it flashes an error that isn't fun for the user
+                //look into later, finish this now
+                variables.email = formValues.newEmail;
+                break;
+            case "api":
+                variables.apiKey = formValues.newApiKey;
+                break;
+            default:
+                console.log(type);
+        }
+
+        let res = await updateUser({
+            variables,
+            refetchQueries: [{ query: CURRENT_USER_QUERY }],
+        });
+
+        if (res.data) {
+            alert("Success");
+            if (type === "password") {
+                setFormValues({
+                    ...formValues,
+                    password: formValues.newPassword,
+                });
+            }
+            if (type === "username") {
+                let res2 = await newSignIn({
+                    variables: {
+                        username: formValues.newUsername,
+                        password: formValues.password,
+                    },
+                    refetchQueries: [{ query: CURRENT_USER_QUERY }],
+                });
+            }
+            setFormErrors({
+                ...formErrors,
+                [type]: "",
+            });
+        } else {
+            alert("huh");
+            setFormErrors({
+                ...formErrors,
+                [type]: res.errors,
+            });
+        }
+    };*/
+
+    const updateFormValue = (key: string, value: string) => {
+        setFormValues((prevState) => ({
+            ...prevState,
+            [key]: value,
+        }));
     };
-
-    console.log(data);
 
     return (
         <div className="bg-snow font-open rounded-lg p-6">
@@ -60,34 +175,26 @@ const EditAccountInfo: React.FC<EditAccountInfoProps> = ({
             data?.authenticateUserWithPassword.item.username ===
                 user.username ? (
                 <>
-                    <form onSubmit={(e) => {
-                        e.preventDefault()
-                    }}>
-                        <label
-                            htmlFor="newUsername"
-                            className="block text-sm font-medium text-gray-700"
-                        >
-                            Change Username
-                        </label>
-                        <input
-                            id="newUsername"
-                            type="text"
+                    {" "}
+                    <div className="-mt-4">
+                        <UpdateFieldForm
+                            label="Change Username"
                             placeholder="New username"
-                            autoComplete="username"
-                            value={newUsername}
-                            onChange={(e) => setNewUsername(e.target.value)}
-                            className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            value={formValues.newUsername}
+                            error={formErrors["username"]}
+                            fieldType="newUsername"
+                            onChange={(value) =>
+                                updateFormValue("newUsername", value)
+                            }
+                            onSubmit={() => handleUpdate("username")}
                         />
-                        <button
-                            className="mt-4 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        >
-                            Update Username
-                        </button>
-                    </form>
-
-                    <form onSubmit={(e) => {
-                        e.preventDefault()
-                    }}>
+                    </div>
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            handleUpdate("password");
+                        }}
+                    >
                         <label
                             htmlFor="newPassword"
                             className="block mt-4 text-sm font-medium text-gray-700"
@@ -99,16 +206,58 @@ const EditAccountInfo: React.FC<EditAccountInfoProps> = ({
                             type="password"
                             autoComplete="password"
                             placeholder="New password"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            value={formValues.newPassword}
+                            onChange={(e) =>
+                                updateFormValue("newPassword", e.target.value)
+                            }
+                            className={`block w-full mt-1 px-3 py-2 border ${
+                                formErrors["password"]
+                                    ? "border-persianRed"
+                                    : "border-gray-300"
+                            }  rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 `}
                         />
-                        <button
-                        className="mt-4 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                    >
-                        Update Password
-                    </button>
+                        <div className="mt-2 border-2 border-gray-300 p-2 font-open">
+                            {/*  <ReactPasswordChecklist
+                                rules={[
+                                    "minLength",
+                                    "specialChar",
+                                    "number",
+                                    "capital",
+                                ]}
+                                minLength={5}
+                                value={newPassword}
+                                onChange={(isValid) => setIsValid(isValid)}
+                            />*/}
+                        </div>
+                        <button className="mt-4 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Update Password
+                        </button>
+                        {formErrors["password"] && (
+                            <span className="font-bold text-persianRed text-lg">
+                                Error: {formErrors["password"]}
+                            </span>
+                        )}
                     </form>
+                    <UpdateFieldForm
+                        label="Add / Change Email (for recovery)"
+                        placeholder="New Email"
+                        value={formValues.newEmail}
+                        error={formErrors["email"]}
+                        fieldType="newEmail"
+                        onChange={(value) => updateFormValue("newEmail", value)}
+                        onSubmit={() => handleUpdate("email")}
+                    />
+                    <UpdateFieldForm
+                        label="Add / Change Apikey"
+                        placeholder="New APIKey"
+                        value={formValues.newApiKey}
+                        error={formErrors["apikey"]}
+                        fieldType="newApiKey"
+                        onChange={(value) =>
+                            updateFormValue("newApiKey", value)
+                        }
+                        onSubmit={() => handleUpdate("api")}
+                    />
                 </>
             ) : (
                 <form
@@ -126,14 +275,25 @@ const EditAccountInfo: React.FC<EditAccountInfoProps> = ({
                         id="password"
                         type="password"
                         placeholder="Enter your password"
-                        value={password}
+                        value={formValues.password}
                         autoComplete="password"
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        onChange={(e) =>
+                            updateFormValue("password", e.target.value)
+                        }
+                        className={`block w-full mt-1 px-3 py-2 border border-gray-300 ${
+                            signInError
+                                ? "border-persianRed"
+                                : "border-gray-300"
+                        } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"`}
                     />
                     <button className="mt-4 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         Submit
                     </button>
+                    {signInError.length > 0 && (
+                        <span className="font-bold text-persianRed text-lg">
+                            Error: Invalid Password
+                        </span>
+                    )}
                 </form>
             )}
         </div>

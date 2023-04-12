@@ -13,6 +13,7 @@ let backend: backendtype = {
         username: "Demo",
         apiKey: "demo",
         money: 100000,
+        email: "",
         trades: [],
         shortTermTaxes: 35,
         longTermTaxes: 15,
@@ -30,6 +31,7 @@ export const CURRENT_USER_QUERY = gql`
                 longTermTaxes
                 money
                 apiKey
+                email
                 trades {
                     id
                     symbol

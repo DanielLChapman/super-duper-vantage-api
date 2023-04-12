@@ -397,14 +397,25 @@ var lists = {
       }),
       email: (0, import_fields.text)({
         hooks: {
-          validateInput: async ({ resolvedData, item, context, addValidationError }) => {
+          validateInput: async ({
+            resolvedData,
+            item,
+            context,
+            addValidationError
+          }) => {
+            console.log(resolvedData);
             const { email } = resolvedData;
-            const existingUser = await context.db.User.findMany({
-              where: { email: { equals: email } }
-            });
-            console.log(existingUser);
-            if (existingUser && existingUser.length > 0 && existingUser.id !== item?.id) {
-              addValidationError("Invalid Email Entry");
+            if (!email) {
+              return true;
+            } else {
+              const existingUser = await context.db.User.findMany(
+                {
+                  where: { email: { equals: email } }
+                }
+              );
+              if (existingUser && existingUser.length > 0 && existingUser.id !== item?.id) {
+                addValidationError("Invalid Email Entry");
+              }
             }
           }
         }

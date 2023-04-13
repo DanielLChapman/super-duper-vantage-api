@@ -18,6 +18,7 @@ let backend: backendtype = {
         shortTermTaxes: 35,
         longTermTaxes: 15,
         stocks: [],
+        useTaxes: false,
     },
 };
 
@@ -32,6 +33,7 @@ export const CURRENT_USER_QUERY = gql`
                 money
                 apiKey
                 email
+                useTaxes
                 trades {
                     id
                     symbol

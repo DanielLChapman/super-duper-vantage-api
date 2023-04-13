@@ -403,7 +403,6 @@ var lists = {
             context,
             addValidationError
           }) => {
-            console.log(resolvedData);
             const { email } = resolvedData;
             if (!email) {
               return true;
@@ -430,6 +429,9 @@ var lists = {
       }),
       createdAt: (0, import_fields.timestamp)({
         defaultValue: { kind: "now" }
+      }),
+      useTaxes: (0, import_fields.checkbox)({
+        defaultValue: false
       })
     }
   }),

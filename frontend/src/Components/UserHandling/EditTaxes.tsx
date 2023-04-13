@@ -55,7 +55,7 @@ const EditTaxes: React.FC<EditTaxesInfoProps> = ({
     const updateFormValue = (key: string, value: string) => {
         setFormValues((prevState) => ({
             ...prevState,
-            [key]: value,
+            [key]: +value,
         }));
     };
 
@@ -64,6 +64,7 @@ const EditTaxes: React.FC<EditTaxesInfoProps> = ({
             <UpdateFieldForm
                 label="Change Short Term Taxes (out of 100)"
                 placeholder="0"
+                //@ts-ignore
                 value={formValues.shortTermTaxes}
                 error={formErrors["shortTermTaxes"]}
                 fieldType="number"
@@ -74,7 +75,8 @@ const EditTaxes: React.FC<EditTaxesInfoProps> = ({
             <UpdateFieldForm
                 label="Change Long Term Taxes (out of 100)"
                 placeholder="0"
-                value={formValues.longTermTaxes}
+                //@ts-ignore
+                value={+formValues.longTermTaxes}
                 error={formErrors["longTermTaxes"]}
                 fieldType="number"
                 onChange={(value) => updateFormValue("longTermTaxes", value)}

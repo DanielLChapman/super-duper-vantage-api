@@ -30,6 +30,7 @@ export const UPDATE_USER_MUTATION = gql`
         $shortTermTaxes: Int
         $longTermTaxes: Int
         $email: String
+        $useTaxes: Boolean
     ) {
         updateUser(
             where: { id: $id }
@@ -40,6 +41,7 @@ export const UPDATE_USER_MUTATION = gql`
                 apiKey: $apiKey
                 shortTermTaxes: $shortTermTaxes
                 longTermTaxes: $longTermTaxes
+                useTaxes: $useTaxes
             }
         ) {
             id

@@ -3,16 +3,43 @@ import React, { useState } from "react";
 import formatAmounts from "../../tools/convertAmounts";
 import { user as userType } from "../../tools/lib";
 import SignOut from "./UserHandling/SignOut";
+import { useMutation } from "@apollo/client";
+import { UPDATE_USER_MUTATION } from "./UserHandling/AccountContainer";
+import { CURRENT_USER_QUERY } from "./User";
 
 export type UserOnlyProps = {
     user: userType | null;
-    taxes: boolean;
-    setTaxes: React.Dispatch<React.SetStateAction<boolean>>;
+    
 };
 
-const Header: React.FC<UserOnlyProps> = ({ user, taxes, setTaxes }) => {
+const Header: React.FC<UserOnlyProps> = ({ user }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [darkMode, setDarkMode] = useState(false)
+    const [darkMode, setDarkMode] = useState(false);
+
+    const [
+        updateUser,
+        {
+            data: updateUserData,
+            error: updateUserError,
+            loading: updateUserLoading,
+        },
+    ] = useMutation(UPDATE_USER_MUTATION);
+
+    const handleTaxesSwitch = async () => {
+        if (!user) {
+            alert('Must Be Signed In');
+            return;
+        }
+        const variables = {
+            id: user.id,
+            useTaxes: !user.useTaxes
+        }
+
+        let res = await updateUser({
+            variables,
+            refetchQueries: [{ query: CURRENT_USER_QUERY }],
+        });
+    }
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -71,10 +98,10 @@ const Header: React.FC<UserOnlyProps> = ({ user, taxes, setTaxes }) => {
                                     {/* Maybe a hover window to initially set it up */}
                                     <button
                                         onClick={() => {
-                                            setTaxes(!taxes);
+                                            handleTaxesSwitch();
                                         }}
                                     >
-                                        {taxes
+                                        {user.useTaxes
                                             ? "Disable Taxes"
                                             : "Enable Taxes"}
                                     </button>

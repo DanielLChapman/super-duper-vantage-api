@@ -70,7 +70,6 @@ export const lists: Lists = {
                         addValidationError,
                     }) => {
                         //@ts-ignore
-                        console.log(resolvedData);
 
                         const { email } = resolvedData;
 
@@ -108,6 +107,9 @@ export const lists: Lists = {
                 // this sets the timestamp to Date.now() when the user is first created
                 defaultValue: { kind: "now" },
             }),
+            useTaxes: checkbox({
+                defaultValue: false
+            })
         },
     }),
 

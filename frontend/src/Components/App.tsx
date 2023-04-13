@@ -29,9 +29,8 @@ const App: React.FC<AppInitialProps> = () => {
         Array<[string, number, string]>
     >([]);
 
-    //(b-a)/(31556952000)
-    const [taxes, setTaxes] = useState(false);
-
+    //this was above taxes, will check later (b-a)/(31556952000)
+   
     const [selector, setSelector] = useState("Day");
 
     //const caches = getCachesByIdentifiers(lazyData)
@@ -85,7 +84,7 @@ const App: React.FC<AppInitialProps> = () => {
 
     return (
         <div className="App flex flex-col min-h-screen justify-between">
-            <Header user={user} taxes={taxes} setTaxes={setTaxes} />
+            <Header user={user} />
             <main className="main-content container mx-auto bg-snow dark:bg-jet mb-auto">
                 <StockSearch
                     checkedStocks={checkedStocks}

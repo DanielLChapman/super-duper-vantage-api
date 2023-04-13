@@ -40,7 +40,7 @@ const UpdateFieldForm: React.FC<UpdateFieldFormProps> = ({
                         ? "password"
                         : fieldType === "newEmail"
                         ? "email"
-                        : fieldType === "text" ? "text" : "number"
+                        : fieldType === "number" ? "number" : "text"
                 }
                 placeholder={placeholder}
                 value={value}

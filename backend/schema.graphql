@@ -15,6 +15,7 @@ type User {
   shortTermTaxes: Int
   longTermTaxes: Int
   createdAt: DateTime
+  useTaxes: Boolean
 }
 
 type PasswordState {
@@ -42,6 +43,7 @@ input UserWhereInput {
   shortTermTaxes: IntNullableFilter
   longTermTaxes: IntNullableFilter
   createdAt: DateTimeNullableFilter
+  useTaxes: BooleanFilter
 }
 
 input IDFilter {
@@ -128,6 +130,11 @@ input DateTimeNullableFilter {
   not: DateTimeNullableFilter
 }
 
+input BooleanFilter {
+  equals: Boolean
+  not: BooleanFilter
+}
+
 input UserOrderByInput {
   id: OrderDirection
   username: OrderDirection
@@ -137,6 +144,7 @@ input UserOrderByInput {
   shortTermTaxes: OrderDirection
   longTermTaxes: OrderDirection
   createdAt: OrderDirection
+  useTaxes: OrderDirection
 }
 
 enum OrderDirection {
@@ -155,6 +163,7 @@ input UserUpdateInput {
   shortTermTaxes: Int
   longTermTaxes: Int
   createdAt: DateTime
+  useTaxes: Boolean
 }
 
 input TradeRelateToManyForUpdateInput {
@@ -187,6 +196,7 @@ input UserCreateInput {
   shortTermTaxes: Int
   longTermTaxes: Int
   createdAt: DateTime
+  useTaxes: Boolean
 }
 
 input TradeRelateToManyForCreateInput {
@@ -224,11 +234,6 @@ input TradeWhereInput {
   dateOfTrade: DateTimeNullableFilter
   buySell: BooleanFilter
   owner: UserWhereInput
-}
-
-input BooleanFilter {
-  equals: Boolean
-  not: BooleanFilter
 }
 
 input TradeOrderByInput {

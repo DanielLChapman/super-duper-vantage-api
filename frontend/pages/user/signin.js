@@ -41,7 +41,7 @@ function signin(props) {
                             onClick={() => {
                                 setNeedToRegister(!needToRegister);
                             }}
-                            className="transform text-center font-semibold text-gray-500 duration-300 hover:text-gray-300"
+                            className="transform mt-2 text-center font-semibold text-gray-500 duration-300 hover:text-gray-300"
                         >
                             {!needToRegister
                                 ? "Need to Register?"

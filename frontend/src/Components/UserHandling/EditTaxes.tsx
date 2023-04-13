@@ -1,7 +1,9 @@
 import React from "react";
 import UpdateFieldForm from "./UpdateFieldForm";
 import { user } from "../../../tools/lib";
-interface EditAccountInfoProps {
+
+
+interface EditTaxesInfoProps {
     formValues: {
         password: string;
         newUsername: string;
@@ -41,18 +43,15 @@ interface EditAccountInfoProps {
         longTermTaxes: string;
     };
     handleUpdate: (type: string) => Promise<void>;
-
-    
 }
+
 const EditTaxes: React.FC<EditTaxesInfoProps> = ({
     formValues,
     formErrors,
     setFormValues,
     setFormErrors,
     handleUpdate,
-    
 }) => {
-
     const updateFormValue = (key: string, value: string) => {
         setFormValues((prevState) => ({
             ...prevState,

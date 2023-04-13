@@ -25,6 +25,7 @@ model User {
   longTermTaxes  Int?      @default(15)
   createdAt      DateTime? @default(now())
   useTaxes       Boolean   @default(false)
+  darkMode       Boolean   @default(false)
 }
 
 model Trade {

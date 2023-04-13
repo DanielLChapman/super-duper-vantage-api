@@ -109,6 +109,9 @@ export const lists: Lists = {
             }),
             useTaxes: checkbox({
                 defaultValue: false
+            }),
+            darkMode: checkbox({
+                defaultValue: false
             })
         },
     }),

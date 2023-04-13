@@ -155,4 +155,5 @@ export type user = {
     createdAt?: Date
     email: string,
     useTaxes: boolean,
+    darkMode: boolean,
 }

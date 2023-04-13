@@ -1,5 +1,5 @@
 import Router from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import formatAmounts from "../../tools/convertAmounts";
 import { user as userType } from "../../tools/lib";
 import SignOut from "./UserHandling/SignOut";
@@ -41,6 +41,22 @@ const Header: React.FC<UserOnlyProps> = ({ user }) => {
         });
     }
 
+    const handleDarkModeSwitch = async () => {
+        if (!user) {
+            alert('Must Be Signed In');
+            return;
+        }
+        const variables = {
+            id: user.id,
+            darkMode: !user.darkMode
+        }
+
+        let res = await updateUser({
+            variables,
+            refetchQueries: [{ query: CURRENT_USER_QUERY }],
+        });
+    }
+
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
@@ -53,6 +69,17 @@ const Header: React.FC<UserOnlyProps> = ({ user }) => {
         Router.push("./user/account");
     };
 
+    useEffect(() => {
+        if (user.darkMode && document.querySelectorAll(".dark").length === 0) {
+            document.querySelector("#htmlDocument").classList.add('dark')
+    
+        }
+        else if (!user.darkMode && document.querySelectorAll(".dark").length === 1) {
+            document.querySelector("#htmlDocument").classList.remove('dark')
+        }
+    }, [user])
+
+    
     return (
         <>
             <nav className="container relative mx-auto p-6 bg-snow dark:bg-jet dark:text-snow">
@@ -117,16 +144,15 @@ const Header: React.FC<UserOnlyProps> = ({ user }) => {
                                 )}
                                 <li className="">
                                     <button onClick={() => {
-                                        if (darkMode) {
+                                        if (user.darkMode) {
                                             document.querySelector("#htmlDocument").classList.remove('dark')
-                                            setDarkMode(false)
                                         } else {
                                             document.querySelector("#htmlDocument").classList.add('dark')
-                                            setDarkMode(true)
                                         }
+                                        handleDarkModeSwitch()
                                         
                                     }}>
-                                        light/dark
+                                        {user.darkMode ? 'Light Mode' : 'Dark Mode'}
                                     </button>
                                 </li>
                             </ul>

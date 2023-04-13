@@ -16,6 +16,7 @@ type User {
   longTermTaxes: Int
   createdAt: DateTime
   useTaxes: Boolean
+  darkMode: Boolean
 }
 
 type PasswordState {
@@ -44,6 +45,7 @@ input UserWhereInput {
   longTermTaxes: IntNullableFilter
   createdAt: DateTimeNullableFilter
   useTaxes: BooleanFilter
+  darkMode: BooleanFilter
 }
 
 input IDFilter {
@@ -145,6 +147,7 @@ input UserOrderByInput {
   longTermTaxes: OrderDirection
   createdAt: OrderDirection
   useTaxes: OrderDirection
+  darkMode: OrderDirection
 }
 
 enum OrderDirection {
@@ -164,6 +167,7 @@ input UserUpdateInput {
   longTermTaxes: Int
   createdAt: DateTime
   useTaxes: Boolean
+  darkMode: Boolean
 }
 
 input TradeRelateToManyForUpdateInput {
@@ -197,6 +201,7 @@ input UserCreateInput {
   longTermTaxes: Int
   createdAt: DateTime
   useTaxes: Boolean
+  darkMode: Boolean
 }
 
 input TradeRelateToManyForCreateInput {

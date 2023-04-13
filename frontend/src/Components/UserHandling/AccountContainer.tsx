@@ -31,6 +31,7 @@ export const UPDATE_USER_MUTATION = gql`
         $longTermTaxes: Int
         $email: String
         $useTaxes: Boolean
+        $darkMode: Boolean
     ) {
         updateUser(
             where: { id: $id }
@@ -42,6 +43,7 @@ export const UPDATE_USER_MUTATION = gql`
                 shortTermTaxes: $shortTermTaxes
                 longTermTaxes: $longTermTaxes
                 useTaxes: $useTaxes
+                darkMode: $darkMode
             }
         ) {
             id

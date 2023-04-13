@@ -432,6 +432,9 @@ var lists = {
       }),
       useTaxes: (0, import_fields.checkbox)({
         defaultValue: false
+      }),
+      darkMode: (0, import_fields.checkbox)({
+        defaultValue: false
       })
     }
   }),

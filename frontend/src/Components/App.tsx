@@ -52,7 +52,7 @@ const App: React.FC<AppInitialProps> = () => {
         skip: !user || called,
         onCompleted: (data) => {
             if (data && data?.cacheStorages?.length > 0) {
-                console.log(data, variables);
+               
                 setCalled(true);
             }
         },

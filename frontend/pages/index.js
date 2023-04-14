@@ -8,7 +8,7 @@ function index(props) {
     return (
         <div>
             <Head>
-                <title>Reddit:Clone</title>
+                <title>Faux Folio</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
 
             </Head>

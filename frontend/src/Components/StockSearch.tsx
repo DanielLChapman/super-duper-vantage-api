@@ -30,6 +30,7 @@ type StockSearchProps = {
         React.SetStateAction<Array<[string, number, string]>>
     >;
     storedCache: any,
+    setUser: any,
 };
 
 const StockSearch: React.FC<StockSearchProps> = ({
@@ -42,6 +43,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
     user,
     dateToUse,
     setDateToUse,
+    setUser,
     storedCache,
 }) => {
     const dateObject = new Date(Date.now());
@@ -192,6 +194,10 @@ const StockSearch: React.FC<StockSearchProps> = ({
     };
 
     const verify = async () => {
+        if (+user.id === -1) {
+            alert('Demo APIKey, will check cache. Otherwise please make an account')
+        }
+
         let closingPrice: any = -1;
 
 
@@ -272,6 +278,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
                             <BuySellHandler
                                 date={`${dateToUse.month}-${dateToUse.day}-${dateToUse.year}`}
                                 user={user}
+                                setUser={setUser}
                                 symbol={stockData.symbol}
                                 amount={stockData.amount}
                                 price={stockData.price}

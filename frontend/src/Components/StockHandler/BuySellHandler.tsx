@@ -10,6 +10,7 @@ type BuySellProps = {
     amount: number;
     symbol: string;
     price: number;
+    setUser: any;
     user: userType;
     date: string;
 };
@@ -65,6 +66,7 @@ const BuySellHandler: React.FC<BuySellProps> = ({
     amount,
     symbol,
     price,
+    setUser,
     date,
 }) => {
     if (!user) {

@@ -29,7 +29,7 @@ const UpdateFieldForm: React.FC<UpdateFieldFormProps> = ({
         >
             <label
                 htmlFor={fieldType}
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 dark:text-snow"
             >
                 {label}
             </label>

@@ -47,7 +47,7 @@ interface EditAccountInfoProps {
     handleUpdate: (type: string) => Promise<void>;
     user: user;
     data: any; // Replace 'any' with the specific type of data returned by the 'authenticateUserWithPassword' mutation.
-    newSignIn: MutationTuple<any, any>; // Replace the two 'any' types with the specific types of your SIGNIN_MUTATION.
+    newSignIn: any; // Replace the two 'any' types with the specific types of your SIGNIN_MUTATION.
   }
 
 const EditAccountInfo: React.FC<EditAccountInfoProps> = ({
@@ -96,71 +96,6 @@ const EditAccountInfo: React.FC<EditAccountInfoProps> = ({
             setSignInError("Invalid Password");
         }
     };
-    /*
-    const handleUpdate = async (type) => {
-        if (!isValid && type === "password") {
-            setFormErrors({
-                ...formErrors,
-                password: "Not a Valid Password",
-            });
-            return;
-        }
-
-        let variables: UserUpdateInput = { id: user?.id };
-        switch (type) {
-            case "username":
-                variables.username = formValues.newUsername;
-                break;
-            case "password":
-                variables.password = formValues.newPassword;
-                break;
-            case "email":
-                //weird error, should be caught on the backend but it flashes an error that isn't fun for the user
-                //look into later, finish this now
-                variables.email = formValues.newEmail;
-                break;
-            case "api":
-                variables.apiKey = formValues.newApiKey;
-                break;
-            default:
-                console.log(type);
-        }
-
-        let res = await updateUser({
-            variables,
-            refetchQueries: [{ query: CURRENT_USER_QUERY }],
-        });
-
-        if (res.data) {
-            alert("Success");
-            if (type === "password") {
-                setFormValues({
-                    ...formValues,
-                    password: formValues.newPassword,
-                });
-            }
-            if (type === "username") {
-                let res2 = await newSignIn({
-                    variables: {
-                        username: formValues.newUsername,
-                        password: formValues.password,
-                    },
-                    refetchQueries: [{ query: CURRENT_USER_QUERY }],
-                });
-            }
-            setFormErrors({
-                ...formErrors,
-                [type]: "",
-            });
-        } else {
-            alert("huh");
-            setFormErrors({
-                ...formErrors,
-                [type]: res.errors,
-            });
-        }
-    };*/
-
     const updateFormValue = (key: string, value: string) => {
         setFormValues((prevState) => ({
             ...prevState,
@@ -169,7 +104,7 @@ const EditAccountInfo: React.FC<EditAccountInfoProps> = ({
     };
 
     return (
-        <div className="bg-snow font-open rounded-lg p-6">
+        <div className="bg-snow dark:bg-jet font-open rounded-lg p-6 pt-10 ">
             {isPasswordValidated &&
             data?.authenticateUserWithPassword &&
             data?.authenticateUserWithPassword.item.username ===
@@ -197,7 +132,7 @@ const EditAccountInfo: React.FC<EditAccountInfoProps> = ({
                     >
                         <label
                             htmlFor="newPassword"
-                            className="block mt-4 text-sm font-medium text-gray-700"
+                            className="block mt-4 text-sm font-medium text-gray-700 dark:text-snow"
                         >
                             Change Password
                         </label>
@@ -259,7 +194,7 @@ const EditAccountInfo: React.FC<EditAccountInfoProps> = ({
                         onSubmit={() => handleUpdate("api")}
                     />
                 </>
-            ) : (
+            ) : +user.id !== -1 ? (
                 <form
                     onSubmit={(e) => {
                         validatePassword(e);
@@ -267,7 +202,7 @@ const EditAccountInfo: React.FC<EditAccountInfoProps> = ({
                 >
                     <label
                         htmlFor="password"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-gray-700 dark:text-white"
                     >
                         Enter Your Current Password
                     </label>
@@ -295,7 +230,7 @@ const EditAccountInfo: React.FC<EditAccountInfoProps> = ({
                         </span>
                     )}
                 </form>
-            )}
+            ) : <a href="/user/signin"><h3 className="text-jet dark:text-snow font-bold text-2xl w-full text-center">Please Sign In</h3></a>}
         </div>
     );
 };

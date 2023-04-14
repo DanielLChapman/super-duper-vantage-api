@@ -1,25 +1,24 @@
 import React from "react";
 import Head from "next/head";
-import Account from '../../src/Components/Account'
+import FAQ from "../src/Components/FAQ"
 
 
-
-function accountPage(props) {
+function index(props) {
 
     return (
         <div>
             <Head>
-                <title>Account : Faux Folio</title>
+                <title>FAQ : Faux Folio</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
 
             </Head>
 
-            <Account />
+            <FAQ />
 
 
         </div>
     );
 }
 
-export default accountPage;
+export default index;
 

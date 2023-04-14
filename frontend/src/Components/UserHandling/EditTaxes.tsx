@@ -60,7 +60,7 @@ const EditTaxes: React.FC<EditTaxesInfoProps> = ({
     };
 
     return (
-        <div className="bg-snow font-open rounded-lg p-6">
+        <div className="bg-snow dark:bg-jet font-open rounded-lg p-6">
             <UpdateFieldForm
                 label="Change Short Term Taxes (out of 100)"
                 placeholder="0"

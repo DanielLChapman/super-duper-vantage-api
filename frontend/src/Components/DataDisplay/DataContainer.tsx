@@ -55,12 +55,14 @@ const DataContainer: React.FC<{
     setCheckedStocks: React.Dispatch<
         React.SetStateAction<Array<[string, number, string]>>
     >;
+    setUser: any,
 }> = ({
     verifiedDates,
     user,
     dateToUse,
     selector,
     checkedStocks,
+    setUser,
     setCheckedStocks,
     storedCache,
 }) => {

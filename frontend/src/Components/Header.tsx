@@ -5,14 +5,14 @@ import { user as userType } from "../../tools/lib";
 import SignOut from "./UserHandling/SignOut";
 import { useMutation } from "@apollo/client";
 import { UPDATE_USER_MUTATION } from "./UserHandling/AccountContainer";
-import { CURRENT_USER_QUERY } from "./User";
+import { CURRENT_USER_QUERY, backendtype } from "./User";
 
 export type UserOnlyProps = {
     user: userType | null;
-    
+    setUser: (value: backendtype) => void;
 };
 
-const Header: React.FC<UserOnlyProps> = ({ user }) => {
+const Header: React.FC<UserOnlyProps> = ({ user, setUser }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
 
@@ -27,76 +27,88 @@ const Header: React.FC<UserOnlyProps> = ({ user }) => {
 
     const handleTaxesSwitch = async () => {
         if (!user) {
-            alert('Must Be Signed In');
+            alert("Must Be Signed In");
+            return;
+        }
+        if (+user.id === -1) {
+            const updatedUser = { ...user, useTaxes: !user.useTaxes };
+            setUser({ data: updatedUser }); // Update the stored user in local storage
             return;
         }
         const variables = {
             id: user.id,
-            useTaxes: !user.useTaxes
-        }
+            useTaxes: !user.useTaxes,
+        };
 
         let res = await updateUser({
             variables,
             refetchQueries: [{ query: CURRENT_USER_QUERY }],
         });
-    }
+    };
 
     const handleDarkModeSwitch = async () => {
         if (!user) {
-            alert('Must Be Signed In');
+            alert("Must Be Signed In");
             return;
         }
+        
+        if (+user.id === -1) {
+            const updatedUser = { ...user, darkMode: !user.darkMode };
+            setUser({ data: updatedUser }); // Update the stored user in local storage
+            return;
+        }
+
+        console.log('here')
+
         const variables = {
             id: user.id,
-            darkMode: !user.darkMode
-        }
+            darkMode: !user.darkMode,
+        };
 
         let res = await updateUser({
             variables,
             refetchQueries: [{ query: CURRENT_USER_QUERY }],
         });
-    }
+    };
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
 
     const handleSignInClick = () => {
-        Router.push("./user/signin");
+        Router.push("/user/signin");
     };
 
     const handleAccountClick = () => {
-        Router.push("./user/account");
+        Router.push("/user/account");
     };
 
     useEffect(() => {
         if (user.darkMode && document.querySelectorAll(".dark").length === 0) {
-            document.querySelector("#htmlDocument").classList.add('dark')
-    
+            document.querySelector("#htmlDocument").classList.add("dark");
+        } else if (
+            !user.darkMode &&
+            document.querySelectorAll(".dark").length === 1
+        ) {
+            document.querySelector("#htmlDocument").classList.remove("dark");
         }
-        else if (!user.darkMode && document.querySelectorAll(".dark").length === 1) {
-            document.querySelector("#htmlDocument").classList.remove('dark')
-        }
-    }, [user])
+    }, [user]);
 
-    
     return (
         <>
             <nav className="container relative mx-auto p-6 bg-snow dark:bg-jet dark:text-snow">
-                 {/*"flex flex-row justify-center space-x-20 my-6 md:justify-between"*/}
+                {/*"flex flex-row justify-center space-x-20 my-6 md:justify-between"*/}
                 <div className="flex flex-col flex-wrap sm:flex-row items-center justify-between mx-auto">
-                    <a href="localhost:7777" className="z-30 flex items-center">
+                    <a href="/" className="z-30 flex items-center">
                         <img
                             src="/fauxfolio-logo.svg"
                             alt=""
                             className="logo dark:hidden"
-                            
                         />
                         <img
                             src="/fauxfolio-logo-svg-dark.svg"
                             alt=""
                             className="logo hidden dark:block"
-                            
                         />
                     </a>
 
@@ -110,10 +122,28 @@ const Header: React.FC<UserOnlyProps> = ({ user }) => {
                             onClick={toggleMenu}
                         >
                             <h3 className="text-2xl">
-                                {" "}
-                                <a href="#" className="text-jet dark:text-snow hover:text-persianRed font-bold font-open">
-                                    {user.username}
-                                </a>{" "}
+                                {+user.id !== -1 && (
+                                    <>
+                                        {" "}
+                                        <a
+                                            href="/user/account"
+                                            className="text-jet dark:text-snow hover:text-persianRed font-bold font-open"
+                                        >
+                                            {user.username}
+                                        </a>{" "}
+                                    </>
+                                )}
+                                {+user.id === -1 && (
+                                    <>
+                                        {" "}
+                                        <a
+                                            href="/user/signin"
+                                            className="text-jet dark:text-snow hover:text-persianRed font-bold font-open"
+                                        >
+                                            Sign In
+                                        </a>{" "}
+                                    </>
+                                )}∂
                             </h3>
                             <p className="user-money text-persianGreen font-semibold font-open">
                                 {formatAmounts(user.money)}
@@ -133,9 +163,28 @@ const Header: React.FC<UserOnlyProps> = ({ user }) => {
                                             : "Enable Taxes"}
                                     </button>
                                 </li>
-                                <li  className="cursor-pointer hover:text-persianRed hover:font-semibold" onClick={handleAccountClick}>Account</li>
+                                <li
+                                    className="cursor-pointer hover:text-persianRed hover:font-semibold"
+                                    
+                                >
+                                    <a
+                                            href="/user/account"
+                                             >
+                                            Account
+                                        </a>
+                                </li>
                                 {user.id === "-1" && (
-                                    <li  className="cursor-pointer hover:text-persianRed hover:font-semibold" onClick={handleSignInClick}>Sign In</li>
+                                    <li
+                                        className="cursor-pointer hover:text-persianRed hover:font-semibold"
+                                        
+                                    >
+                                        <a
+                                            href="/user/signin"
+                                            className=""
+                                        >
+                                            Sign In
+                                        </a>
+                                    </li>
                                 )}
                                 {user.id !== "-1" && (
                                     <li className="">
@@ -143,16 +192,27 @@ const Header: React.FC<UserOnlyProps> = ({ user }) => {
                                     </li>
                                 )}
                                 <li className="">
-                                    <button onClick={() => {
-                                        if (user.darkMode) {
-                                            document.querySelector("#htmlDocument").classList.remove('dark')
-                                        } else {
-                                            document.querySelector("#htmlDocument").classList.add('dark')
-                                        }
-                                        handleDarkModeSwitch()
-                                        
-                                    }}>
-                                        {user.darkMode ? 'Light Mode' : 'Dark Mode'}
+                                    <button
+                                        onClick={() => {
+                                            if (user.darkMode) {
+                                                document
+                                                    .querySelector(
+                                                        "#htmlDocument"
+                                                    )
+                                                    .classList.remove("dark");
+                                            } else {
+                                                document
+                                                    .querySelector(
+                                                        "#htmlDocument"
+                                                    )
+                                                    .classList.add("dark");
+                                            }
+                                            handleDarkModeSwitch();
+                                        }}
+                                    >
+                                        {user.darkMode
+                                            ? "Light Mode"
+                                            : "Dark Mode"}
                                     </button>
                                 </li>
                             </ul>

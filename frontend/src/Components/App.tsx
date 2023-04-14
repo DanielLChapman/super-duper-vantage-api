@@ -15,7 +15,7 @@ type AppInitialProps = {};
 const App: React.FC<AppInitialProps> = () => {
     //user entry
 
-    let user: user = useUser();
+    const { user, setUser } = useUser();
 
     const dateObject = new Date(Date.now());
     //DATES:
@@ -84,7 +84,7 @@ const App: React.FC<AppInitialProps> = () => {
 
     return (
         <div className="App flex flex-col min-h-screen justify-between">
-            <Header user={user} />
+            <Header user={user} setUser={setUser} />
             <main className="main-content container mx-auto bg-snow dark:bg-jet mb-auto">
                 <StockSearch
                     checkedStocks={checkedStocks}
@@ -96,6 +96,7 @@ const App: React.FC<AppInitialProps> = () => {
                     setDateToUse={setDateToUse}
                     dateToUse={dateToUse}
                     user={user}
+                    setUser={setUser}
                     storedCache={data}
                 />
                 <DataContainer
@@ -104,6 +105,7 @@ const App: React.FC<AppInitialProps> = () => {
                     verifiedDates={verifiedDates}
                     selector={selector}
                     user={user}
+                    setUser={setUser}
                     dateToUse={dateToUse}
                     storedCache={data}
                 />

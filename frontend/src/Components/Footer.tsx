@@ -3,7 +3,7 @@ import { user } from "../../tools/lib";
 import { useUser } from "./User";
 
 const Footer = () => {
-    let user: user = useUser();
+    const { user: user, setUser } = useUser();
 
     return (
         <footer className="py-16 mt-16 bg-delftBlue text-white font-open font-bold ">

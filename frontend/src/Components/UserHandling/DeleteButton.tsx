@@ -80,9 +80,13 @@ const DeleteButton: React.FC<DeleteAccountProps> = ({ user }) => {
             }
         }
     };
+    if (+user.id === -1) {
+        return <a href="/user/signin"><h3 className="text-jet dark:text-snow font-bold text-2xl w-full text-center">Please Sign In</h3></a>
+    }
 
     return (
         <>
+            
             {deleteError && (
                 <span className="text-persianRed font-bold font-open text-lg">
                     Error Deleting Account

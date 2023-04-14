@@ -6,12 +6,12 @@ import { user } from '../../tools/lib';
 import AccountContainer from './UserHandling/AccountContainer';
 
 function Account(props) {
-    let user:user = useUser();
+    const { user: user, setUser } = useUser();
     //to be updated later
-    const [taxes, setTaxes] = useState(false);
+
     return (
         <div className="App flex flex-col min-h-screen justify-between">
-            <Header user={user} taxes={taxes} setTaxes={setTaxes} />
+            <Header user={user} setUser={setUser} />
             <main className="main-content container mx-auto bg-snow dark:bg-jet mb-auto">
                 <AccountContainer user={user} />
             </main>

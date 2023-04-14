@@ -53,7 +53,7 @@ export async function verifyFetch(symbol: string, selector: string, apiKey: stri
 
     if (!dataFromApi[jsonKey]) {
         return {
-            error: 'Please alert admin with date and symbol used',
+            error: 'Please alert admin with date and symbol used. May also be using a demo account in which case the api endpoint can not be used.',
         }
     }
     

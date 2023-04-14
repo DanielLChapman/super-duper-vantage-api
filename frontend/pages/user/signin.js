@@ -17,7 +17,7 @@ const SignUp = dynamic(
 function signin(props) {
     let [needToRegister, setNeedToRegister] = useState(false);
     const router = useRouter();
-    let user = useUser();
+    const { user: user, setUser } = useUser();
 
     React.useEffect(() => {
         if (user.id !== "-1") {

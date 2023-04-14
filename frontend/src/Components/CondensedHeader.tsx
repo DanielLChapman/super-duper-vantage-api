@@ -1,18 +1,62 @@
 import Router from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import formatAmounts from "../../tools/convertAmounts";
+import { CURRENT_USER_QUERY, useUser } from "./User";
+import { useMutation } from "@apollo/client";
+import { UPDATE_USER_MUTATION } from "./UserHandling/AccountContainer";
 
 function CondensedHeader(props) {
+    const { user, setUser } = useUser();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [darkMode, setDarkMode] = useState(false);
+
+    const [
+        updateUser,
+        {
+            data: updateUserData,
+            error: updateUserError,
+            loading: updateUserLoading,
+        },
+    ] = useMutation(UPDATE_USER_MUTATION);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
 
-    const handleSignInClick = () => {
-        Router.push("./user/signin");
+   
+    const handleDarkModeSwitch = async () => {
+        if (!user) {
+            alert("Must Be Signed In");
+            return;
+        }
+        
+        if (+user.id === -1) {
+            const updatedUser = { ...user, darkMode: !user.darkMode };
+            setUser({ data: updatedUser }); // Update the stored user in local storage
+            console.log(updatedUser);
+            return;
+        }
+
+        const variables = {
+            id: user.id,
+            darkMode: !user.darkMode,
+        };
+
+        let res = await updateUser({
+            variables,
+            refetchQueries: [{ query: CURRENT_USER_QUERY }],
+        });
     };
+
+    useEffect(() => {
+        if (user.darkMode && document.querySelectorAll(".dark").length === 0) {
+            document.querySelector("#htmlDocument").classList.add("dark");
+        } else if (
+            !user.darkMode &&
+            document.querySelectorAll(".dark").length === 1
+        ) {
+            document.querySelector("#htmlDocument").classList.remove("dark");
+        }
+    }, [user]);
 
     return (
         <nav className="container relative mx-auto p-6 bg-snow dark:bg-jet dark:text-snow">
@@ -41,31 +85,45 @@ function CondensedHeader(props) {
                         onClick={toggleMenu}
                     >
                         <h3 className="text-2xl">
-                            {" "}
-                            <a
-                                href="#"
-                                className="text-jet dark:text-snow hover:text-persianRed font-bold font-open"
-                            >
-                                Signing In
-                            </a>{" "}
+                            {+user.id !== -1 && (
+                                <>
+                                    {" "}
+                                    <a
+                                        href="#"
+                                        className="text-jet dark:text-snow hover:text-persianRed font-bold font-open"
+                                    >
+                                        {user.username}
+                                    </a>{" "}
+                                </>
+                            )}
+                            {+user.id === -1 && (
+                                <>
+                                    {" "}
+                                    <a
+                                        href="#"
+                                        className="text-jet dark:text-snow hover:text-persianRed font-bold font-open"
+                                    >
+                                        Sign In
+                                    </a>{" "}
+                                </>
+                            )}
                         </h3>
                         <p className="user-money font-semibold font-open">
                             <button
                                 onClick={() => {
-                                    if (darkMode) {
+                                    if (user.darkMode) {
                                         document
                                             .querySelector("#htmlDocument")
                                             .classList.remove("dark");
-                                        setDarkMode(false);
                                     } else {
                                         document
                                             .querySelector("#htmlDocument")
                                             .classList.add("dark");
-                                        setDarkMode(true);
                                     }
+                                    handleDarkModeSwitch();
                                 }}
                             >
-                                light/dark
+                                {user.darkMode ? "Light Mode" : "Dark Mode"}
                             </button>
                         </p>
                     </div>

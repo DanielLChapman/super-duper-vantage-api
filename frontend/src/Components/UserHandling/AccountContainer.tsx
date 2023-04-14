@@ -164,7 +164,7 @@ const AccountContainer: React.FC<EditAccountInfoProps> = ({ user }) => {
                 <div className="account-info border border-gray-300 rounded-lg p-6 shadow-sm hover:shadow-lg transition-shadow duration-300">
                     <button
                         onClick={() => setIsEditAccountOpen(!isEditAccountOpen)}
-                        className="text-lg w-full text-center font-semibold text-blue-600 hover:text-blue-800 focus:outline-none"
+                        className="text-lg w-full text-center font-semibold text-blue-600 hover:text-blue-800 dark:text-snow dark:hover:text-electricBlue  focus:outline-none"
                     >
                         Edit Account Info
                     </button>
@@ -186,7 +186,7 @@ const AccountContainer: React.FC<EditAccountInfoProps> = ({ user }) => {
                 <div className="account-info border border-gray-300 rounded-lg p-6 shadow-sm hover:shadow-lg transition-shadow duration-300">
                     <button
                         onClick={() => setIsEditTaxesOpen(!isEditTaxesOpen)}
-                        className="text-lg  w-full text-center font-semibold text-blue-600 hover:text-blue-800 focus:outline-none"
+                        className="text-lg  w-full text-center font-semibold text-blue-600 hover:text-blue-800 dark:text-snow dark:hover:text-electricBlue focus:outline-none"
                     >
                         Edit Taxes
                     </button>

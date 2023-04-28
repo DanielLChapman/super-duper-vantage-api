@@ -1,8 +1,8 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import React, { useEffect, useState } from "react";
-import { CURRENT_USER_QUERY } from "../User";
-import { user as userType } from "../../../tools/lib";
+import { CURRENT_USER_QUERY, useStock } from "../User";
+import { stock, tradeHistory, user as userType } from "../../../tools/lib";
 import roundToTwo from "../../../tools/roundToTwo";
 import { GET_STOCKS, GET_TRADES } from "../DataDisplay/DataContainer";
 
@@ -151,9 +151,41 @@ const BuySellHandler: React.FC<BuySellProps> = ({
         ],
     });
 
+    const { addStock, sellUserStock } = useStock();
     //graphql call to update user
     const buyHandler = async (swapOption) => {
+        if (user.id === "-1") {
+            const newTrade: tradeHistory = {
+                id: (Date.now() + Math.random()).toString(36),
+                symbol: symbol,
+                amount: amount,
+                price: price * 100,
+                buySell: true,
+                dateOfTrade: new Date(Date.now()),
+            };
+            if (swapOption === "buy") {
+                const newStock: stock = {
+                    id: (Date.now() + Math.random()).toString(36),
+                    symbol: symbol,
+                    amount: amount,
+                    price: price * 100,
+                    createdAt: new Date(Date.now()),
+                    dateOfTrade: new Date(Date.now()),
+                };
+
+                
+
+                addStock(newStock, newTrade);
+            } else {
+                newTrade.buySell = false;
+                {/* might be an off by 100 issue here, will have to check later */}
+                sellUserStock(newTrade, (newTrade.price * amount))
+            }
+            return;
+        }
+
         let res;
+
         switch (swapOption) {
             case "buy":
                 res = await buyStock();

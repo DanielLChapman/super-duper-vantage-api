@@ -152,6 +152,9 @@ const StockSearch: React.FC<StockSearchProps> = ({
 
             if (closingPrice.error) {
                 setVerifyError(closingPrice);
+                setTimeout(() => {
+                    setVerifyError(null);
+                }, 5000)
                 return;
             } else {
                 setVerifyError(null);

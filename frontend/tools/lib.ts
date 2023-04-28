@@ -148,8 +148,8 @@ export type user = {
     apiKey: string,
     username: string,
     money: number,
-    trades?: [tradeHistory] | [],
-    stocks?: [stock] | [],
+    trades?: tradeHistory[] | [],
+    stocks?: stock[] | [],
     shortTermTaxes: number,
     longTermTaxes: number,
     createdAt?: Date

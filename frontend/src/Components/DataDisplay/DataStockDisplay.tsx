@@ -71,7 +71,7 @@ interface Props {
     >;
     verifyThePrice: number;
     setTheVerifiedPrice: React.Dispatch<React.SetStateAction<number>>;
-    handleSell: (stock, number) => {};
+    handleSell: (stock: stock, number: number) => {};
 }
 
 const StockCard: React.FC<Props> = ({

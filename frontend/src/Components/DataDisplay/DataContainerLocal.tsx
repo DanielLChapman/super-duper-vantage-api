@@ -10,42 +10,7 @@ import StockCard, {
 } from "./DataStockDisplay";
 import TradeCard from "./DataTradeDisplay";
 
-export const GET_TRADES = gql`
-    query Trades($userID: ID!, $limit: Int!, $offset: Int!) {
-        trades(
-            where: { owner: { id: { equals: $userID } } }
-            skip: $offset
-            take: $limit
-            orderBy: { dateOfTrade: desc }
-        ) {
-            id
-            symbol
-            amount
-            price
-            buySell
-            dateOfTrade
-        }
-    }
-`;
-
-export const GET_STOCKS = gql`
-    query Stocks($userID: ID!, $limit: Int!, $offset: Int!) {
-        stocks(
-            where: { owner: { id: { equals: $userID } } }
-            skip: $offset
-            take: $limit
-            orderBy: { dateOfTrade: desc }
-        ) {
-            id
-            symbol
-            amount
-            price
-            dateOfTrade
-        }
-    }
-`;
-
-const DataContainer: React.FC<{
+const DataContainerLocal: React.FC<{
     verifiedDates: boolean;
     selector: string | "day" | "monthly" | "weekly" | "intraday";
     user: user;
@@ -55,7 +20,7 @@ const DataContainer: React.FC<{
     setCheckedStocks: React.Dispatch<
         React.SetStateAction<Array<[string, number, string]>>
     >;
-    setUser: any,
+    setUser: any;
 }> = ({
     verifiedDates,
     user,
@@ -66,176 +31,70 @@ const DataContainer: React.FC<{
     setCheckedStocks,
     storedCache,
 }) => {
+    const [showStocks, setShowStocks] = useState(false);
+    const [showTrades, setShowTrades] = useState(false);
+    const [verifyThePrice, setTheVerifiedPrice] = useState(-1);
+
     if (!user) {
         return <span>Loading....</span>;
     }
-    const [showStocks, setShowStocks] = useState(false);
-    const [showTrades, setShowTrades] = useState(false);
 
-    const [tradePage, setTradePage] = useState(1);
-    const [tradeItemsPerPage, setTradeItemsPerPage] = useState(10);
+    const { stocks, trades } = user;
 
     const [stockPage, setStockPage] = useState(1);
-    const [stockItemsPerPage, setStockItemsPerPage] = useState(10);
-    const [verifyThePrice, setTheVerifiedPrice] = useState(-1);
+    const [tradePage, setTradePage] = useState(1);
+    const stockItemsPerPage = 10;
+    const tradeItemsPerPage = 10;
 
-    const [
-        sellAllStock,
-        { data: sellAllData, error: sellAllError, loading: sellAllLoading },
-    ] = useMutation(SELL_ALL_HANDLER);
-
-    const [
-        sellSomeStock,
-        { data: sellSomeData, error: sellSomeError, loading: sellSomeLoading },
-    ] = useMutation(SELL_SOME_HANDLER);
-
-    const {
-        loading: tradesLoading,
-        error: tradesError,
-        data: tradesData,
-    } = useQuery(GET_TRADES, {
-        variables: {
-            userID: user.id,
-            limit: tradeItemsPerPage,
-            offset: (tradePage - 1) * tradeItemsPerPage,
-        },
-    });
-
-    const {
-        loading: stockLoading,
-        error: stockError,
-        data: stockData,
-    } = useQuery(GET_STOCKS, {
-        variables: {
-            userID: user.id,
-            limit: stockItemsPerPage,
-            offset: (stockPage - 1) * stockItemsPerPage,
-        },
-    });
-
-    let trades = [] as tradeHistory[];
-    let stocks = [] as stock[];
-
-    if (tradesLoading || tradesError) {
-        trades = [];
-    } else {
-        trades = tradesData.trades;
-    }
-
-    if (stockLoading || stockError) {
-        stocks = [];
-    } else {
-        stocks = stockData.stocks;
-    }
-
-    const totalTrades = trades.length;
-    const totalStocks = stocks.length;
+    const displayedStocks = stocks.slice(
+        (stockPage - 1) * stockItemsPerPage,
+        stockPage * stockItemsPerPage
+    );
+    const displayedTrades = trades.slice(
+        (tradePage - 1) * tradeItemsPerPage,
+        tradePage * tradeItemsPerPage
+    );
 
     const handleSell = async (stock: stock, sellAmount) => {
         if (verifyThePrice === -1) {
             return;
         }
         let convertedPrice = +(roundToTwo(+verifyThePrice) * 100).toFixed(0);
-
-        let res;
-        if (stock.amount === sellAmount) {
-            res = await sellSomeStock({
-                variables: {
-                    stockPrice: convertedPrice,
-                    stockSymbol: stock.symbol,
-                    stockID: stock.id,
-                    amount: sellAmount,
-                    dateOfTrade: Date.now() + "",
-                },
-                refetchQueries: [
-                    { query: CURRENT_USER_QUERY },
-                    {
-                        query: GET_STOCKS,
-                        variables: {
-                            userID: user.id,
-                            limit: stockItemsPerPage,
-                            offset: (stockPage - 1) * stockItemsPerPage,
-                        },
-                    },
-                    {
-                        query: GET_TRADES,
-                        variables: {
-                            userID: user.id,
-                            limit: tradeItemsPerPage,
-                            offset: (tradePage - 1) * tradeItemsPerPage,
-                        },
-                    },
-                ],
-            });
-        } else {
-            res = await sellAllStock({
-                variables: {
-                    stockPrice: convertedPrice,
-                    stockSymbol: stock.symbol,
-                    stockID: stock.id,
-                    dateOfTrade: Date.now() + "",
-                },
-                refetchQueries: [
-                    { query: CURRENT_USER_QUERY },
-                    {
-                        query: GET_STOCKS,
-                        variables: {
-                            userID: user.id,
-                            limit: stockItemsPerPage,
-                            offset: (stockPage - 1) * stockItemsPerPage,
-                        },
-                    },
-                    {
-                        query: GET_TRADES,
-                        variables: {
-                            userID: user.id,
-                            limit: tradeItemsPerPage,
-                            offset: (tradePage - 1) * tradeItemsPerPage,
-                        },
-                    },
-                ],
-            });
-        }
-
-        if (res.data) {
-            alert("Success!");
-        }
     };
-
-    let t = storedCache?.cacheStorages?.map((x) => {
-        return [x.symbol, x.price, x.identifier];
-    })
-    
-    let newCheckedStocks = [...checkedStocks];
-    if (t && t.length > 0) {
-        newCheckedStocks = [...newCheckedStocks, ...t]
-    }
-
-    useEffect(() => {
-        setCheckedStocks([]);
-    }, [dateToUse, selector]);
 
     return (
         <div className="data-container container flex flex-col font-open">
             <div className="stock-search-view-container border-4 border-t-0 border-electricBlue rounded-lg container max-w-[1500px] mx-auto p-6 flex flex-col">
-                <h2 className="font-bold text-2xl text-jet dark:text-snow">Stocks // Trade History</h2>
-                <section id="data-container" className="data-container font-bold">
+                <h2 className="font-bold text-2xl text-jet dark:text-snow">
+                    Stocks // Trade History
+                </h2>
+                <section
+                    id="data-container"
+                    className="data-container font-bold"
+                >
                     <ul>
                         <li className="mb-5">
-                            <h6 onClick={() => setShowStocks(!showStocks)} className={`text-xl font-semibold text-jet dark:text-snow 
+                            <h6
+                                onClick={() => setShowStocks(!showStocks)}
+                                className={`text-xl font-semibold text-jet dark:text-snow 
                             transition-colors duration-150 hover:text-persianRed cursor-pointer hover:text-2xl 
-                            ${!stockError && !stockLoading && showStocks ? 'text-xl text-persianRed' : ''}`}>
+                            ${
+                                showStocks
+                                    ? "text-xl text-persianRed"
+                                    : ""
+                            }`}
+                            >
                                 Stocks
                             </h6>
-                            {!stockError && !stockLoading && showStocks && (
+                            {showStocks && (
                                 <>
-                                    {stocks.length > 0 ? (
+                                    {displayedStocks.length > 0 ? (
                                         <ul className="data-container-table">
-                                            {stocks.map((stock, index) => (
+                                            {displayedStocks.map((stock, index) => (
                                                 <li key={index + stock.id}>
                                                     <StockCard
                                                         checkedStocks={
-                                                            newCheckedStocks
+                                                            checkedStocks
                                                         }
                                                         setCheckedStocks={
                                                             setCheckedStocks
@@ -261,7 +120,7 @@ const DataContainer: React.FC<{
                                     ) : (
                                         <p>No stocks found</p>
                                     )}
-                                    {totalStocks > 0 && (
+                                    {displayedStocks.length > 0 && (
                                         <div className="ml-4">
                                             <button
                                                 aria-disabled={stockPage === 1}
@@ -275,8 +134,8 @@ const DataContainer: React.FC<{
                                             </button>
                                             <button
                                                 disabled={
-                                                    totalStocks <
-                                                    stockItemsPerPage
+                                                    stockPage * stockItemsPerPage >=
+                                                    stocks.length
                                                 }
                                                 aria-disabled={stockPage === 1}
                                                 onClick={() =>
@@ -292,19 +151,27 @@ const DataContainer: React.FC<{
                             )}
                         </li>
                         <li>
-                            <h6 id="data-container-trades" onClick={() => {
-                                setShowTrades(!showTrades)
-                            }} className={`text-xl font-semibold text-jet dark:text-snow transition-colors duration-150
+                            <h6
+                                id="data-container-trades"
+                                onClick={() => {
+                                    setShowTrades(!showTrades);
+                                }}
+                                className={`text-xl font-semibold text-jet dark:text-snow transition-colors duration-150
                              hover:text-delftBlue cursor-pointer hover:text-2xl
-                             ${!tradesLoading && !tradesError && showTrades ? 'text-xl text-delftBlue' : ''}`}>
+                             ${
+                                  showTrades
+                                     ? "text-xl text-delftBlue"
+                                     : ""
+                             }`}
+                            >
                                 Trades
                             </h6>
-                            {!tradesLoading && !tradesError && showTrades && (
+                            {showTrades && (
                                 <>
-                                    {trades.length > 0 ? (
+                                    {displayedTrades.length > 0 ? (
                                         <>
                                             <ul className="data-container-table">
-                                                {trades.map((trade, index) => (
+                                                {displayedTrades.map((trade, index) => (
                                                     <li key={index}>
                                                         <TradeCard
                                                             trade={trade}
@@ -316,7 +183,7 @@ const DataContainer: React.FC<{
                                     ) : (
                                         <p>No trades found</p>
                                     )}
-                                    {totalTrades > 0 && (
+                                    {displayedTrades.length > 0 && (
                                         <div className="ml-4">
                                             <button
                                                 disabled={tradePage === 1}
@@ -329,8 +196,8 @@ const DataContainer: React.FC<{
                                             </button>
                                             <button
                                                 disabled={
-                                                    totalTrades <
-                                                    tradeItemsPerPage
+                                                    tradePage * tradeItemsPerPage >=
+                                                    trades.length
                                                 }
                                                 onClick={() =>
                                                     setTradePage(tradePage + 1)
@@ -350,4 +217,5 @@ const DataContainer: React.FC<{
         </div>
     );
 };
-export default DataContainer;
+
+export default DataContainerLocal;

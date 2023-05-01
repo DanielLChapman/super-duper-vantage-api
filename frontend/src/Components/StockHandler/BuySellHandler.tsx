@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import React, { useEffect, useState } from "react";
-import { CURRENT_USER_QUERY, useStock } from "../User";
+import { CURRENT_USER_QUERY, useStock, useUser } from "../User";
 import { stock, tradeHistory, user as userType } from "../../../tools/lib";
 import roundToTwo from "../../../tools/roundToTwo";
 import { GET_STOCKS, GET_TRADES } from "../DataDisplay/DataContainer";
@@ -72,6 +72,8 @@ const BuySellHandler: React.FC<BuySellProps> = ({
     if (!user) {
         return <span>Please log in</span>;
     }
+
+    const { recheckLocalStorage } = useUser();
 
     let dateCheck = Date.now() + "";
     if (date) {
@@ -161,7 +163,7 @@ const BuySellHandler: React.FC<BuySellProps> = ({
                 amount: amount,
                 price: price * 100,
                 buySell: true,
-                dateOfTrade: new Date(Date.now()),
+                dateOfTrade: new Date(dateCheck),
             };
             if (swapOption === "buy") {
                 const newStock: stock = {
@@ -169,8 +171,8 @@ const BuySellHandler: React.FC<BuySellProps> = ({
                     symbol: symbol,
                     amount: amount,
                     price: price * 100,
-                    createdAt: new Date(Date.now()),
-                    dateOfTrade: new Date(Date.now()),
+                    createdAt:  new Date(dateCheck),
+                    dateOfTrade:  new Date(dateCheck),
                 };
 
                 
@@ -181,6 +183,7 @@ const BuySellHandler: React.FC<BuySellProps> = ({
                 {/* might be an off by 100 issue here, will have to check later */}
                 sellUserStock(newTrade, (newTrade.price * amount))
             }
+            recheckLocalStorage();
             return;
         }
 

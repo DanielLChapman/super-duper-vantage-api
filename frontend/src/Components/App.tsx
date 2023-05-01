@@ -9,6 +9,7 @@ import Header from "./Header";
 import StockSearch from "./StockSearch";
 import { useUser } from "./User";
 import { useQuery } from "@apollo/client";
+import DataContainerLocal from "./DataDisplay/DataContainerLocal";
 
 type AppInitialProps = {};
 
@@ -30,7 +31,7 @@ const App: React.FC<AppInitialProps> = () => {
     >([]);
 
     //this was above taxes, will check later (b-a)/(31556952000)
-   
+
     const [selector, setSelector] = useState("Day");
 
     //const caches = getCachesByIdentifiers(lazyData)
@@ -52,7 +53,6 @@ const App: React.FC<AppInitialProps> = () => {
         skip: !user || called,
         onCompleted: (data) => {
             if (data && data?.cacheStorages?.length > 0) {
-               
                 setCalled(true);
             }
         },
@@ -99,16 +99,30 @@ const App: React.FC<AppInitialProps> = () => {
                     setUser={setUser}
                     storedCache={data}
                 />
-                <DataContainer
-                    checkedStocks={checkedStocks}
-                    setCheckedStocks={setCheckedStocks}
-                    verifiedDates={verifiedDates}
-                    selector={selector}
-                    user={user}
-                    setUser={setUser}
-                    dateToUse={dateToUse}
-                    storedCache={data}
-                />
+                {user.id === "-1" && (
+                    <DataContainerLocal
+                        checkedStocks={checkedStocks}
+                        setCheckedStocks={setCheckedStocks}
+                        verifiedDates={verifiedDates}
+                        selector={selector}
+                        user={user}
+                        setUser={setUser}
+                        dateToUse={dateToUse}
+                        storedCache={data}
+                    />
+                )}
+                {user.id !== "-1" && (
+                    <DataContainer
+                        checkedStocks={checkedStocks}
+                        setCheckedStocks={setCheckedStocks}
+                        verifiedDates={verifiedDates}
+                        selector={selector}
+                        user={user}
+                        setUser={setUser}
+                        dateToUse={dateToUse}
+                        storedCache={data}
+                    />
+                )}
             </main>
             <Footer />
         </div>

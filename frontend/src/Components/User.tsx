@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { stock, tradeHistory, user as userType } from "../../tools/lib";
 import { useLocalStorage } from "./Tools/useLocalStorage";
 
@@ -13,7 +13,7 @@ let backend: backendtype = {
         id: -1 + "",
         username: "Demo",
         apiKey: "demo",
-        money: 100000,
+        money: 10000000,
         email: "",
         trades: [],
         shortTermTaxes: 35,
@@ -57,26 +57,56 @@ export const CURRENT_USER_QUERY = gql`
         }
     }
 `;
+
 export function useUser(): {
     user: userType;
     setUser: (value: backendtype) => void;
+    recheckLocalStorage: () => void;
 } {
     const { data } = useQuery(CURRENT_USER_QUERY);
-    const [storedUser, setStoredUser] = useLocalStorage<backendtype | null>(
-        "user",
-        null
-    );
+    const [storedUser, setStoredUser] = useState<backendtype | null>(null);
+    const [storageCheck, setStorageCheck] = useState(0);
+
+    useEffect(() => {
+        const storedValue = localStorage.getItem("user");
+        if (storedValue) {
+            setStoredUser(JSON.parse(storedValue));
+        } else {
+            setStoredUser(backend);
+        }
+    }, [storageCheck]);
+
+    const recheckLocalStorage = () => {
+        setStorageCheck(storageCheck + 1);
+    };
+
+    const setUser = useCallback((value: backendtype) => {
+        setStoredUser(value);
+        localStorage.setItem("user", JSON.stringify(value));
+    }, []);
 
     if (!data || !data.authenticatedItem) {
         if (!storedUser) {
             setStoredUser(backend);
-            return { user: backend.data, setUser: setStoredUser };
+            return {
+                user: backend.data,
+                setUser: setUser,
+                recheckLocalStorage,
+            };
         } else {
-            return { user: storedUser.data, setUser: setStoredUser };
+            return {
+                user: storedUser.data,
+                setUser: setUser,
+                recheckLocalStorage,
+            };
         }
     }
 
-    return { user: data.authenticatedItem, setUser: setStoredUser };
+    return {
+        user: data.authenticatedItem,
+        setUser: setUser,
+        recheckLocalStorage,
+    };
 }
 
 export function useStock(): {
@@ -84,37 +114,37 @@ export function useStock(): {
     sellUserStock: (tradeData: tradeHistory, moneyToAdd: number) => void;
     removeStock: (stockId: string, amountToRemove?: number) => void;
 } {
-    const { user, setUser } = useUser();
+    const { user, setUser, recheckLocalStorage } = useUser();
 
     const addStock = useCallback(
         (stockData: stock, tradeData: tradeHistory) => {
-            if (user.money < (stockData.price * stockData.amount)/100) {
+            if (user.money < (stockData.price * stockData.amount) / 100) {
                 return;
             }
             // Add the stock to the user's stocks array
             const updatedStocks = user.stocks
-                ? [...user.stocks, stockData]
+                ? [...user.stocks, stockData].sort((a, b) => new Date(a.dateOfTrade).getTime() - new Date(b.dateOfTrade).getTime())
                 : [stockData];
 
             // Add the trade to the user's trade history
             const updatedTrades = user.trades
-                ? [...user.trades, tradeData]
-                : [tradeData];
+            ? [...user.trades, tradeData].sort((a, b) => new Date(a.dateOfTrade).getTime() - new Date(b.dateOfTrade).getTime())
+            : [tradeData];
 
             // Update the user object with the new stocks and trades
             const updatedUser = {
                 ...user,
                 stocks: updatedStocks,
                 trades: updatedTrades,
-                money: user.money - ((stockData.price * stockData.amount)/100)
+                money: user.money - (stockData.price * stockData.amount) / 100,
             };
 
             // Wrap the updated user object in a data property to match the backendtype
             const updatedUserBackend = { data: updatedUser };
-
+            console.log(updatedUserBackend);
             // Save the updated user object to local storage
-            console.log(updatedUser)
             setUser(updatedUserBackend);
+            recheckLocalStorage();
         },
         [user, setUser]
     );
@@ -123,10 +153,10 @@ export function useStock(): {
         (tradeData: tradeHistory, moneyToAdd: number) => {
             // Add the trade to the user's trade history
             const updatedTrades = user.trades
-                ? [...user.trades, tradeData]
-                : [tradeData];
+            ? [...user.trades, tradeData].sort((a, b) => new Date(a.dateOfTrade).getTime() - new Date(b.dateOfTrade).getTime())
+            : [tradeData];
             // Update the user's money based on the stock's value
-            const updatedMoney = user.money + moneyToAdd/100;
+            const updatedMoney = user.money + moneyToAdd / 100;
 
             // Update the user object with the new stocks array and updated money
             const updatedUser = {
@@ -137,9 +167,11 @@ export function useStock(): {
 
             // Wrap the updated user object in a data property to match the backendtype
             const updatedUserBackend = { data: updatedUser };
-
+            console.log(updatedUserBackend);
             // Save the updated user object to local storage
+            
             setUser(updatedUserBackend);
+            recheckLocalStorage();
         },
         [user, setUser]
     );
@@ -153,7 +185,7 @@ export function useStock(): {
         const updatedMoney = user.money + stockValue;
 
         // Add the trade to the user's trade history
-        const updatedTrades = user.trades ? [...user.trades, trade] : [trade];
+        const updatedTrades = user.trades ? [...user.trades, trade].sort((a, b) => new Date(a.dateOfTrade).getTime() - new Date(b.dateOfTrade).getTime()) : [trade];
 
         // Update the user object with the updated money and updated trades
         const updatedUser = {
@@ -188,7 +220,10 @@ export function useStock(): {
             const trade: tradeHistory = {
                 id: (Date.now() + Math.random()).toString(36), // Generate a random ID
                 symbol: stockToRemove.symbol,
-                amount: amountToRemove && amountToRemove < stockToRemove.amount ? amountToRemove : stockToRemove.amount,
+                amount:
+                    amountToRemove && amountToRemove < stockToRemove.amount
+                        ? amountToRemove
+                        : stockToRemove.amount,
                 price: stockToRemove.price,
                 dateOfTrade: new Date(), // Set the current date as the date of the trade
                 buySell: false, // Set to false for sell
@@ -233,6 +268,8 @@ export function useStock(): {
 
             // Call the helper function to update the user's money and trade history
             updateUserMoneyAndTrades(stockValue, trade);
+
+            recheckLocalStorage();
         },
         [user, setUser]
     );

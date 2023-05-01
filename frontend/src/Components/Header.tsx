@@ -74,15 +74,7 @@ const Header: React.FC<UserOnlyProps> = ({ user, setUser }) => {
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
-
-    const handleSignInClick = () => {
-        Router.push("/user/signin");
-    };
-
-    const handleAccountClick = () => {
-        Router.push("/user/account");
-    };
-
+    
     useEffect(() => {
         if (user.darkMode && document.querySelectorAll(".dark").length === 0) {
             document.querySelector("#htmlDocument").classList.add("dark");

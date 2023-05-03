@@ -162,32 +162,73 @@ describe("DateController with wrapper", () => {
         });
     });
 
-    test('form does not submit when day is greater than max', async () => {
-      render(<Wrapper />);
-    
-      fireEvent.change(screen.getByTestId('date-controller-form-month'), { target: { value: '2' } });
-      fireEvent.change(screen.getByTestId('date-controller-form-day'), { target: { value: '30' } });
-      fireEvent.change(screen.getByTestId('date-controller-form-year'), { target: { value: '2021' } });
-    
-      fireEvent.click(screen.getByTestId('date-controller-form-submit'));
-    
-      await waitFor(() => {
-        expect(screen.queryByTestId("date-offers")).not.toBeInTheDocument();
-      });
+    test("form does not submit when day is greater than max", async () => {
+        render(<Wrapper />);
+
+        fireEvent.change(screen.getByTestId("date-controller-form-month"), {
+            target: { value: "2" },
+        });
+        fireEvent.change(screen.getByTestId("date-controller-form-day"), {
+            target: { value: "30" },
+        });
+        fireEvent.change(screen.getByTestId("date-controller-form-year"), {
+            target: { value: "2021" },
+        });
+
+        fireEvent.click(screen.getByTestId("date-controller-form-submit"));
+
+        await waitFor(() => {
+            expect(screen.queryByTestId("date-offers")).not.toBeInTheDocument();
+        });
     });
-    
-    test('form does not submit when day is greater than max for leap year', async () => {
-      render(<Wrapper />);
-    
-      fireEvent.change(screen.getByTestId('date-controller-form-month'), { target: { value: '2' } });
-      fireEvent.change(screen.getByTestId('date-controller-form-day'), { target: { value: '29' } });
-      fireEvent.change(screen.getByTestId('date-controller-form-year'), { target: { value: '2021' } });
-    
-      fireEvent.click(screen.getByTestId('date-controller-form-submit'));
-    
-      await waitFor(() => {
-        expect(screen.queryByTestId("date-offers")).not.toBeInTheDocument();
-      });
+
+    test("form does not submit when day is greater than max for leap year", async () => {
+        render(<Wrapper />);
+
+        fireEvent.change(screen.getByTestId("date-controller-form-month"), {
+            target: { value: "2" },
+        });
+        fireEvent.change(screen.getByTestId("date-controller-form-day"), {
+            target: { value: "29" },
+        });
+        fireEvent.change(screen.getByTestId("date-controller-form-year"), {
+            target: { value: "2021" },
+        });
+
+        fireEvent.click(screen.getByTestId("date-controller-form-submit"));
+
+        await waitFor(() => {
+            expect(screen.queryByTestId("date-offers")).not.toBeInTheDocument();
+        });
     });
-     
+
+    test("clicking on an offer in dateOffers updates the dates", async () => {
+        render(<Wrapper />);
+
+        fireEvent.change(screen.getByTestId("date-controller-form-month"), {
+            target: { value: "2" },
+        });
+        fireEvent.change(screen.getByTestId("date-controller-form-day"), {
+            target: { value: "4" },
+        });
+        fireEvent.change(screen.getByTestId("date-controller-form-year"), {
+            target: { value: "2021" },
+        });
+
+        fireEvent.click(screen.getByTestId("date-controller-form-submit"));
+
+        await waitFor(() => {
+            const dateOffers = screen.getByTestId("date-offers");
+            const listItems = within(dateOffers).getAllByRole("listitem");
+
+            expect(listItems).toHaveLength(4);
+        });
+
+        fireEvent.click(screen.getByTestId("monthly-offering-2"));
+
+        await waitFor(() => {
+            expect(screen.queryByTestId("date-offers")).not.toBeInTheDocument();
+            expect(screen.getByTestId("date-controller-form-month").value === 28);
+        });
+    });
 });

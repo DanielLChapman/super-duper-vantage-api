@@ -136,7 +136,7 @@ export function useStock(): {
                 ...user,
                 stocks: updatedStocks,
                 trades: updatedTrades,
-                money: user.money - (stockData.price * stockData.amount) / 100,
+                money: user.money - (stockData.price * stockData.amount),
             };
 
             // Wrap the updated user object in a data property to match the backendtype
@@ -156,7 +156,7 @@ export function useStock(): {
             ? [...user.trades, tradeData].sort((a, b) => new Date(a.dateOfTrade).getTime() - new Date(b.dateOfTrade).getTime())
             : [tradeData];
             // Update the user's money based on the stock's value
-            const updatedMoney = user.money + moneyToAdd / 100;
+            const updatedMoney = user.money + moneyToAdd;
 
             // Update the user object with the new stocks array and updated money
             const updatedUser = {

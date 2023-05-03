@@ -27,6 +27,7 @@
     "@babel/preset-react": "^7.12.1",
     "@babel/preset-typescript": "^7.0.0",
     "@jest/globals": "^29.3.1",
+    "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/react": "18.0.9",
@@ -42,8 +43,9 @@
     "dev": "next dev -p 7777",
     "build": "next build",
     "start": "next start",
-    "test": "jest -w",
-    "test:ci": "jest --ci"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "eslintConfig": {
     "extends": [
@@ -62,5 +64,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "jest": {
+    "setupFilesAfterEnv": ["./src/__test__/jest.setup.js"],
+    "testEnvironment": "jsdom",
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "\\.(css|less|scss|sass)$": "identity-obj-proxy"
+    }
   }
 }

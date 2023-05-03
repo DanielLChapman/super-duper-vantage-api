@@ -161,7 +161,7 @@ const BuySellHandler: React.FC<BuySellProps> = ({
                 id: (Date.now() + Math.random()).toString(36),
                 symbol: symbol,
                 amount: amount,
-                price: price * 100,
+                price: price*100,
                 buySell: true,
                 dateOfTrade: new Date(dateCheck),
             };
@@ -170,7 +170,7 @@ const BuySellHandler: React.FC<BuySellProps> = ({
                     id: (Date.now() + Math.random()).toString(36),
                     symbol: symbol,
                     amount: amount,
-                    price: price * 100,
+                    price: price*100,
                     createdAt:  new Date(dateCheck),
                     dateOfTrade:  new Date(dateCheck),
                 };

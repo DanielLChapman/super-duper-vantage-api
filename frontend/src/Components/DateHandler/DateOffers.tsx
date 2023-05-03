@@ -19,7 +19,7 @@ const DateOffers: React.FC<DateOffersProps> = ({
     }
 
     return (
-        <div className="date-offers">
+        <div className="date-offers" data-testid="date-offers">
             <h3 className="text-red-700 font-bold text-lg">
                 Sorry, after 90 days the dates are more strict in requirements,
                 please select one to use:

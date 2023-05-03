@@ -127,6 +127,7 @@ const DateController: React.FC<DateControllersProps> = ({
         let dayTemp = d;
         let yearTemp = y;
 
+        
         //establish a dateObject of the temp days, as they can be different than state
         let tempDateOfWeek = new Date(`${monthTemp}-${dayTemp}-${yearTemp}`);
         //establish a current time
@@ -141,7 +142,7 @@ const DateController: React.FC<DateControllersProps> = ({
            updateAllDates(m, d, y);
            return;
         }
-
+       
         //if the dateRequested is in the future, correct to today
         if (dateObject2 < tempDateOfWeek) {
             alert(
@@ -167,6 +168,7 @@ const DateController: React.FC<DateControllersProps> = ({
         let dayDiff = Math.ceil(miliDiff / (1000 * 60 * 60 * 24));
 
         if (dayDiff < 90) {
+            
             //if under 90 days
             //make sure its not a weekend, otherwise go the Friday before
 
@@ -180,7 +182,7 @@ const DateController: React.FC<DateControllersProps> = ({
             setURLSelector('Day');
         } else {
             //if over 90 days
-
+            
             //check if it is an end of the month:
             let curMonth = months[monthTemp - 1] as Month;
 
@@ -254,6 +256,7 @@ const DateController: React.FC<DateControllersProps> = ({
             return;
         }
 
+        
         
 
         dateFixer(monthTemp, dayTemp, yearTemp);

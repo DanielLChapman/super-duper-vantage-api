@@ -57,6 +57,7 @@ const DataContainerLocal: React.FC<{
 
     const handleSell = async (stock: stock, sellAmount) => {
         if (verifyThePrice === -1) {
+            alert('No Price Found')
             return;
         }
         let convertedPrice = +(roundToTwo(+verifyThePrice) * 100).toFixed(0);

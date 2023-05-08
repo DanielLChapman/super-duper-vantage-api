@@ -102,7 +102,7 @@ const StockCard: React.FC<Props> = ({
                 "Please verify that the date is confirmed by selecting Set Sell Date"
             );
             return;
-        }
+        } 
         let closingPrice: any = -1;
 
         let nudate = new Date(

@@ -85,6 +85,7 @@ const AccountContainer: React.FC<EditAccountInfoProps> = ({ user }) => {
     ] = useMutation(UPDATE_USER_MUTATION);
 
     const handleUpdate = async (type) => {
+        console.log('here')
         //move this back down and stop this from ever being called
 
         /*
@@ -127,7 +128,10 @@ const AccountContainer: React.FC<EditAccountInfoProps> = ({ user }) => {
             refetchQueries: [{ query: CURRENT_USER_QUERY }],
         });
 
+
+
         if (res.data) {
+        
             alert("Success");
             if (type === "password") {
                 setFormValues({
@@ -164,6 +168,7 @@ const AccountContainer: React.FC<EditAccountInfoProps> = ({ user }) => {
                 <div className="account-info border border-gray-300 rounded-lg p-6 shadow-sm hover:shadow-lg transition-shadow duration-300">
                     <button
                         onClick={() => setIsEditAccountOpen(!isEditAccountOpen)}
+                        data-testid="account-edit-info"
                         className="text-lg w-full text-center font-semibold text-blue-600 hover:text-blue-800 dark:text-snow dark:hover:text-electricBlue  focus:outline-none"
                     >
                         Edit Account Info

@@ -45,6 +45,7 @@ const UpdateFieldForm: React.FC<UpdateFieldFormProps> = ({
                 placeholder={placeholder}
                 value={value}
                 autoComplete={fieldType}
+                data-testid={fieldType}
                 onChange={(e) => onChange(e.target.value)}
                 className={`block w-full mt-1 px-3 py-2 border ${
                     error ? "border-persianRed" : "border-gray-300"
@@ -52,7 +53,7 @@ const UpdateFieldForm: React.FC<UpdateFieldFormProps> = ({
                 {...(fieldType === "number" ? { min: 0, max: 100 } : {})}
             />
             <button className="mt-4 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                Update {label}
+                Update
             </button>
             {error && (
                 <span className="font-bold text-persianRed text-lg">

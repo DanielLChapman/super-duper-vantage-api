@@ -208,6 +208,7 @@ const EditAccountInfo: React.FC<EditAccountInfoProps> = ({
                     </label>
                     <input
                         id="password"
+                        data-testid="password-field"
                         type="password"
                         placeholder="Enter your password"
                         value={formValues.password}

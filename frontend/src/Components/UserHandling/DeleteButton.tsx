@@ -5,7 +5,7 @@ import { SIGNIN_MUTATION } from "./SignIn";
 import { Router, useRouter } from "next/router";
 import { user } from "../../../tools/lib";
 
-const DELETE_USER_MUTATION = gql`
+export const DELETE_USER_MUTATION = gql`
     mutation deleteUser($id: ID!) {
         deleteUser(id: $id) {
             id

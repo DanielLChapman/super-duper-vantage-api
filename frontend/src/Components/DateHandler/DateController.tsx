@@ -310,9 +310,9 @@ const DateController: React.FC<DateControllersProps> = ({
                     />
                 </div>
                 <div className="form-control flex">
-                    <label htmlFor="month" className="font-semibold text-lg p-2 w-[150px] lg:w-auto dark:text-snow">Year: </label>
+                    <label htmlFor="year" className="font-semibold text-lg p-2 w-[150px] lg:w-auto dark:text-snow">Year: </label>
                     <input
-                        name="day"
+                        name="year"
                         type="number"
                         min={1900}
                         max={dateObject.getFullYear()}

@@ -40,27 +40,31 @@ export const GET_CACHES_BY_IDENTIFIERS = gql`
     }
 `;
 
+
 export function addToCache(symbol: string, date: Date, price) {
     let newPrice = price * 100;
-    let identifier = `${symbol.toUpperCase}-${
-        date.getMonth() + 1
-    }-${date.getDay()}-${date.getFullYear()}`;
+    let identifier = `${symbol.toUpperCase()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}-${date.getUTCFullYear()}`;
+
+    const variables = {
+        symbol,
+        price: newPrice,
+        identifier,
+        date: date,
+    };
+
+    console.log("Variables sent in addToCache:", variables);
 
     const [addCache] = useMutation(ADD_CACHE, {
-        variables: {
-            symbol,
-            price: newPrice,
-            identifier,
-            dateOfTrade: date,
-        },
+        variables,
     });
 
     addCache();
 }
 
-export function getCachesByIdentifiers(identifiers: string[]) {
+
+export function getCachesByIdentifiers(ids: string[]) {
     const { data, error, loading } = useQuery(GET_CACHES_BY_IDENTIFIERS, {
-        variables: { identifiers },
+        variables: { ids },
     });
 
     // throw an error if there was a problem with the query

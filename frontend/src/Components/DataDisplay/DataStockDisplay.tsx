@@ -115,7 +115,6 @@ const StockCard: React.FC<Props> = ({
 
         for (let [s, price, identifier] of checkedStocks) {
             if (identifier === identifierNew) {
-                console.log('here')
                 closingPrice = +price;
                 setTheVerifiedPrice(closingPrice);
             }
@@ -192,7 +191,7 @@ const StockCard: React.FC<Props> = ({
                                     <span className=" ">
                                         {" "}
                                         On {stockDate.getMonth() + 1} /{" "}
-                                        {stockDate.getDay()} /{" "}
+                                        {stockDate.getDate()} /{" "}
                                         {stockDate.getFullYear()}
                                     </span>
                                 )}
@@ -228,7 +227,7 @@ const StockCard: React.FC<Props> = ({
                                         <span>
                                             {" "}
                                             On {stockDate.getMonth() + 1} /{" "}
-                                            {stockDate.getDay()} /{" "}
+                                            {stockDate.getDate()} /{" "}
                                             {stockDate.getFullYear()}
                                         </span>
                                     )}

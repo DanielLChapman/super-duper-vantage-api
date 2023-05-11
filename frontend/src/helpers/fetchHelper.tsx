@@ -1,5 +1,4 @@
 export const verifyAPIHandler = async (url) => {
-    console.log('here')
     let dataFromApi: object;
     await fetch(url)
         .then((response) => response.json())
@@ -63,16 +62,9 @@ export async function verifyFetch(symbol: string, selector: string, apiKey: stri
 
     let closingPrice = selector === 'Day' || selector === 'Intraday' ? dataFromApi[jsonKey][dateToUseForSearch]['4. close'] : dataFromApi[jsonKey][dateToUseForSearch]['5. adjusted close'];
 
-    return closingPrice;
-    /*
-    setStockData({
-        ...stockData,
-        price: closingPrice
-    });
-    setBuySellAppear(true);
-    return {
-        symbol: stockData.symbol,
-        close: closingPrice
+    if (!closingPrice) {
+        closingPrice = selector === 'Day' || selector === 'Intraday' ? dataFromApi[jsonKey][dateToUseForSearch]['5. adjusted close'] : dataFromApi[jsonKey][dateToUseForSearch]['4. close'];
+
     }
-*/
+    return closingPrice;
 }

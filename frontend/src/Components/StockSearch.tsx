@@ -54,7 +54,6 @@ const StockSearch: React.FC<StockSearchProps> = ({
         price: 0,
     });
 
-    const [buySellAppear, setBuySellAppear] = useState(false);
     const [viewStateManager, setViewStateManager] = useState(views["dates"]);
     const [nuKey, setNuKey] = useState(Math.random() * 1000);
 
@@ -122,7 +121,6 @@ const StockSearch: React.FC<StockSearchProps> = ({
             }
         }
 
-        setBuySellAppear(false);
         setStockData({
             ...stockData,
             price: 0,

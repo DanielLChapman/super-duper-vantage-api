@@ -129,6 +129,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
     };
 
     const postVerify = async (cP) => {
+ 
         let closingPrice = cP;
 
         let nudate = new Date(
@@ -170,7 +171,11 @@ const StockSearch: React.FC<StockSearchProps> = ({
                     identifier: identifierNew,
                 };
 
-                const { data } = await addCache({ variables });
+                if (variables.price !== null) {
+                    const { data } = await addCache({ variables });
+                }
+
+                
             }
 
             setCheckedStocks([
@@ -223,6 +228,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
         
 
         let found = false;
+        
         if (closingPrice !== -1) {
             //means we've searched it before or 
             postVerify(
@@ -231,6 +237,7 @@ const StockSearch: React.FC<StockSearchProps> = ({
                     : cacheCheck.cacheStorages[0].price / 100
             );
         } else {
+      
             setIdentifiers([identifierNew]);
             getCaches()
         }

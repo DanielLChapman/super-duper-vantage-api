@@ -57,7 +57,9 @@ const StockSymbolForm: React.FC<DateControllersProps> = ({
                 //let val = +e.currentTarget.value;
                 //handleSymbolChange(stockData.symbol, stockData.amount);
                 setEnabled(false);
+                
                 let output = await verify();
+                
             }}
         >
             <div className="flex flex-col">
@@ -90,6 +92,7 @@ const StockSymbolForm: React.FC<DateControllersProps> = ({
                         name="amount"
                         value={amount}
                         onChange={handleStockChange}
+                        data-testid="handle-stock-change-amount"
                         className="flex-grow block p-2 pl-7 w-full text-md text-gray-900 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 "
                     />
                 </label>
@@ -98,6 +101,7 @@ const StockSymbolForm: React.FC<DateControllersProps> = ({
                 <button
                     aria-disabled={!enabled}
                     disabled={!enabled}
+                    data-testid="verify-stock-button"
                     className="group relative h-10 w-48 overflow-hidden rounded-lg bg-delftBlue shadow hover:bg-"
                 >
                     <div className="absolute duration-300 inset-0 w-full h-full transition-all scale-0 group-hover:scale-100 group-hover:bg-persianGreen rounded-lg"></div>

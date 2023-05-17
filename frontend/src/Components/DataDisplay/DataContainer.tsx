@@ -215,6 +215,7 @@ const DataContainer: React.FC<{
         setCheckedStocks([]);
     }, [dateToUse, selector]);
 
+
     return (
         <div className="data-container container flex flex-col font-open">
             <div className="stock-search-view-container border-4 border-t-0 border-electricBlue rounded-lg container max-w-[1500px] mx-auto p-6 flex flex-col">
@@ -222,7 +223,7 @@ const DataContainer: React.FC<{
                 <section id="data-container" className="data-container font-bold">
                     <ul>
                         <li className="mb-5">
-                            <h6 onClick={() => setShowStocks(!showStocks)} className={`text-xl font-semibold text-jet dark:text-snow 
+                            <h6 data-testid="stock-datacontainer-reveal-button" onClick={() => {setShowStocks(!showStocks)}} className={`text-xl font-semibold text-jet dark:text-snow 
                             transition-colors duration-150 hover:text-persianRed cursor-pointer hover:text-2xl 
                             ${!stockError && !stockLoading && showStocks ? 'text-xl text-persianRed' : ''}`}>
                                 Stocks
@@ -292,7 +293,7 @@ const DataContainer: React.FC<{
                             )}
                         </li>
                         <li>
-                            <h6 id="data-container-trades" onClick={() => {
+                            <h6 id="data-container-trades" data-testid="trade-datacontainer-reveal-button"  onClick={() => {
                                 setShowTrades(!showTrades)
                             }} className={`text-xl font-semibold text-jet dark:text-snow transition-colors duration-150
                              hover:text-delftBlue cursor-pointer hover:text-2xl

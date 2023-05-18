@@ -97,21 +97,18 @@ const StockCard: React.FC<Props> = ({
     //Logic to call API, or let user know to wait
     //get price, have state manager to switch between verify and sell button
     const verifyPrice = async () => {
+
         if (!verifiedDates) {
             alert(
                 "Please verify that the date is confirmed by selecting Set Sell Date"
             );
             return;
-        } 
+        }
         let closingPrice: any = -1;
 
-        let nudate = new Date(
-            `${dateToUse.month}-${dateToUse.day}-${dateToUse.year}`
-        );
-
-        let identifierNew = `${stock.symbol.toUpperCase()}-${
-            dateToUse.month
-        }-${dateToUse.day}-${dateToUse.year}`;
+        let identifierNew = `${stock.symbol.toUpperCase()}-${dateToUse.month}-${
+            dateToUse.day
+        }-${dateToUse.year}`;
 
         for (let [s, price, identifier] of checkedStocks) {
             if (identifier === identifierNew) {
@@ -136,10 +133,11 @@ const StockCard: React.FC<Props> = ({
             return closingPrice;
         }
 
-        
-
         setTheVerifiedPrice(closingPrice);
-        setCheckedStocks([...checkedStocks, [stock.symbol, closingPrice, identifierNew]]);
+        setCheckedStocks([
+            ...checkedStocks,
+            [stock.symbol, closingPrice, identifierNew],
+        ]);
     };
 
     //if the props change, setState back to verify.
@@ -254,7 +252,10 @@ const StockCard: React.FC<Props> = ({
                                         {verifyThePrice === -1 ? (
                                             <button
                                                 className="stock-card-sell-button get-price-button"
-                                                onClick={verifyPrice}
+                                                onClick={() => {
+                                                    verifyPrice();
+                                                }}
+                                                data-testid="verifyThePriceButton"
                                             >
                                                 Get Price
                                             </button>
@@ -294,6 +295,7 @@ const StockCard: React.FC<Props> = ({
                                             setSellAmount(+e.target.value)
                                         }
                                         className="stock-card-sell-input w-24"
+                                        data-testid="stock-amount-input-for-sell"
                                     />
                                     <span>
                                         {verifyThePrice === -1
@@ -349,11 +351,14 @@ const StockCard: React.FC<Props> = ({
                                 {stock.symbol}{" "}
                             </span>
 
-                            <span className="py-2"> 
+                            <span className="py-2">
                                 Bought For:{" "}
                                 <span className="text-persianGreen ">
                                     $
-                                    {(stock.amount * stock.price / 100).toFixed(2)}
+                                    {(
+                                        (stock.amount * stock.price) /
+                                        100
+                                    ).toFixed(2)}
                                 </span>
                             </span>
                             <button

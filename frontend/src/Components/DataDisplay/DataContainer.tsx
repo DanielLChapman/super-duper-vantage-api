@@ -270,6 +270,7 @@ const DataContainer: React.FC<{
                                                 onClick={() =>
                                                     setStockPage(stockPage - 1)
                                                 }
+                                                data-testid="stock-pagination-prev"
                                                 className="disabled:opacity-50 get-price-button w-[100px] hover:scale-105 hover:ml-1 hover:bg-darkOrange disabled:hover:bg-delftBlue hover:shadow-md"
                                             >
                                                 Previous
@@ -283,6 +284,7 @@ const DataContainer: React.FC<{
                                                 onClick={() =>
                                                     setStockPage(stockPage + 1)
                                                 }
+                                                data-testid="stock-pagination-next"
                                                 className="disabled:opacity-50 get-price-button w-[100px] hover:scale-105 hover:ml-1 hover:bg-darkOrange disabled:hover:bg-delftBlue hover:shadow-md"
                                             >
                                                 Next

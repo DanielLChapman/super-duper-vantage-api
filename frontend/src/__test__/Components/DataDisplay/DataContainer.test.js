@@ -29,8 +29,15 @@ import DataContainer, {
 } from "../../../Components/DataDisplay/DataContainer";
 import { databaseUser } from "../../mockUser";
 import { getMockStockData } from "../../mockStockData";
+import { verifyFetch } from "../../../helpers/fetchHelper";
 
 const mockData = getMockStockData();
+
+jest.mock("../../../helpers/fetchHelper", () => ({
+    ...jest.requireActual("../../../helpers/fetchHelper"),
+    verifyAPIHandler: jest.fn(),
+    verifyFetch: jest.fn(),
+}));
 
 const emptyMocks = [
     {
@@ -82,7 +89,7 @@ const oneMocks = [
                         id: "22",
                         symbol: "AAPL",
                         price: 15000,
-                        amount: 0,
+                        amount: 2,
                         dateOfTrade: new Date(Date.now()),
                     },
                 ],
@@ -127,7 +134,7 @@ const paginationMocks = [
         },
         result: {
             data: {
-                stocks: mockData.slice(0,10),
+                stocks: mockData.slice(0, 10),
             },
         },
     },
@@ -142,7 +149,7 @@ const paginationMocks = [
         },
         result: {
             data: {
-                stocks: mockData.slice(10,20),
+                stocks: mockData.slice(10, 20),
             },
         },
     },
@@ -321,6 +328,75 @@ describe("Data Container Component", () => {
             mockData.slice(0, 10).forEach((item) => {
                 expect(screen.getByText(item.symbol)).toBeInTheDocument();
             });
+        });
+    });
+
+    it("correctly updates the prices when data is confirmed", async () => {
+        let current = new Date(Date.now());
+
+        window.alert = jest.fn();
+
+        global.fetch = jest.fn(() =>
+            Promise.resolve({
+                json: () =>
+                    Promise.resolve({
+                        "Time Series (Daily)": {
+                            [currentDate]: {
+                                "4. close": 5,
+                            },
+                        },
+                    }),
+            })
+        );
+
+        render(
+            <MockedProvider mocks={oneMocks} addTypename={false}>
+                <DataContainer
+                    verifiedDates={true}
+                    user={user}
+                    dateToUse={dateToUse}
+                    selector={selector}
+                    checkedStocks={checkedStocks}
+                    setUser={setUser}
+                    setCheckedStocks={setCheckedStocks}
+                    storedCache={storedCache}
+                />
+            </MockedProvider>
+        );
+
+        fireEvent.click(
+            screen.getByTestId("stock-datacontainer-reveal-button")
+        );
+
+        await waitFor(() => {
+            expect(screen.getByText("AAPL")).toBeInTheDocument();
+            expect(screen.getByText("Bought For:")).toBeInTheDocument();
+        });
+
+        fireEvent.click(screen.getByText("Expand"));
+        await waitFor(() => {
+            expect(
+                screen.getByText("Total Amount Of Shares:")
+            ).toBeInTheDocument();
+        });
+
+        verifyFetch.mockResolvedValueOnce(5);
+
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("verifyThePriceButton"));
+        });
+        //fireEvent.click(screen.getByTestId("verifyThePriceButton"));
+
+        await waitFor(() => {
+            expect(screen.getByText("$10.00")).toBeInTheDocument();
+            expect(screen.getByText("$0.00")).toBeInTheDocument();
+        });
+
+        const input = screen.getByTestId("stock-amount-input-for-sell");
+        fireEvent.change(input, { target: { value: "1" } });
+
+        await waitFor(() => {
+            expect(screen.getByText("$5.00")).toBeInTheDocument();
         });
     });
 });
